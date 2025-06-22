@@ -4,6 +4,7 @@ import { QuestCard } from "../components/QuestCard";
 import { BackArrow } from "@/components/button/BackArrow";
 import NameAndPoint from "@/components/user/NameAndPoint";
 import type { Quest } from "../types/quest";
+import SoundButton from "@/components/button/SoundButton";
 
 interface QuestDetailTemplateProps {
   questType: string;
@@ -64,10 +65,13 @@ export const QuestDetailTemplate = ({
   return (
     // 배경 이미지
     <Background backgroundImage="https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749086237/iPad_Pro_12.9__-_63_fl49sp.webp">
+      {/* 뒤로가기 */}
+      <BackArrow onClick={onBack} />
+      {/* 사운드 */}
+      <SoundButton />
       {/* 이름, 포인트 정보 */}
       <NameAndPoint position={{ top: "0.9rem", right: "1.4rem" }} />
 
-      <BackArrow onClick={onBack} />
       {/* 포포 이미지 */}
       <img
         src="https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749107825/ChatGPT_Image_May_26__2025__04_02_46_PM-removebg-preview_1_1_swqc8d.webp"

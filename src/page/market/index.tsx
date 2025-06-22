@@ -19,7 +19,10 @@ export default function MarketPage() {
 
     // 첫페이지 로드시 배경음악 설정
     useEffect(() => {
-      setNewAudio(MarketBackgroundMusic, 0.8);
+      console.log("audio.name", audio?.name);
+      if(audio?.name !== MarketBackgroundMusic) {
+        setNewAudio(MarketBackgroundMusic, 0.6);
+      }
     }, []);
   
     // 음소거 상태 변경시 배경음악 정지 또는 재생

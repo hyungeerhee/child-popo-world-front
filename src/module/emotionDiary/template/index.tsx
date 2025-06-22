@@ -4,7 +4,7 @@ import { BackArrow } from "@/components/button/BackArrow";
 import type { Diary } from "../types/diary";
 import { WriteLimitModal } from "../components/writeLimitModal";
 import SoundButton from "@/components/button/SoundButton";
-
+import NameAndPoint from "@/components/user/NameAndPoint";
 interface EmotionDiaryTemplateProps {
   onClickWrite: () => void;
   onBack: () => void;
@@ -38,6 +38,8 @@ export const EmotionDiaryTemplate = ({
       <BackArrow onClick={onBack} />
       {/* 음소거 버튼 */}
       <SoundButton />
+      {/* 오른쪽 상단 총 금액 표시 (실제 포인트) */}
+      <NameAndPoint  />
       {/* 제목 */}
       <div
         aria-label="제목: 감정일기"
@@ -52,14 +54,14 @@ export const EmotionDiaryTemplate = ({
         <img
           src="https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749614463/Polygon_4_bejfpz.webp"
           alt="왼쪽 화살표"
-          className="h-[0.8rem] scale-x-[-1] cursor-pointer"
+          className="h-[0.8rem] scale-x-[-1] cursor-pointer "
           onClick={onPrevMonth}
         />
         {/* 월 표시 */}
         <div
           aria-label="달력 버튼"
           className="flex items-center justify-center px-[1rem] py-[0.15rem] 
-             bg-[#93d088] text-[#fffde7] text-[0.7rem]  rounded-full w-[6rem]
+             bg-[#93d088] text-[#fffde7] text-[0.7rem]  rounded-full min-w-[6rem]
              shadow-md cursor-pointer"
         >
           {formatMonth(currentDate)}
@@ -68,7 +70,7 @@ export const EmotionDiaryTemplate = ({
         <img
           src="https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749614463/Polygon_4_bejfpz.webp"
           alt="오른쪽 화살표"
-          className="h-[0.8rem] cursor-pointer"
+          className="h-[0.8rem] cursor-pointer "
           onClick={onNextMonth}
         />
       </div>
@@ -92,7 +94,7 @@ export const EmotionDiaryTemplate = ({
           aria-label="오늘의 일기 쓰기"
           className="w-[8rem] px-[1rem] py-[0.4rem] 
              bg-[#93d088] text-[#fffde7] text-[0.85rem] font-semibold rounded-full 
-             shadow-md cursor-pointer"
+             shadow-md cursor-pointer active:scale-95 transition-all duration-100"
           onClick={onClickWrite}
         >
           오늘의 일기 쓰기

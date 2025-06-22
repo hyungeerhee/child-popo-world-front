@@ -71,9 +71,15 @@ export interface TurnData {
   news_tag: string;
 }
 
-const INITIAL_POINT = 2000;
+const INITIAL_POINT = {
+  "little-pig": 700,
+  truck: 1000,
+  masic: 700,
+  ninja: 2000,
+}
+
 const INITIAL_GAME_STATE: GameState = {
-  point: INITIAL_POINT,
+  point:  0,
   turn: 1,
   turnMax: 0,
   beforePrice: [0, 0, 0],
@@ -153,6 +159,7 @@ export default function InvestingGame() {
           console.log(data.story);
           setGameState((prev) => ({
             ...prev,
+            point: INITIAL_POINT[gametype as keyof typeof INITIAL_POINT] || 0,
             scenario: story, // 게임 시나리오 저장
             currentScenario: story[0], // 첫번째 시나리오 저장
             result: story[1].result, // 뉴스에 대한 결과 초기화 (이번턴 뉴스에 대한 결과는 다음턴 시나리오에 있음)
@@ -226,7 +233,7 @@ export default function InvestingGame() {
       updateGameState({ isGameOver: true });
       // 게임 결과 페이지로 이동
       navigate(`/investing/game/${gametype}?stage=game-end`);
-      endGame(sessionId, "1111", true, lastPoint - INITIAL_POINT);
+      endGame(sessionId, "1111", true, lastPoint - INITIAL_POINT[gametype as keyof typeof INITIAL_POINT]);
       return;
     }
 
@@ -290,7 +297,7 @@ export default function InvestingGame() {
   // 게임 타입에 따라 템플릿 렌더링
   switch (gameStage) {
     case "game-start":
-      return <GameStartTemplate gameType={gametype} />;
+      return <GameStartTemplate gameType={gametype} point={INITIAL_POINT[gametype as keyof typeof INITIAL_POINT]} />;
     case "game-play":
       return (
         <GamePlayTemplate
@@ -304,13 +311,12 @@ export default function InvestingGame() {
     case "game-end":
       const lastPoint =
         gameState.point + gameState.price.reduce((acc, curr, index) => acc + curr * gameState.count[index], 0);
-      const initialPoint = INITIAL_POINT;
       const stockNames = gameState.currentScenario?.stocks.map((stock) => stock.name);
       return (
         <GameEndTemplate
           gameType={gametype}
           lastPoint={lastPoint}
-          initialPoint={initialPoint}
+          initialPoint={INITIAL_POINT[gametype as keyof typeof INITIAL_POINT]}
           sessionId={sessionId}
           stockNames={stockNames || []}
           scenario={gameState.scenario}

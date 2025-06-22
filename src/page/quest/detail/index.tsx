@@ -5,7 +5,8 @@ import type { Quest } from "@/module/quest/types/quest";
 import apiClient, { ApiError } from "@/lib/api/axios";
 import { StateChangeModal } from "@/module/quest/components/StateChangeModal";
 import { useAuthStore } from "@/lib/zustand/store";
-
+import { playButtonSound,  } from "@/lib/utils/sound";
+import backClickSound from "@/assets/sound/back_click.mp3";
 const questStateMap: Record<string, Quest["state"]> = {
   PENDING_ACCEPT: "수락하기",
   IN_PROGRESS: "다 했어요",
@@ -77,7 +78,6 @@ export default function QuestDetail() {
         );
 
         const data = await response.data;
-        console.log(data);
         setPoint(data.currentPoint);
         const mapped = data.quests.map((item: any) => ({
           ...item,
@@ -116,6 +116,7 @@ export default function QuestDetail() {
 
   // 완료 버튼
   const handleComplete = useCallback(() => {
+    playButtonSound();
     navigate("/quest/detail/complete", {
       state: { questType },
     });
@@ -132,6 +133,7 @@ export default function QuestDetail() {
     childId: string,
     state: Quest["state"]
   ) => {
+    playButtonSound();
     const modalMessage = MatchModalText[state];
     if (modalMessage) {
       // 수락하기, 다 했어요 눌렀을 경우 모달창
@@ -188,6 +190,7 @@ export default function QuestDetail() {
         pendingChange.state
       );
     }
+    playButtonSound();
     setPendingChange(null);
     setIsModalOpen(false);
   };
@@ -204,9 +207,10 @@ export default function QuestDetail() {
             questType={questType}
             questData={filteredQuestData}
             selectedState={selectedState}
-            onSelectState={(state) =>
+            onSelectState={(state) => {
+              playButtonSound();
               setSelectedState((prev) => (prev === state ? null : state))
-            }
+            }}
             onComplete={handleComplete}
             onBack={handleBack}
             onChangeState={handleChangeState}
@@ -216,7 +220,10 @@ export default function QuestDetail() {
           />
           <StateChangeModal
             isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
+            onClose={() => {
+              playButtonSound(backClickSound);
+              setIsModalOpen(false);
+            }}
             text={modalText}
             onConfirm={handleModalConfirm}
           />

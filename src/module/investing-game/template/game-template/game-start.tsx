@@ -5,6 +5,7 @@ import { GameStartExplain } from "./game-start-explain";
 import { BackArrow } from "@/components/button/BackArrow";
 import SoundButton from "@/components/button/SoundButton";
 import { playButtonSound } from "@/lib/utils/sound";
+import NameAndPoint from "@/components/user/NameAndPoint";
 
 interface GameCharacter {
   image: string;
@@ -39,6 +40,7 @@ interface GameStartProps {
   startButtonStrokeColor: string;
   sirenImage?: string;
   gameType: string;
+  point: number;
 }
 
 export const GameStart = ({
@@ -64,6 +66,7 @@ export const GameStart = ({
   startButtonStrokeColor,
   sirenImage,
   gameType,
+  point,
 }: GameStartProps) => {
   // 게임 설명 모달 상태
   const [isGameStartModalOpen, setIsGameStartModalOpen] = useState(false);
@@ -75,6 +78,7 @@ export const GameStart = ({
         <BackArrow color={gameType === "ninja" ? "white" : "gray"} />
         <SoundButton />
         <GameStartExplain
+          point={point}
           onClose={() => setIsGameStartModalOpen(false)}
           gameTitle={gameTitle}
           gameDescription={gameDescription}
@@ -97,6 +101,8 @@ export const GameStart = ({
       <BackArrow color={gameType === "ninja" ? "white" : "gray"} />
       {/* 음소거 버튼 */}
       <SoundButton />
+      {/* 포인트  */}
+      <NameAndPoint/> 
       {/* 제목 */}
       {/* leading-[1.2] 줄간격 조정 */}
       <TextWithStroke
@@ -121,7 +127,7 @@ export const GameStart = ({
           <div key={index} className="relative flex flex-col justify-center items-center gap-y-0.5">
             <img src={char.image} alt={char.alt} className="min-w-0 h-31 object-contain" />
             <div
-              className="px-5 ml-3 rounded-lg border-3 xl:border-5 text-center"
+              className="px-5 ml-3 rounded-lg border-2 xl:border-4 text-center"
               style={{ backgroundColor: stockButtonBgColor, borderColor: stockButtonStrokeColor }}
             >
               <span className="text-white text-xs font-bold">{char.label}</span>

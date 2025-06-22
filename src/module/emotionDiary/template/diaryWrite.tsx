@@ -2,6 +2,7 @@ import { BackArrow } from "@/components/button/BackArrow";
 import { Background } from "@/components/layout/Background";
 import { emotionList } from "../constants/emotionList";
 import SoundButton from "@/components/button/SoundButton";
+import { playButtonSound } from "@/lib/utils/sound";
 
 interface DiaryWriteTemplateProps {
   onBack: () => void;
@@ -40,7 +41,10 @@ export const DiaryWriteTemplate = ({
           <div
             key={emotion.server}
             className="flex flex-col justify-center items-center cursor-pointer transition-all duration-200"
-            onClick={() => onSelectEmotion(emotion.server)}
+            onClick={() => {
+              playButtonSound();
+              onSelectEmotion(emotion.server)
+            }}    
           >
             <img
               src={emotion.url}
@@ -86,7 +90,10 @@ export const DiaryWriteTemplate = ({
     bg-[#fff2b0] text-[#698d71] text-[1rem] 
     rounded-3xl px-[1.1rem] py-[0.3rem] cursor-pointer 
     shadow-md "
-        onClick={onSubmit}
+        onClick={() => {
+          playButtonSound();
+          onSubmit()
+        }}
       >
         기록하기
       </div>

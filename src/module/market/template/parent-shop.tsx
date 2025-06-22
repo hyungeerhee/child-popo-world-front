@@ -11,7 +11,7 @@ import NameAndPoint from "@/components/user/NameAndPoint";
 import type { StoreItem } from "@/lib/api/market/getStore";
 import { CompleteModal } from "../components/CompleteModal";
 import SoundButton from "@/components/button/SoundButton";
-
+import { playButtonSound } from "@/lib/utils/sound";  
 interface ParentShopTemplateProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
@@ -93,7 +93,7 @@ export const ParentShopTemplate = ({
           />
         </Modal>
         {/* 뒤로가기 */}
-        <BackArrow onClick={handleBack} />
+        <BackArrow onClick={handleBack} color="white"/>
         {/* 음소거 버튼 */}
         <SoundButton />
         {/* 이름과 포인트 */}
@@ -104,7 +104,9 @@ export const ParentShopTemplate = ({
         <SpeechBubble
           text={currentMessage.text}
           buttonText={currentMessage.buttonText}
-          onClick={handleSpeechBubbleClick}
+          onClick={() => {
+            handleSpeechBubbleClick()
+          }}
         />
         {/* 상품들 */}
         <div className="absolute bottom-29 left-1/2 -translate-x-1/2 w-75 flex items-center gap-x-14">
@@ -112,7 +114,9 @@ export const ParentShopTemplate = ({
             <div
               className="relative active:scale-95 transition-all duration-100"
               key={product.id}
-              onClick={() => handleProductClick(product)}
+              onClick={() => {
+                handleProductClick(product)
+              }}
             >
               <img src={IMAGE_URLS.items.dish} alt="dish" className="w-14 h-14 object-contain" />
               <img
@@ -129,7 +133,9 @@ export const ParentShopTemplate = ({
             <div
               className="flex flex-col justify-center items-center gap-y-0.5 w-26 px-4 py-1.5 bg-[#F6D8B8] border-2 border-[#97784A] rounded-md min-h-[3.5rem] active:scale-95 transition-all duration-100"
               key={product.name}
-              onClick={() => handleProductClick(product)}
+              onClick={() => {
+                handleProductClick(product)
+              }}
             >
               <div className="text-[#6E532C] text-[0.65rem] font-bold">{product.name}</div>
               <div className="flex items-center gap-1">

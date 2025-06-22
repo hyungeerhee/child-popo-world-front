@@ -3,9 +3,10 @@ import { GameStart } from "./game-template/game-start";
 
 interface GameStartTemplateProps {
   gameType: string;
+  point: number;
 }
 
-export const GameStartTemplate = ({ gameType }: GameStartTemplateProps) => {
+export const GameStartTemplate = ({ gameType, point }: GameStartTemplateProps) => {
   switch (gameType) {
     case "little-pig":
       return (
@@ -78,6 +79,7 @@ export const GameStartTemplate = ({ gameType }: GameStartTemplateProps) => {
           startButtonStrokeColor="#e45628" // 게임 시작 버튼 스트로크 색
           sirenImage={IMAGE_URLS.investing_game.little_pig.little_siren_pig} // 모달 사이렌 이미지
           gameType={gameType}
+          point={point}
         />
       );
     case "truck":
@@ -145,6 +147,7 @@ export const GameStartTemplate = ({ gameType }: GameStartTemplateProps) => {
           startButtonBgColor="#fe6e38"
           startButtonStrokeColor="#e45628"
           gameType={gameType}
+          point={point}
         />
       );
     case "ninja":
@@ -217,6 +220,7 @@ export const GameStartTemplate = ({ gameType }: GameStartTemplateProps) => {
           startButtonBgColor="#fe6e38"
           startButtonStrokeColor="#e45628"
           gameType={gameType}
+          point={point}
         />
       );
     case "masic":
@@ -288,6 +292,7 @@ export const GameStartTemplate = ({ gameType }: GameStartTemplateProps) => {
           startButtonBgColor="#374752"
           startButtonStrokeColor="#374752"
           gameType={gameType}
+          point={point}
         />
       );
     default:

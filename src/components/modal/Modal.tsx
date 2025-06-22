@@ -1,3 +1,4 @@
+import { playButtonSound } from "@/lib/utils/sound";
 import React from "react";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
@@ -19,7 +20,12 @@ export const Modal = ({ isOpen, onClose, children }: ModalProps) => {
   return (
     <ModalPortal>
       {/* 모달 오버레이: 배경을 어둡게 하고 모달을 중앙에 배치 */}
-      <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 font-TJ" onClick={onClose}>
+      <div
+        className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 font-TJ"
+        onClick={() => {
+          onClose?.();
+        }}
+      >
         {/* 모달 컨텐츠: 흰색 배경의 실제 모달 내용 */}
         {children}
       </div>

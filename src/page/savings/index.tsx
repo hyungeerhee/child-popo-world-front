@@ -4,16 +4,18 @@ import { useState, useRef, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { BackArrow } from "../../components/button/BackArrow";
-import { ko } from "date-fns/locale";
+import { ko, pl } from "date-fns/locale";
 import { addDays, isAfter as _isAfter, isSameDay as _isSameDay } from "date-fns";
 import { TextWithStroke } from "../../components/text/TextWithStroke";
 import apiClient from "../../lib/api/axios";
 import { useAuthStore } from "@/lib/zustand/store";
 import { IMAGE_URLS } from "@/lib/constants/constants";
-import { setNewAudio, stopBackgroundMusic } from "@/lib/utils/sound";
+import { playButtonSound, setNewAudio, stopBackgroundMusic } from "@/lib/utils/sound";
 import { useSoundStore } from "@/lib/zustand/soundStore";
 import SavingsBackgroundMusic from "@/assets/sound/saving.mp3";
 import SoundButton from "@/components/button/SoundButton";
+import backClickSound from "@/assets/sound/back_click.mp3";
+import NameAndPoint from "@/components/user/NameAndPoint";
 
 const IS_TEST_MODE = false;
 
@@ -358,10 +360,10 @@ export default function SavingsPage() {
           background: #78CA7F !important;
           color: #fff !important;
         }
-        /* hover 효과 */
-        .react-datepicker__day:hover {
-          background: #BBA14F;
-          color: #fff;
+        /* 날짜 hover 효과 (선택 가능한 날짜만) */
+        .react-datepicker__day:not([aria-disabled=true]):hover {
+          border-radius: 0.3rem;
+          background-color: #BBA14F;
         }
         /* 네비게이션(화살표) 색상 */
         .react-datepicker__navigation-icon::before {
@@ -384,8 +386,9 @@ export default function SavingsPage() {
         }
         .react-datepicker__navigation {
           top: 1rem !important;  /* 기본값보다 더 아래로 */
+          padding: 0rem 1.5rem
         }
-
+        
         .react-datepicker__day,
         .react-datepicker__day--selected,
         .react-datepicker__day--keyboard-selected,
@@ -402,6 +405,36 @@ export default function SavingsPage() {
           opacity: 0.5;
           cursor: not-allowed;
         }
+
+        @media (max-width: 430px) {
+          .react-datepicker__navigation {
+            top: -0.3rem !important;
+          }
+          .react-datepicker {
+            border: 4px solid #BBA14F;
+            border-radius: 1.2rem !important;
+          }
+        }
+        
+        @media (min-width: 431px) and (max-width: 615px) {
+          .react-datepicker__navigation {
+            top: -0.1rem !important;
+          }
+          .react-datepicker {
+            border: 4px solid #BBA14F;
+            border-radius: 1.2rem !important;
+          }
+        }
+                  
+        @media (min-width: 616px) and (max-width: 1179px) {
+          .react-datepicker__navigation {
+            top: 0.5rem !important;
+          }
+          .react-datepicker {
+            border: 6px solid #BBA14F;
+            border-radius: 1.2rem !important;
+          }
+        }
       
 }
         
@@ -410,23 +443,12 @@ export default function SavingsPage() {
 
       {/* 메인 컨테이너 */}
       <Background backgroundImage={IMAGE_URLS.savings.bg}>
-        {/* 오른쪽 상단 총 금액 표시 (실제 포인트) */}
-        <div className="absolute top-3 right-1 w-23 min-h-0 flex flex-wrap active:scale-95 transition-all duration-100 z-50">
-          <div className="relative w-5.5 h-5.5 left-4 inline-flex items-center gap-0.5">
-            <img src={IMAGE_URLS.common.coin} alt="코인" className="w-full h-full object-contain" />
-            <TextWithStroke
-              text={`${point ?? 0}냥`}
-              className="whitespace-nowrap"
-              textClassName="text-main-yellow-800 text-[0.7rem]"
-              strokeClassName="text-main-brown-800 text-[0.7rem] text-stroke-width-[0.12rem] text-stroke-color-main-brown-800"
-            />
-          </div>
-        </div>
         {/* 뒤로가기 */}
         <BackArrow />
         {/* 음소거 버튼 */}
         <SoundButton /> 
-
+        {/* 오른쪽 상단 총 금액 표시 (실제 포인트) */}
+        <NameAndPoint />
         {/* 페이지 제목 */}
         <div className="w-full flex flex-col items-center mt-8">
           <h1 className="text-[2.3rem] font-extrabold text-white mb-2 text-center">
@@ -447,7 +469,10 @@ export default function SavingsPage() {
                   <div>
                     <div className="font-bold text-lg text-[#BBA14F]">시작 날짜</div>
                     <div
-                      onClick={() => setOpenPicker("start")}
+                      onClick={() => {
+                        playButtonSound();
+                        setOpenPicker("start");
+                      }}
                       className="font-bold text-lg text-[#6F4223] bg-transparent outline-none cursor-pointer flex items-center h-8"
                     >
                       {startDate
@@ -464,7 +489,10 @@ export default function SavingsPage() {
                   <div>
                     <div className="font-bold text-lg text-[#BBA14F]">종료 날짜</div>
                     <div
-                      onClick={() => setOpenPicker("end")}
+                      onClick={() => {
+                        playButtonSound();
+                        setOpenPicker("end");
+                      }}
                       className="font-bold text-lg text-[#6F4223] bg-transparent outline-none cursor-pointer flex items-center h-8"
                     >
                       {endDate
@@ -481,7 +509,10 @@ export default function SavingsPage() {
                   <div>
                     <div className="font-bold text-lg text-[#BBA14F]">목표 저축 금액</div>
                     <div
-                      onClick={() => handleOpenInput("goal")}
+                      onClick={() => {
+                        playButtonSound();
+                        handleOpenInput("goal");
+                      }}
                       className="font-bold text-lg text-[#6F4223] bg-transparent outline-none cursor-pointer flex items-center h-8"
                     >
                       {goalAmount ? goalAmount + "냥" : "입력"}
@@ -609,14 +640,20 @@ export default function SavingsPage() {
             {isCreated ? (
               <button
                 className="bg-[#FDF0B7] text-[#573924] font-bold text-[1.2rem] rounded-4xl py-3 w-45 cursor-pointer disabled:opacity-60"
-                onClick={handleDepositClick}
+                onClick={() => {
+                  playButtonSound();
+                  handleDepositClick();
+                }}
               >
                 입금하기
               </button>
             ) : (
               <button
                 className="bg-[#FDF0B7] text-[#573924] font-bold text-[1.2rem] rounded-4xl py-3 w-45 cursor-pointer disabled:opacity-60"
-                onClick={handleCreateAccount}
+                onClick={() => {
+                  playButtonSound();
+                  handleCreateAccount();
+                }}
                 disabled={isLoading || !goalAmount || !startDate || !endDate || !bonusAmount}
               >
                 {isLoading ? "개설 중..." : "저축 통장 개설"}
@@ -639,13 +676,18 @@ export default function SavingsPage() {
             <DatePicker
               ref={openPicker === "start" ? startPickerRef : endPickerRef}
               selected={openPicker === "start" ? startDate : endDate}
+              onMonthChange={() => playButtonSound()}
               onChange={(date) => {
+                playButtonSound();  
                 if (openPicker === "start") setStartDate(date);
                 else setEndDate(date);
                 setOpenPicker(null);
               }}
               open
-              onClickOutside={handleOverlayClick}
+              onClickOutside={() => {
+                playButtonSound(backClickSound);
+                handleOverlayClick();
+              }}
               dateFormat="yyyy년 MM월 dd일"
               inline
               locale={ko}
@@ -659,6 +701,11 @@ export default function SavingsPage() {
                 ? {
                     minDate: addDays(startDate, 5),
                     openToDate: addDays(startDate, 5),
+                  }
+                : openPicker === "end" && !startDate
+                ? {
+                    minDate: addDays(today, 5),
+                    openToDate: addDays(today, 5),
                   }
                 : {})}
             />
@@ -681,7 +728,7 @@ export default function SavingsPage() {
               {/* 금액 입력 필드 */}
               <input
                 type="number"
-                className="bg-white border-4 border-[#BBA14F] rounded-lg px-4 py-2 text-lg text-center mb-4 focus:outline-none w-full"
+                className="bg-white md:border-4 border-2 border-[#BBA14F] rounded-lg px-4 py-2 text-lg text-center mb-4 focus:outline-none w-full"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="금액을 입력하세요"
@@ -691,7 +738,10 @@ export default function SavingsPage() {
               {/* 확인 버튼 */}
               <button
                 className="cursor-pointer bg-[#BBA14F] text-white font-bold rounded-xl px-6 py-2 mt-2 transition"
-                onClick={handleSaveInput}
+                onClick={() => {
+                  playButtonSound();
+                  handleSaveInput();
+                }}
               >
                 확인
               </button>
@@ -706,7 +756,10 @@ export default function SavingsPage() {
           {/* 모달 배경 오버레이 */}
           <div
             className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center"
-            onClick={() => setIsDepositModalOpen(false)}
+            onClick={() => {
+              playButtonSound(backClickSound);
+              setIsDepositModalOpen(false);
+            }}
           >
             {/* 입금 폼 */}
             <div
@@ -716,7 +769,10 @@ export default function SavingsPage() {
               {/* X 닫기 버튼 */}
               <button
                 className="absolute top-0.5 right-2.5 text-2xl text-[#BBA14F] hover:text-[#6F4223] font-bold focus:outline-none cursor-pointer"
-                onClick={() => setIsDepositModalOpen(false)}
+                onClick={() => {
+                  playButtonSound(backClickSound);
+                  setIsDepositModalOpen(false);
+                }}
                 aria-label="닫기"
               >
                 ×
@@ -726,7 +782,7 @@ export default function SavingsPage() {
               {/* 입금 금액 입력 필드 */}
               <input
                 type="number"
-                className="bg-white border-4 border-[#BBA14F] rounded-lg px-4 py-2 text-m text-center mb-2 focus:outline-none w-full"
+                className="bg-white md:border-4 border-2 border-[#BBA14F] rounded-lg px-4 py-2 text-m text-center mb-2 focus:outline-none w-full"
                 value={depositInput}
                 onChange={handleDepositInputChange}
                 placeholder="금액을 입력하세요"
@@ -751,7 +807,10 @@ export default function SavingsPage() {
               {/* 입금하기 버튼 */}
               <button
                 className="cursor-pointer bg-[#BBA14F] text-white font-bold rounded-xl px-6 py-2 mt-2 transition disabled:opacity-50"
-                onClick={handleDepositConfirm}
+                onClick={() => {
+                  playButtonSound();
+                  handleDepositConfirm();
+                }}
                 disabled={
                   (!IS_TEST_MODE && hasDepositedToday) || !depositInput || !!depositError || Number(depositInput) <= 0
                 }
@@ -802,8 +861,8 @@ export default function SavingsPage() {
 
           {/* 입금 결과 표시 */}
           <div className="fixed inset-0 flex items-center justify-center z-50 font-TJ">
-            <div className="bg-[#FFF6D5] rounded-2xl p-8 shadow-xl flex flex-col items-center w-[22rem] border-8 border-[#BBA14F]">
-              <div className="text-2xl font-bold mb-4 text-[#BBA14F]">적금!</div>
+            <div className="bg-[#FFF6D5] rounded-2xl p-8 shadow-xl flex flex-col items-center w-[22rem] md:border-8 border-4 border-[#BBA14F]">
+              <div className="text-2xl font-bold mb-4 text-[#BBA14F]">입금 완료!</div>
 
               {/* 입금 정보와 확인 버튼 */}
               <div className="flex flex-row items-center justify-between w-full mb-4">
@@ -813,7 +872,10 @@ export default function SavingsPage() {
                 </div>
                 <button
                   className="bg-[#BBA14F] text-white font-bold rounded-xl px-6 py-2 ml-4 cursor-pointer"
-                  onClick={() => setIsDepositResultModalOpen(false)}
+                  onClick={() => {
+                    playButtonSound();
+                    setIsDepositResultModalOpen(false);
+                  }}
                 >
                   확인
                 </button>

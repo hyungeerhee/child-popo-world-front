@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { getStoreItems, type StoreItem } from "@/lib/api/market/getStore";
 import { buyProduct } from "@/lib/api/market/buyProduct";
 import { useAuthStore } from "../../../lib/zustand/store";
+import { playButtonSound } from "@/lib/utils/sound";
 
 export const TEXT_MESSAGE = {
   not_product: {
@@ -55,6 +56,7 @@ export default function NpcShop() {
   const currentMessage = getMessage();
 
   const handleSpeechBubbleClick = () => {
+    playButtonSound();
     if (currentMessage.buttonText === "더보기") {
       setProductIndex((prev) => prev + 1);
     } else if (currentMessage.buttonText === "처음으로") {
@@ -63,6 +65,7 @@ export default function NpcShop() {
   };
 
   const handleProductClick = (product: StoreItem) => {
+    playButtonSound();
     setSelectedProduct(product);
     setIsOpen(true);
   };
@@ -72,6 +75,7 @@ export default function NpcShop() {
   };
 
   const handlePurchase = async () => {
+    playButtonSound();
     try {
       const response = await buyProduct({ productId: selectedProduct?.id || "", amount: 1 });
       setPoint(response.currentPoint);
@@ -82,6 +86,7 @@ export default function NpcShop() {
   };
 
   const handleComplete = () => {
+    playButtonSound();
     setIsCompleteOpen(false);
     setIsOpen(false);
   };

@@ -5,7 +5,7 @@ import { IMAGE_URLS } from "@/lib/constants/constants";
 
 export default function SoundButton({ className }: { className?: string }) {
   const { toggleMute, isMuted } = useSoundStore();
-  const defaultStyle = "absolute  left-[3.1rem] top-[0.7rem] flex flex-col items-center cursor-pointer active:scale-95 transition-all duration-300";
+  const defaultStyle = "absolute  left-[3.1rem] top-[0.65rem] flex flex-col items-center cursor-pointer active:scale-95 transition-all duration-300";
   return (
     <div
       className={`${className ? className : defaultStyle}`}

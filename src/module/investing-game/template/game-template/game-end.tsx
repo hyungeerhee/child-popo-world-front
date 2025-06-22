@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import rough from "roughjs";
 import * as d3 from "d3";
 import { Link } from "react-router-dom";
-import { BorderModal } from "../../component/game-component/border-modal";
+import { BorderModal } from "../../component/border-modal";
 import type { Scenario } from "@/page/investing/game";
 import { playButtonSound } from "@/lib/utils/sound";
 import ClickSound from "@/assets/sound/button_click.mp3";

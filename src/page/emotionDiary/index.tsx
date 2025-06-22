@@ -3,9 +3,10 @@ import { EmotionDiaryTemplate } from "../../module/emotionDiary/template";
 import { useEffect, useState } from "react";
 import apiClient, { ApiError } from "@/lib/api/axios";
 import type { Diary } from "@/module/emotionDiary/types/diary";
-import { setNewAudio, stopBackgroundMusic } from "@/lib/utils/sound";
+import { setNewAudio, stopBackgroundMusic, playButtonSound } from "@/lib/utils/sound";
 import { useSoundStore } from "@/lib/zustand/soundStore";
 import EmotionDiaryBackgroundMusic from "@/assets/sound/diary.mp3";
+import backClickSound from "@/assets/sound/back_click.mp3";
 
 const API_URL = "/api/diary";
 
@@ -61,6 +62,7 @@ export default function EmotionDiaryPage() {
 
   // 왼쪽 화살표
   const handlePrevMonth = () => {
+    playButtonSound();
     const newDate = new Date(currentDate);
     newDate.setMonth(currentDate.getMonth() - 1);
     setCurrentDate(newDate);
@@ -68,6 +70,7 @@ export default function EmotionDiaryPage() {
 
   // 오른쪽 화살표
   const handleNextMonth = () => {
+    playButtonSound();
     const newDate = new Date(currentDate);
     newDate.setMonth(currentDate.getMonth() + 1);
     setCurrentDate(newDate);
@@ -90,6 +93,7 @@ export default function EmotionDiaryPage() {
 
   // 작성하기 버튼 클릭
   const handleClickWrite = () => {
+    playButtonSound();
     if (isWrittenToday) {
       // 오늘의 일기를 작성했다면 모달창 true
       setIsModalOpen(true);
@@ -101,6 +105,7 @@ export default function EmotionDiaryPage() {
 
   // 모달창 닫기
   const handleCloseModal = () => {
+    playButtonSound();
     setIsModalOpen(false);
   };
 
