@@ -8,7 +8,7 @@ import { ko, pl } from "date-fns/locale";
 import { addDays, isAfter as _isAfter, isSameDay as _isSameDay } from "date-fns";
 import { TextWithStroke } from "../../components/text/TextWithStroke";
 import apiClient from "../../lib/api/axios";
-import { useAuthStore } from "@/lib/zustand/store";
+import { useAuthStore } from "@/lib/zustand/authStore";
 import { IMAGE_URLS } from "@/lib/constants/constants";
 import { playButtonSound, setNewAudio, stopBackgroundMusic } from "@/lib/utils/sound";
 import { useSoundStore } from "@/lib/zustand/soundStore";

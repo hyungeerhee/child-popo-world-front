@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import MainTemplate from "../../module/main/template";
 import { useNavigate } from "react-router-dom";
 import { useSoundStore } from "@/lib/zustand/soundStore";
-import { useAuthStore } from "@/lib/zustand/store";
+import { useAuthStore } from "@/lib/zustand/authStore";
 import { setNewAudio, stopBackgroundMusic } from "@/lib/utils/sound";
 import { IMAGE_URLS } from "@/lib/constants/constants";
 import { preload } from "react-dom";
@@ -101,6 +101,20 @@ export default function Main() {
     }
 
     if (island == "emotionDiary") {
+      const emotionDiaryImages = [...Object.values(IMAGE_URLS.emotionList)];
+      emotionDiaryImages.forEach((image) => {
+        preload(image, { as: "image" });
+      });
+    }
+
+    if (island === "quest") {
+      const questPageImages = [...Object.values(IMAGE_URLS.quest)];
+      questPageImages.forEach((image) => {
+        preload(image, { as: "image" });
+      });
+    }
+
+    if(island === "emotionDiary") {
       const emotionDiaryImages = [...Object.values(IMAGE_URLS.emotionList)];
       emotionDiaryImages.forEach((image) => {
         preload(image, { as: "image" });

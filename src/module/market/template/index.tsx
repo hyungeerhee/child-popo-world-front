@@ -21,15 +21,17 @@ const TARGET_POSITION = {
 };
 
 interface MarketTemplateProps {
-  isAnimating: boolean;
+  isAnimate: boolean | null;
+  isMounted: boolean;
   direction: "right" | "left";
   handleBack: () => void;
   handleAnimationComplete: () => void;
 }
 
 export const MarketTemplate = ({
-  isAnimating,
+  isAnimate,
   direction,
+  isMounted,
   handleBack,
   handleAnimationComplete,
 }: MarketTemplateProps) => {
@@ -42,13 +44,15 @@ export const MarketTemplate = ({
       {/* 이름 포인트 */}
       <NameAndPoint />
       {/* 처음 페이지 방문했을때 포니 배타고 오는것 */}
+      {isMounted && (
       <Poni
         initialPosition={INITIAL_POSITION[direction]}
-        isAnimating={isAnimating}
+        isAnimate={isAnimate}
         targetPosition={TARGET_POSITION[direction]}
-        direction={direction}
-        onAnimationComplete={handleAnimationComplete}
-      />
+          direction={direction}
+          onAnimationComplete={handleAnimationComplete}
+        />
+      )}
       {/* 제목 */}
       <div className="absolute top-2 left-1/2 -translate-x-1/2">
         <TextWithStroke

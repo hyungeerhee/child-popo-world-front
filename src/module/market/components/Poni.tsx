@@ -7,7 +7,7 @@ interface PoniProps {
     top: string;
     left?: string;
   };
-  isAnimating: boolean;
+  isAnimate: boolean | null;
   targetPosition: {
     top: string;
     left?: string;
@@ -18,6 +18,7 @@ interface PoniProps {
 
 export const Poni = ({
   initialPosition,
+  isAnimate,
   targetPosition,
   direction = "left",
   onAnimationComplete,
@@ -25,7 +26,7 @@ export const Poni = ({
   return (
     <motion.div
       className="absolute w-20 h-20"
-      initial={initialPosition}
+      initial={isAnimate ? initialPosition : targetPosition}
       animate={targetPosition}
       transition={{
         duration: 1.5,

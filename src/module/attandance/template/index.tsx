@@ -4,11 +4,19 @@ import { useEffect, useState } from "react";
 import { getKSTDateTime } from "@/lib/utils/getKSTDateTime";
 import { getAttendance, postAttendance } from "@/lib/api/attandance/attendance";
 import { PointModal } from "@/components/modal/PointModal";
-
+import { useAuthStore } from "@/lib/zustand/authStore";
+import { playButtonSound } from "@/lib/utils/sound";
+import { Modal } from "@/components/modal/Modal";
+import SoundButton from "@/components/button/SoundButton";
 // text F48A00
 // button_bg F48A00
 // bg FFF4BF
 const WEEK = ["월", "화", "수", "목", "금", "토", "일"];
+
+const rewardText = {
+  day: "출석체크 보상을 받았어요!",
+  week: "일주일 연속성공 보상을 받았어요!",
+}
 
 interface Attendance {
   dayOfWeek: string;
@@ -18,10 +26,13 @@ interface Attendance {
 export function AttandanceTemplate() {
   const [attendance, setAttendance] = useState<Attendance[]>([]);
   const [isPointModalOpen, setIsPointModalOpen] = useState(false);
+  const [rewardPoints, setRewardPoints] = useState(0); 
+  const [isWeekCompleted, setIsWeekCompleted] = useState(false);
+  const [isAlreadyAttended, setIsAlreadyAttended] = useState(false);
+  const {setPoint, point} = useAuthStore();
 
   useEffect(() => {
     getAttendance().then((data) => {
-      console.log(data);
       setAttendance(data);
     });
   }, []);
@@ -34,8 +45,14 @@ export function AttandanceTemplate() {
 
   const handleAttendance = () => {
     postAttendance(getToday()).then((data) => {
-      console.log(data);
+
       setAttendance(data.weekAttendance);
+      setRewardPoints(data.rewardPoints);
+      if(point !== null) setPoint(point + data.rewardPoints);
+      setIsWeekCompleted(data.weekCompleted);
+      setIsPointModalOpen(true);
+    }).catch((error) => {
+        setIsAlreadyAttended(true);
     });
   };
 
@@ -69,12 +86,32 @@ export function AttandanceTemplate() {
         <PointModal
           isOpen={isPointModalOpen}
           onClose={() => setIsPointModalOpen(false)}
-          text={`축하해요! \n 출석체크 보상을 받았어요!`}
-          price={100}
+          title={"축하해요!"}
+          text={rewardText[isWeekCompleted ? "week" : "day"]}
+          price={rewardPoints}
           onConfirm={() => setIsPointModalOpen(false)}
         />
 
+        {isAlreadyAttended && (
+          <Modal
+            isOpen={isAlreadyAttended}
+          >
+            <div className="relative flex flex-col gap-y-1 justify-center items-center w-[14rem] h-[6rem] bg-[#FFF6D5] border-4 border-[#FEA95E] rounded-2xl shadow-lg">
+              <div className="text-lg text-[#6E532C] font-bold text-center">이미 출석했어요!</div>  
+              <button className="px-6 py-0.5 text-center rounded-lg bg-[#EE9223] text-white text-base font-bold shadow-md hover:shadow-lg active:scale-95 transition-all duration-200"
+                onClick={() => {
+                  playButtonSound();
+                  setIsAlreadyAttended(false);
+                }}
+              >
+                확인
+              </button>
+            </div>
+          </Modal>
+        )}
+
         <BackArrow />
+        <SoundButton />
         {/* 왼쪽 제목 */}
         <div className="ml-6 flex flex-col w-fit mb-6">
           <h3 className="mt-20 mb-2 text-[#F48A00] text-2xl font-bold text-center">
@@ -111,8 +148,13 @@ export function AttandanceTemplate() {
         </div>
         {/* 출석하기 버튼 */}
         <div
-          className="mt-8 mx-auto w-fit py-2 px-10 bg-[#F48A00] text-white text-lg rounded-xl"
-          onClick={handleAttendance}
+          className="mt-8 mx-auto w-fit py-2 px-10 bg-[#F48A00] text-white text-lg rounded-xl active:scale-95 transition-all duration-100"
+          onClick={
+            () => {
+              playButtonSound();
+              handleAttendance();
+            }
+          }
         >
           출석하기
         </div>

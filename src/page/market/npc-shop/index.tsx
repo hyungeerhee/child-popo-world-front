@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getStoreItems, type StoreItem } from "@/lib/api/market/getStore";
 import { buyProduct } from "@/lib/api/market/buyProduct";
-import { useAuthStore } from "../../../lib/zustand/store";
+import { useAuthStore } from "../../../lib/zustand/authStore";
 import { playButtonSound } from "@/lib/utils/sound";
 
 export const TEXT_MESSAGE = {
@@ -29,11 +29,12 @@ export default function NpcShop() {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [isCompleteOpen, setIsCompleteOpen] = useState(false);
+  const [isNoPointModalOpen, setIsNoPointModalOpen] = useState(false);
   const [productIndex, setProductIndex] = useState(0);
   const [storeItems, setStoreItems] = useState<StoreItem[]>([]);
   const lastIndex = Math.ceil(storeItems.length / 3) - 1;
   const [selectedProduct, setSelectedProduct] = useState<StoreItem | null>(null);
-  const { setPoint } = useAuthStore();
+  const { setPoint, point } = useAuthStore();
   useEffect(() => {
     getStoreItems("npc").then((items) => {
       setStoreItems(items);
@@ -76,6 +77,12 @@ export default function NpcShop() {
 
   const handlePurchase = async () => {
     playButtonSound();
+
+    // 포인트가 부족하면 모달 띄우기
+    if (selectedProduct?.price && point !== null && point >= 0 && selectedProduct.price > point) {
+      setIsNoPointModalOpen(true);
+      return;
+    } 
     try {
       const response = await buyProduct({ productId: selectedProduct?.id || "", amount: 1 });
       setPoint(response.currentPoint);
@@ -105,6 +112,9 @@ export default function NpcShop() {
       handlePurchase={handlePurchase}
       isCompleteOpen={isCompleteOpen}
       handleComplete={handleComplete}
+      isNoPointModalOpen={isNoPointModalOpen}
+      setIsNoPointModalOpen={setIsNoPointModalOpen}
+      point={point}
     />
   );
 }

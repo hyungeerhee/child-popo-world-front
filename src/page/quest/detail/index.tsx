@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import type { Quest } from "@/module/quest/types/quest";
 import apiClient, { ApiError } from "@/lib/api/axios";
 import { StateChangeModal } from "@/module/quest/components/StateChangeModal";
-import { useAuthStore } from "@/lib/zustand/store";
+import { useAuthStore } from "@/lib/zustand/authStore";
 import { playButtonSound,  } from "@/lib/utils/sound";
 import backClickSound from "@/assets/sound/back_click.mp3";
 const questStateMap: Record<string, Quest["state"]> = {

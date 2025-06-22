@@ -76,7 +76,7 @@ export const GamePlayTurnFinish = ({
           onNextTurn();
         }}
       >
-        Let's 투자!
+        {turn + 1 <= 6 ? "Let's 투자!" : "투자 완료!"}
       </button>
     </BorderModal>
   );

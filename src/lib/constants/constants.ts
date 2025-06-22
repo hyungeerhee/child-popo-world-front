@@ -195,6 +195,16 @@ const IMAGE_URLS = {
   quest: {
     modal_popo:
       "https://res.cloudinary.com/dgmbxvpv9/image/upload/f_auto,q_auto/v1750166596/quest-modal-popo_l4ldtl",
+    quest_map_page: "https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749002225/quest-map-page.webp",
+    quest_map_page_parent: "https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749003144/quest-map-page-parent.webp",
+    quest_map_page_daily: "https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749003248/quest-map-page-daily.webp",
+    quest_map_parents_popo: "https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749014097/quest-map-parents-popo.webp",
+    quest_map_daily_poni: "https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749012328/quest-map-daily-poni.webp",
+    quest_map_title: "https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749009914/quest-map-title-.webp",
+    quest_map_daily_poni_parent: "https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749014888/image-Photoroom_5_calb9b.webp",
+    quest_map_daily_poni_parent_2: "https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749020143/image-Photoroom_8_bfxs5w.webp",
+    quest_map_daily_poni_parent_3: "https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749021774/Group-1000002186_mxtdvh.webp"
+
   },
   raising: {
     apple:
