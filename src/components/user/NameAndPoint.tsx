@@ -1,4 +1,4 @@
-import { useAuthStore } from "@/lib/zustand/store";
+import { useAuthStore } from "@/lib/zustand/authStore";
 import { TextWithStroke } from "../text/TextWithStroke";
 import { IMAGE_URLS } from "@/lib/constants/constants";
 

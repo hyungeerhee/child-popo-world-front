@@ -4,9 +4,10 @@ import { GameStart } from "./game-template/game-start";
 interface GameStartTemplateProps {
   gameType: string;
   point: number;
+  handleGameOut: () => void;
 }
 
-export const GameStartTemplate = ({ gameType, point }: GameStartTemplateProps) => {
+export const GameStartTemplate = ({ gameType, point, handleGameOut }: GameStartTemplateProps) => {
   switch (gameType) {
     case "little-pig":
       return (
@@ -77,9 +78,9 @@ export const GameStartTemplate = ({ gameType, point }: GameStartTemplateProps) =
           stockButtonStrokeColor="#895835" // 종목 카드 버튼 스트로크 색
           startButtonBgColor="#fe6e38" // 게임 시작 버튼 색
           startButtonStrokeColor="#e45628" // 게임 시작 버튼 스트로크 색
-          sirenImage={IMAGE_URLS.investing_game.little_pig.little_siren_pig} // 모달 사이렌 이미지
           gameType={gameType}
           point={point}
+          handleGameOut={handleGameOut}
         />
       );
     case "truck":
@@ -148,6 +149,7 @@ export const GameStartTemplate = ({ gameType, point }: GameStartTemplateProps) =
           startButtonStrokeColor="#e45628"
           gameType={gameType}
           point={point}
+          handleGameOut={handleGameOut}
         />
       );
     case "ninja":
@@ -221,6 +223,7 @@ export const GameStartTemplate = ({ gameType, point }: GameStartTemplateProps) =
           startButtonStrokeColor="#e45628"
           gameType={gameType}
           point={point}
+          handleGameOut={handleGameOut}
         />
       );
     case "masic":
@@ -293,6 +296,7 @@ export const GameStartTemplate = ({ gameType, point }: GameStartTemplateProps) =
           startButtonStrokeColor="#374752"
           gameType={gameType}
           point={point}
+          handleGameOut={handleGameOut}
         />
       );
     default:

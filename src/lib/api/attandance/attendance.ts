@@ -6,6 +6,12 @@ interface GetAttendanceResponse {
   attended: boolean;
 }
 
+interface postAttendanceResPonse {
+  weekAttendance: GetAttendanceResponse[],
+  weekCompleted: boolean,
+  rewardPoints: number
+}
+
 export async function getAttendance(): Promise<GetAttendanceResponse[]> {
   try {
     const response = await apiClient.get<GetAttendanceResponse[]>("/api/attendance");
@@ -20,10 +26,11 @@ export async function getAttendance(): Promise<GetAttendanceResponse[]> {
 
 export async function postAttendance(dayOfWeek: string) {
   try {
-    const response = await apiClient.post<{ weekAttendance: GetAttendanceResponse[] }>("/api/attendance", {
+    const response = await apiClient.post<postAttendanceResPonse>("/api/attendance", {
       dayOfWeek,
       isAttended: true,
     });
+
     return response.data;
   } catch (error) {
     if (error instanceof ApiError) {

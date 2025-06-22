@@ -3,6 +3,7 @@ import { Background } from "../../../components/layout/Background";
 import { TextWithStroke } from "@/components/text/TextWithStroke";
 import NameAndPoint from "@/components/user/NameAndPoint";
 import SoundButton  from "@/components/button/SoundButton";
+import { IMAGE_URLS } from "@/lib/constants/constants";
 interface QuestTemplateProps {
   onClickQuest?: (quest: string) => void;
   onBack?: () => void;
@@ -12,7 +13,7 @@ export const QuestTemplate = ({ onClickQuest, onBack }: QuestTemplateProps) => {
     // 배경 이미지
     <Background
       aria-label="퀘스트 맵 화면 배경 이미지"
-      backgroundImage="https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749002225/quest-map-page.webp"
+      backgroundImage={IMAGE_URLS.quest.quest_map_page}
     >
       {/* 뒤로가기 */}
       <BackArrow onClick={onBack} />
@@ -22,7 +23,7 @@ export const QuestTemplate = ({ onClickQuest, onBack }: QuestTemplateProps) => {
       <NameAndPoint pointTextColor="text-main-yellow-200" />
       {/* 부모 퀘스트 집 이미지, 일일 퀘스트 시계탑 이미지 및 텍스트 */}
       <img
-        src="https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749003144/quest-map-page-parent.webp"
+        src={IMAGE_URLS.quest.quest_map_page_parent}
         alt="부모 퀘스트 이미지"
         className="absolute h-[10rem] left-[0.01rem] top-[5.3rem] "
       />
@@ -34,7 +35,7 @@ export const QuestTemplate = ({ onClickQuest, onBack }: QuestTemplateProps) => {
         />
       </div>
       <img
-        src="https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749003248/quest-map-page-daily.webp"
+        src={IMAGE_URLS.quest.quest_map_page_daily}
         alt="일일 퀘스트 이미지"
         className="absolute h-[15rem] right-[0.7rem] top-[0.1rem] cursor-pointer "
       />
@@ -48,24 +49,24 @@ export const QuestTemplate = ({ onClickQuest, onBack }: QuestTemplateProps) => {
 
       {/* 포니 */}
       <img
-        src="https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749014097/quest-map-parents-popo.webp"
+        src={IMAGE_URLS.quest.quest_map_parents_popo}
         alt="부모퀘스트 포니"
         className="absolute h-29 left-[3rem] top-[10rem]"
       />
       <img
-        src="https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749012328/quest-map-daily-poni.webp"
+        src={IMAGE_URLS.quest.quest_map_daily_poni}
         alt="일일퀘스트 포니"
         className="absolute h-22 right-[3.8rem] top-[11rem]"
       />
 
       <img
-        src="https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749014888/image-Photoroom_5_calb9b.webp"
+        src={IMAGE_URLS.quest.quest_map_daily_poni_parent}
         alt="고민하는 포니"
         className="absolute h-[10rem] left-[14.5rem] xl:top-[16.97rem] md:top-[16.8rem] sm:top-[16.8rem]"
       />
       {/* 제목 - 퀘스트 */}
       <img
-        src="https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749009914/quest-map-title-.webp"
+        src={IMAGE_URLS.quest.quest_map_title}
         alt="제목 표지판"
         className="h-55 absolute top-[-2.7rem] left-[12.5rem]"
       />
@@ -106,7 +107,7 @@ export const QuestTemplate = ({ onClickQuest, onBack }: QuestTemplateProps) => {
 
       {/* 말풍선 */}
       <img
-        src="https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749020143/image-Photoroom_8_bfxs5w.webp"
+        src={IMAGE_URLS.quest.quest_map_daily_poni_parent_2}
         alt="일일퀘스트 말풍선"
         className="h-15.5 absolute left-[23.35rem] top-[8.4rem]"
       />
@@ -117,7 +118,7 @@ export const QuestTemplate = ({ onClickQuest, onBack }: QuestTemplateProps) => {
         확인해봐!
       </div>
       <img
-        src="https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749021774/Group-1000002186_mxtdvh.webp"
+        src={IMAGE_URLS.quest.quest_map_daily_poni_parent_3}
         alt="부모퀘스트 말풍선"
         className="h-14 absolute left-[9.8rem] top-[8.8rem]"
       />

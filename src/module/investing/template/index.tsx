@@ -3,27 +3,67 @@ import { Info } from "../components/Info";
 import { Background } from "../../../components/layout/Background";
 import { IMAGE_URLS } from "@/lib/constants/constants";
 import { BackArrow } from "@/components/button/BackArrow";
-import { motion, useAnimation } from "framer-motion";
+import { motion } from "framer-motion";
 import SoundButton from "@/components/button/SoundButton";
+import { Modal } from "@/components/modal/Modal";
+import { GameStartModal } from "@/module/investing/components/game-start-modal";
+import type { TargetAndTransition } from "framer-motion"
+import { chaptersInfo } from "@/page/investing";
+import { NoPointModal } from "@/components/modal/NoPointModal";
+import { playButtonSound } from "@/lib/utils/sound";
 
 interface InvestingTemplateProps {
   onBack: () => void;
-  onChapterClick: (chapter: string) => void;
-  onAnimationComplete: () => void;
   point: number | null;
+  animation: TargetAndTransition;
+  isGameStartModalOpen: boolean;
+  setIsGameStartModalOpen: (isOpen: boolean) => void;
+  isNoPointModalOpen: boolean;
+  setIsNoPointModalOpen: (isOpen: boolean) => void;
+  chapter: string;
+  onChapterClick: (chapter: string) => void;
+  handleGameStart: (chapter: string) => void;
 }
 
 export const InvestingTemplate = ({
   onBack,
+  point,  
+  animation,
+  isGameStartModalOpen,
+  setIsGameStartModalOpen,
+  isNoPointModalOpen,
+  setIsNoPointModalOpen,
+  chapter,
   onChapterClick,
-  onAnimationComplete,
-  point,
+  handleGameStart,
 }: InvestingTemplateProps) => {
-  const controls = useAnimation();
 
   return (
     // 백그라운드 이미지
     <Background backgroundImage={IMAGE_URLS.investing.bg}>
+       {/* 모의투자 시작 모달 */}
+       {isGameStartModalOpen && 
+        <Modal isOpen={isGameStartModalOpen} >
+          <GameStartModal 
+          point={chaptersInfo[chapter as keyof typeof chaptersInfo].price} 
+          title={chaptersInfo[chapter as keyof typeof chaptersInfo].name}
+          onConfirm={() => handleGameStart(chapter)} 
+          onCancel={() => setIsGameStartModalOpen(false)} 
+          sirenImage={chaptersInfo[chapter as keyof typeof chaptersInfo].sirenImage}
+          newsImage={chaptersInfo[chapter as keyof typeof chaptersInfo].newsImage}
+          />
+        </Modal>
+        }
+        {/* 포인트 부족 모달 */}
+        <Modal isOpen={isNoPointModalOpen} >
+          <NoPointModal 
+            requiredPoint={chaptersInfo[chapter as keyof typeof chaptersInfo]?.price || 0}
+            currentPoint={point || 0} isOpen={isNoPointModalOpen} onClose={() => {
+            playButtonSound();
+            setIsNoPointModalOpen(false); 
+          }} />
+        </Modal>
+
       {/* 뒤로가기 버튼 */}
       <BackArrow onClick={onBack} />
       {/* 음소거 버튼 */}
@@ -62,14 +102,14 @@ export const InvestingTemplate = ({
         </div>
       </div>
 
+     
       {/* 포니 */}
       <motion.img
         src={IMAGE_URLS.investing.poni}
         alt="포니 캐릭터"
         className="absolute h-[11.25rem] left-[14.5rem] top-[9rem]"
-        animate={controls}
+        animate={animation}
         transition={{ duration: 1 }}
-        onAnimationComplete={onAnimationComplete}
       />
       {/* 챕터 제목, 가격 */}
       <TextWithStroke

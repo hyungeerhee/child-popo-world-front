@@ -5,8 +5,9 @@ import { playButtonSound } from "@/lib/utils/sound";
 import closeSound from "@/assets/sound/back_click.mp3";
 import CloseIcon from "@/components/icon/CloseIcon";
 import { useState } from "react";
-import { GameStartModal } from "../../component/game-start-modal";
+import { GameStartModal } from "../../../investing/components/game-start-modal";
 import { Modal } from "@/components/modal/Modal";
+import { IMAGE_URLS } from "@/lib/constants/constants";
 interface GameDescription {
   image: string;
   label: string;
@@ -32,15 +33,13 @@ export const GameStartExplain = ({
   gameTitle: _gameTitle,
   gameDescription,
   descriptions,
-  gamePlayPath,
-  point,
   textColor,
   stockNameColor,
   borderColor,
   borderStrokeColor,
   sirenImage,
+  gamePlayPath,
   }: GameStartExplainProps) => {
-  const [isGameStartModalOpen, setIsGameStartModalOpen] = useState(false);
   return (
     <BorderModal
       borderColor={borderColor}
@@ -48,15 +47,7 @@ export const GameStartExplain = ({
       className={`flex flex-col items-start px-6`}
       sirenImage={sirenImage}
     >
-      {isGameStartModalOpen && 
-      <Modal isOpen={isGameStartModalOpen} >
-        <GameStartModal point={point} gamePlayPath={gamePlayPath} onConfirm={() => {
-          setIsGameStartModalOpen(false);
-        }} onCancel={() => {
-          setIsGameStartModalOpen(false);
-        }} />
-    </Modal>
-      }
+
       {/* 닫기 버튼 */}
       <CloseIcon className="absolute top-3 right-3 w-5 h-5 object-contain active:scale-95 transition-all duration-100" onClick={() => {
         playButtonSound(closeSound);
@@ -83,16 +74,15 @@ export const GameStartExplain = ({
         ))}
       </section>
       {/* 게임 시작 버튼 */}
-        <div
+        <Link to={gamePlayPath}
           className={`absolute bottom-3 right-13 px-3 py-1.5 text-white text-[0.7rem] rounded-lg active:scale-95 transition-all duration-100`}
           style={{ backgroundColor: stockNameColor }}
           onClick={() => {
             playButtonSound();
-            setIsGameStartModalOpen(true);
           }}
         >
           게임 시작
-        </div>
+        </Link>
     </BorderModal>
   );
 };

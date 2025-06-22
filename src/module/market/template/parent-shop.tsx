@@ -12,6 +12,7 @@ import type { StoreItem } from "@/lib/api/market/getStore";
 import { CompleteModal } from "../components/CompleteModal";
 import SoundButton from "@/components/button/SoundButton";
 import { playButtonSound } from "@/lib/utils/sound";  
+import { NoPointModal } from "@/components/modal/NoPointModal";
 interface ParentShopTemplateProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
@@ -25,6 +26,9 @@ interface ParentShopTemplateProps {
   handlePurchase: () => void;
   isCompleteOpen: boolean;
   handleComplete: () => void;
+  isNoPointModalOpen: boolean;
+  setIsNoPointModalOpen: (isOpen: boolean) => void;
+  point: number | null;
 }
 
 export const ParentShopTemplate = ({
@@ -40,6 +44,9 @@ export const ParentShopTemplate = ({
   handlePurchase,
   isCompleteOpen,
   handleComplete,
+  isNoPointModalOpen,
+  setIsNoPointModalOpen,
+  point,
 }: ParentShopTemplateProps) => {
   const [isCurtainOpen, setIsCurtainOpen] = useState(false);
   const [isCurtainOpen2, setIsCurtainOpen2] = useState(true);
@@ -72,7 +79,7 @@ export const ParentShopTemplate = ({
         </div>
       )}
       <Background backgroundImage={IMAGE_URLS.market.parent_shop_bg}>
-        {/* 모달 */}
+        {/* 구매 모달 */}
         <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
           <PurchaseModal
             image={selectedProduct?.imageUrl || ""}
@@ -82,6 +89,7 @@ export const ParentShopTemplate = ({
             onClose={() => setIsOpen(false)}
           />
         </Modal>
+        {/* 구매 완료 모달 */}
         <Modal isOpen={isCompleteOpen} onClose={handleComplete}>
           <CompleteModal
             text={`${selectedProduct?.name}을 구매했어요!`}
@@ -90,6 +98,15 @@ export const ParentShopTemplate = ({
             isOpen={isCompleteOpen}   
             onConfirm={handleComplete}
             onClose={handleComplete}
+          />
+        </Modal>
+        {/* 포인트 부족 모달 */}
+        <Modal isOpen={isNoPointModalOpen} onClose={() => setIsNoPointModalOpen(false)}>
+          <NoPointModal
+            isOpen={isNoPointModalOpen}
+            requiredPoint={selectedProduct?.price || 0}
+            currentPoint={point || 0}
+            onClose={() => setIsNoPointModalOpen(false)}
           />
         </Modal>
         {/* 뒤로가기 */}

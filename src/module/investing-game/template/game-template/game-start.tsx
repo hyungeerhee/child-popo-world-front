@@ -5,7 +5,11 @@ import { GameStartExplain } from "./game-start-explain";
 import { BackArrow } from "@/components/button/BackArrow";
 import SoundButton from "@/components/button/SoundButton";
 import { playButtonSound } from "@/lib/utils/sound";
-import NameAndPoint from "@/components/user/NameAndPoint";
+import { GameOutModal } from "../../component/game-out-modal";
+import { Modal } from "@/components/modal/Modal";
+import { useNavigate } from "react-router-dom";
+import { INITIAL_CHAPTER_DATA } from "@/page/investing/game";
+
 
 interface GameCharacter {
   image: string;
@@ -38,9 +42,9 @@ interface GameStartProps {
   stockButtonStrokeColor: string;
   startButtonBgColor: string;
   startButtonStrokeColor: string;
-  sirenImage?: string;
   gameType: string;
   point: number;
+  handleGameOut: () => void;
 }
 
 export const GameStart = ({
@@ -64,18 +68,34 @@ export const GameStart = ({
   stockButtonStrokeColor,
   startButtonBgColor,
   startButtonStrokeColor,
-  sirenImage,
   gameType,
   point,
+  handleGameOut,
 }: GameStartProps) => {
   // 게임 설명 모달 상태
   const [isGameStartModalOpen, setIsGameStartModalOpen] = useState(false);
-
+  const [isGameOutModalOpen, setIsGameOutModalOpen] = useState(false);
+  const navigate = useNavigate();
   // 맨 첫화면에서 게임 시작하기를 눌러 모달을 띄운다면 모달 화면을 보여준다.
   if (isGameStartModalOpen) {
     return (
       <Background backgroundImage={backgroundImage} backgroundClassName="flex flex-col items-center justify-center">
-        <BackArrow color={gameType === "ninja" ? "white" : "gray"} />
+        {/* 게임 종료 모달 */}
+        <Modal isOpen={isGameOutModalOpen}>
+          <GameOutModal
+            onConfirm={() => {
+              setIsGameOutModalOpen(false);
+              navigate("/investing");
+              handleGameOut();
+            }}
+            onCancel={() => {
+              setIsGameOutModalOpen(false);
+            }}
+            sirenImage={INITIAL_CHAPTER_DATA[gameType].sirenImage}
+            closeImage={INITIAL_CHAPTER_DATA[gameType].closeImage}
+          />
+        </Modal>
+        <BackArrow color={gameType === "ninja" ? "white" : "gray"} onClick={() => setIsGameOutModalOpen(true)} />
         <SoundButton />
         <GameStartExplain
           point={point}
@@ -88,7 +108,7 @@ export const GameStart = ({
           stockNameColor={stockNameColor}
           borderColor={borderColor}
           borderStrokeColor={borderStrokeColor}
-          sirenImage={sirenImage}
+          sirenImage={INITIAL_CHAPTER_DATA[gameType].sirenImage}
         />
       </Background>
     );
@@ -97,12 +117,25 @@ export const GameStart = ({
   // 모달 뜬것이 없다면 게임 시작화면을 보여준다.
   return (
     <Background backgroundImage={backgroundImage} backgroundClassName="flex flex-col items-center">
+      <Modal isOpen={isGameOutModalOpen}>
+        <GameOutModal
+          onConfirm={() => {
+            setIsGameOutModalOpen(false);
+            navigate("/investing");
+            handleGameOut();
+          }}
+          onCancel={() => {
+            setIsGameOutModalOpen(false);
+          }}
+          sirenImage={INITIAL_CHAPTER_DATA[gameType].sirenImage}
+          closeImage={INITIAL_CHAPTER_DATA[gameType].closeImage}
+        />
+      </Modal>
+
       {/* 뒤로가기 버튼 */}
-      <BackArrow color={gameType === "ninja" ? "white" : "gray"} />
+      <BackArrow color={gameType === "ninja" ? "white" : "gray"} onClick={() => setIsGameOutModalOpen(true)}  />
       {/* 음소거 버튼 */}
       <SoundButton />
-      {/* 포인트  */}
-      <NameAndPoint/> 
       {/* 제목 */}
       {/* leading-[1.2] 줄간격 조정 */}
       <TextWithStroke

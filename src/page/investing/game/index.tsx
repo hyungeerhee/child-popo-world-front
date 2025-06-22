@@ -10,10 +10,12 @@ import { sendTurnData } from "@/lib/api/invest-game/investTurnUpdate";
 import { getChapterData } from "@/lib/api/invest-game/investChapterApi";
 import { setNewAudio, stopBackgroundMusic } from "@/lib/utils/sound";
 import { useSoundStore } from "@/lib/zustand/soundStore";
+import { useAuthStore } from "@/lib/zustand/authStore";
 import LittlePigSound from "@/assets/sound/chapter1.mp3";
 import TruckSound from "@/assets/sound/chapter2.mp3";
 import MasicSound from "@/assets/sound/chapter3.mp3";
 import NinjaSound from "@/assets/sound/chapter4.mp3";
+import { IMAGE_URLS } from "@/lib/constants/constants";
 
 // 게임 관련 타입 정의
 export interface Stock {
@@ -71,12 +73,50 @@ export interface TurnData {
   news_tag: string;
 }
 
-const INITIAL_POINT = {
-  "little-pig": 700,
-  truck: 1000,
-  masic: 700,
-  ninja: 2000,
+interface ChapterData {
+  id: string;
+  name: string;
+  price: number;
+  sound: string;
+  sirenImage: string;
+  closeImage: string;
 }
+export const INITIAL_CHAPTER_DATA: Record<string, ChapterData> = {
+  "little-pig": {
+    id: "1111",
+    name: "little-pig",
+    price: 700,
+    sound: LittlePigSound,
+    sirenImage: IMAGE_URLS.investing_game.little_pig.little_siren_pig,
+    closeImage: IMAGE_URLS.investing_game.little_pig.little_pig_close,
+  },
+  truck: {
+    id: "2222",
+    name: "truck",
+    price: 1000,
+    sound: TruckSound,
+    sirenImage: IMAGE_URLS.investing_game.base.siren_popo,
+    closeImage: IMAGE_URLS.investing_game.base.x_popo,
+  },
+  masic: {
+    id: "3333",
+    name: "masic",
+    price: 700,
+    sound: MasicSound,
+    sirenImage: IMAGE_URLS.investing_game.base.siren_popo,
+    closeImage: IMAGE_URLS.investing_game.base.x_popo,
+  },
+  ninja: {
+    id: "4444",
+    name: "ninja",
+    price: 2000,
+    sound: NinjaSound,
+    sirenImage: IMAGE_URLS.investing_game.base.siren_popo,
+    closeImage: IMAGE_URLS.investing_game.base.x_popo,
+  },
+}
+
+
 
 const INITIAL_GAME_STATE: GameState = {
   point:  0,
@@ -99,19 +139,7 @@ const INITIAL_GAME_STATE: GameState = {
   news_tag: "",
 };
 
-const CHAPTER_ID = {
-  "little-pig": "1111",
-  truck: "2222",
-  masic: "3333",
-  ninja: "4444",
-};
 
-const CHAPTER_SOUND = {
-  "little-pig": LittlePigSound,
-  truck: TruckSound,
-  masic: MasicSound,
-  ninja: NinjaSound,
-};
 
 export default function InvestingGame() {
   // 동적 파라미터useParams 가 없으면 빈 문자열로 초기화
@@ -125,10 +153,11 @@ export default function InvestingGame() {
   const [startedAt, setStartAt] = useState("");
   const navigate = useNavigate();
   const { isMuted, audio } = useSoundStore();
-
+  const { point, setPoint } = useAuthStore();
+  
   // 첫페이지 로드시 배경음악 설정
   useEffect(() => {
-    setNewAudio(CHAPTER_SOUND[gametype as keyof typeof CHAPTER_SOUND], 1);
+    setNewAudio(INITIAL_CHAPTER_DATA[gametype].sound, 1);
   }, []);
 
   // 음소거 상태 변경시 배경음악 정지 또는 재생
@@ -148,10 +177,11 @@ export default function InvestingGame() {
 
   // 시나리오 데이터 로드
   useEffect(() => {
-    if (gameStage === "game-play") {
+    if (gameStage === "game-start") {
       const fetchChapterData = async () => {
-        const result = await getChapterData(CHAPTER_ID[gametype as keyof typeof CHAPTER_ID]);
+        const result = await getChapterData(INITIAL_CHAPTER_DATA[gametype].id);
         if (result.success && result.data) {
+          if (point !== null) setPoint(point - INITIAL_CHAPTER_DATA[gametype].price);
           const data = result.data;
           const sessionId = data.sessionId; // 게임 세션 id 추출
           setSessionId(sessionId); // 게임 세션 id 저장
@@ -159,7 +189,7 @@ export default function InvestingGame() {
           console.log(data.story);
           setGameState((prev) => ({
             ...prev,
-            point: INITIAL_POINT[gametype as keyof typeof INITIAL_POINT] || 0,
+            point: INITIAL_CHAPTER_DATA[gametype].price || 0,
             scenario: story, // 게임 시나리오 저장
             currentScenario: story[0], // 첫번째 시나리오 저장
             result: story[1].result, // 뉴스에 대한 결과 초기화 (이번턴 뉴스에 대한 결과는 다음턴 시나리오에 있음)
@@ -222,7 +252,7 @@ export default function InvestingGame() {
       };
 
       // 각 주식별로 턴 데이터 전송
-      sendTurnData(sessionId, CHAPTER_ID[gametype as keyof typeof CHAPTER_ID], gameState.turn, turnData);
+      sendTurnData(sessionId, INITIAL_CHAPTER_DATA[gametype].id, gameState.turn, turnData);
     });
 
     // 턴 끝남
@@ -233,7 +263,7 @@ export default function InvestingGame() {
       updateGameState({ isGameOver: true });
       // 게임 결과 페이지로 이동
       navigate(`/investing/game/${gametype}?stage=game-end`);
-      endGame(sessionId, "1111", true, lastPoint - INITIAL_POINT[gametype as keyof typeof INITIAL_POINT]);
+      endGame(sessionId, INITIAL_CHAPTER_DATA[gametype].id, true, lastPoint - INITIAL_CHAPTER_DATA[gametype].price);
       return;
     }
 
@@ -287,7 +317,7 @@ export default function InvestingGame() {
 
   const handleGameOut = () => {
     navigate("/investing");
-    endGame(sessionId, "1111", false, 0);
+    endGame(sessionId, INITIAL_CHAPTER_DATA[gametype].id, false, 0);
   };
 
   // 예시
@@ -297,7 +327,11 @@ export default function InvestingGame() {
   // 게임 타입에 따라 템플릿 렌더링
   switch (gameStage) {
     case "game-start":
-      return <GameStartTemplate gameType={gametype} point={INITIAL_POINT[gametype as keyof typeof INITIAL_POINT]} />;
+      return <GameStartTemplate
+                gameType={gametype} 
+                point={INITIAL_CHAPTER_DATA[gametype].price} 
+                handleGameOut={handleGameOut}
+              />;
     case "game-play":
       return (
         <GamePlayTemplate
@@ -316,7 +350,7 @@ export default function InvestingGame() {
         <GameEndTemplate
           gameType={gametype}
           lastPoint={lastPoint}
-          initialPoint={INITIAL_POINT[gametype as keyof typeof INITIAL_POINT]}
+          initialPoint={INITIAL_CHAPTER_DATA[gametype].price}
           sessionId={sessionId}
           stockNames={stockNames || []}
           scenario={gameState.scenario}
