@@ -1,8 +1,12 @@
 import { IMAGE_URLS } from "@/lib/constants/constants";
 import { Modal } from "@/components/modal/Modal";
 import { motion } from "framer-motion";
+import Lottie from "react-lottie";
+import animationData from '@/components/lottie/Confetti.json';
+import { useEffect, useState } from "react";
 
 interface PointModalProps {
+  title: string;
   text: string;
   price: number;
   isOpen: boolean;
@@ -10,7 +14,9 @@ interface PointModalProps {
   onClose: () => void;
 }
 
-export const PointModal = ({ text, price, isOpen, onConfirm, onClose }: PointModalProps) => {
+export const PointModal = ({ title, text, price, isOpen, onConfirm, onClose }: PointModalProps) => {
+  const [shouldPlayAnimation, setShouldPlayAnimation] = useState(false);
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <motion.div
@@ -24,18 +30,20 @@ export const PointModal = ({ text, price, isOpen, onConfirm, onClose }: PointMod
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.6 }}
+          onAnimationComplete={() => setShouldPlayAnimation(true)}
           src={IMAGE_URLS.market.modal_popo}
           alt="modal_popo"
-          className="w-24 h-24 object-contain absolute -bottom-3 -left-6 drop-shadow-md"
+          className="w-24 h-24 object-contain absolute -bottom-3 -left-6 drop-shadow-md z-20"
         />
 
         <motion.div
           initial={{ y: 10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="flex flex-col items-center gap-y-3 w-full bg-white/40 p-4 rounded-xl backdrop-blur-sm"
+          className="flex flex-col items-center gap-y-1 w-full bg-white/40 p-4 rounded-xl backdrop-blur-sm"
         >
-          <div className="text-lg text-[#6E532C] font-bold text-center whitespace-pre-line">{text}</div>
+          <h3 className="text-xl text-[#6E532C] font-bold text-center">{title}</h3>
+          <div className="text-lg text-[#6E532C] font-bold text-center whitespace-pre-line mb-2">{text}</div>
           <div className="flex items-center gap-x-2 bg-[#FFF6D5] px-4 py-2 rounded-lg">
             <img src={IMAGE_URLS.common.coin} alt="coin" className="w-6 h-6 object-contain animate-bounce" />
             <div className="text-lg text-[#6E532C] font-bold">{price}냥</div>
@@ -50,12 +58,41 @@ export const PointModal = ({ text, price, isOpen, onConfirm, onClose }: PointMod
         >
           <button
             onClick={onConfirm}
-            className="w-full py-2.5 text-center rounded-lg bg-gradient-to-r from-[#EE9223] to-[#FEA95E] text-white text-base font-bold shadow-md hover:shadow-lg active:scale-95 transition-all duration-200"
+            className="w-full py-2.5 text-center rounded-lg bg-[#EE9223] text-white text-base font-bold shadow-md hover:shadow-lg active:scale-95 transition-all duration-200 "
           >
             확인
           </button>
         </motion.div>
       </motion.div>
+      
+      {shouldPlayAnimation && (
+        <Lottie
+          options={{
+            loop: false,
+            autoplay: true,
+            animationData: animationData,
+            rendererSettings: {
+              preserveAspectRatio: 'xMidYMid slice'
+            }
+          }}
+          height={"30rem"}
+          width={"32rem"}
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            pointerEvents: "none",
+            zIndex: 10
+          }}
+          eventListeners={[
+            {
+              eventName: 'complete',
+              callback: () => setShouldPlayAnimation(false)
+            }
+          ]}
+        />
+      )}
     </Modal>
   );
 };

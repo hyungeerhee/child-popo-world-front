@@ -6,11 +6,11 @@ import apiClient from "../../lib/api/axios";
 import { ToRasingLandLoading1 } from "@/components/loading/ToRasingLandLoading1";
 import { ToRasingLandLoading2 } from "@/components/loading/ToRasingLandLoading2";
 import { useLocation, useNavigate } from "react-router-dom";
-import { setNewAudio, stopBackgroundMusic } from "@/lib/utils/sound";
+import { setNewAudio, stopBackgroundMusic, playButtonSound } from "@/lib/utils/sound";
 import { useSoundStore } from "@/lib/zustand/soundStore";
 import RaisingBackgroundMusic from "@/assets/sound/raising.mp3";
 import SoundButton from "@/components/button/SoundButton";
-
+import backClickSound from "@/assets/sound/back_click.mp3";
 // 먹이 타입 정의
 interface Feed {
   productId: string;
@@ -185,10 +185,12 @@ export default function RaisingPage() {
   // 인벤토리에서 먹이 사용시 로딩 화면 출력
   const { state } = useLocation();
   const from = state?.from;
-  console.log(from);
-  if(from === "inventory") {
-    setIsLoading(true);
-  }
+  
+  useEffect(() => {
+    if(from === "inventory") {
+      setIsLoading(true);
+    }
+  }, [from]);
 
   if(isLoading) {
     return <ToRasingLandLoading2 onAnimationComplete={() => setIsLoading(false)}/>;
@@ -203,7 +205,7 @@ export default function RaisingPage() {
 
     return (
       <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/30">
-        <div className="relative bg-[#FFF6D1]/100 rounded-3xl px-10 py-8 min-w-[420px]">    
+        <div className="relative bg-[#FFF6D1]/100 rounded-3xl px-10 py-8 min-w-[26.25rem]">    
           <div className="absolute left-1/2 -top-6 -translate-x-1/2 bg-[#EBD057] text-center py-2 rounded-xl font-bold text-2xl text-[#834400] w-50">
             먹이 선택하기
           </div>
@@ -217,6 +219,7 @@ export default function RaisingPage() {
                 `}
                 onClick={() => {
                   if (feed.stock === 0) return;
+                  playButtonSound();
                   toggleFeed(feed.productId);
                 }}
               >
@@ -230,17 +233,23 @@ export default function RaisingPage() {
             ))}
           </div>
           <div className="flex justify-center gap-4 mt-2">
-            <button
+          <button
               className="bg-[#EBD057] text-[#834400] font-bold px-6 py-1 rounded-xl text-xl shadow cursor-pointer"
-              onClick={onCancel}
+              onClick={() => {
+                playButtonSound();
+                onConfirm(selected);
+              }}
             >
-              취소
+              확인
             </button>
             <button
               className="bg-[#EBD057] text-[#834400] font-bold px-6 py-1 rounded-xl text-xl shadow cursor-pointer"
-              onClick={() => onConfirm(selected)}
+              onClick={() => {
+                playButtonSound(backClickSound);
+                onCancel();
+              }}
             >
-              확인
+              취소
             </button>
           </div>
         </div>
@@ -331,6 +340,7 @@ export default function RaisingPage() {
             <button
               className="bg-yellow-300 text-[#834400] font-bold px-6 py-1 rounded-xl text-xl shadow cursor-pointer"
               onClick={() => {
+                playButtonSound();
                 fetchFeeds(); // 먹이 주기 버튼 클릭 시 먹이 목록 실시간 조회
                 setIsFeedModalOpen(true);
               }}

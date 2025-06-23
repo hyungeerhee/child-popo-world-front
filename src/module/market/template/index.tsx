@@ -6,6 +6,7 @@ import { BackArrow } from "@/components/button/BackArrow";
 import { IMAGE_URLS } from "@/lib/constants/constants";
 import NameAndPoint from "@/components/user/NameAndPoint";
 import SoundButton from "@/components/button/SoundButton";
+import { playButtonSound } from "@/lib/utils/sound";
 
 // 포니 초기 위치
 const INITIAL_POSITION = {
@@ -20,15 +21,17 @@ const TARGET_POSITION = {
 };
 
 interface MarketTemplateProps {
-  isAnimating: boolean;
+  isAnimate: boolean | null;
+  isMounted: boolean;
   direction: "right" | "left";
   handleBack: () => void;
   handleAnimationComplete: () => void;
 }
 
 export const MarketTemplate = ({
-  isAnimating,
+  isAnimate,
   direction,
+  isMounted,
   handleBack,
   handleAnimationComplete,
 }: MarketTemplateProps) => {
@@ -41,13 +44,15 @@ export const MarketTemplate = ({
       {/* 이름 포인트 */}
       <NameAndPoint />
       {/* 처음 페이지 방문했을때 포니 배타고 오는것 */}
+      {isMounted && (
       <Poni
         initialPosition={INITIAL_POSITION[direction]}
-        isAnimating={isAnimating}
+        isAnimate={isAnimate}
         targetPosition={TARGET_POSITION[direction]}
-        direction={direction}
-        onAnimationComplete={handleAnimationComplete}
-      />
+          direction={direction}
+          onAnimationComplete={handleAnimationComplete}
+        />
+      )}
       {/* 제목 */}
       <div className="absolute top-2 left-1/2 -translate-x-1/2">
         <TextWithStroke
@@ -58,7 +63,7 @@ export const MarketTemplate = ({
       </div>
 
       {/* npc 상점 */}
-      <Link to="/market/npc">
+      <Link to="/market/npc" onClick={() => playButtonSound()}  >
         <div className="flex flex-col items-center justify-center absolute top-28 left-48 active:scale-95 transition-all duration-100">
           <img src={IMAGE_URLS.market.npc_shop} alt="npc_shop" className="w-32 h-32 object-contain" />
           <div className="px-4 text-[0.6rem] py-[2px] -ml-5 -mt-0.5 font-bold text-[#5C3600] bg-[#F6D8B8] border md:border-3 border-[#97774A] rounded-lg ">
@@ -67,7 +72,7 @@ export const MarketTemplate = ({
         </div>
       </Link>
       {/* 포포 창고 */}
-      <Link to="/market/inventory">
+      <Link to="/market/inventory" onClick={() => playButtonSound()}>
         <div className="flex flex-col items-center justify-center absolute top-74 left-86 active:scale-95 transition-all duration-100">
           <img src={IMAGE_URLS.market.inventory} alt="inventory" className="w-24 h-24 object-contain " />
           <div className="px-5 text-[0.6rem] py-[2px] -mt-0.5 font-bold text-[#5C3600] bg-[#F6D8B8] border md:border-3 border-[#97784A] rounded-lg ">
@@ -76,7 +81,7 @@ export const MarketTemplate = ({
         </div>
       </Link>
       {/* 부모님 상점 */}
-      <Link to="/market/parent">
+      <Link to="/market/parent" onClick={() => playButtonSound()}>
         <div className="flex flex-col items-center justify-center absolute top-45 left-105 active:scale-95 transition-all duration-100">
           <img src={IMAGE_URLS.market.parent_shop} alt="parent_shop" className="w-24 h-24 object-contain" />
           <div className="px-4 text-[0.6rem] py-[2px] -mt-0.5 font-bold text-[#5C3600] bg-[#F6D8B8] border md:border-3 border-[#97784A] rounded-lg ">

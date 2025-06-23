@@ -9,6 +9,8 @@ import NameAndPoint from "@/components/user/NameAndPoint";
 import type { StoreItem } from "@/lib/api/market/getStore";
 import { CompleteModal } from "../components/CompleteModal";
 import SoundButton from "@/components/button/SoundButton";
+import { playButtonSound } from "@/lib/utils/sound";
+import { NoPointModal } from "@/components/modal/NoPointModal";
 
 interface NpcShopTemplateProps {
   isOpen: boolean;
@@ -23,6 +25,9 @@ interface NpcShopTemplateProps {
   handlePurchase: () => void;
   isCompleteOpen: boolean;
   handleComplete: () => void;
+  isNoPointModalOpen: boolean;
+  setIsNoPointModalOpen: (isOpen: boolean) => void;
+  point: number | null;
 }
 
 export const NpcShopTemplate = ({
@@ -38,11 +43,14 @@ export const NpcShopTemplate = ({
   handlePurchase,
   isCompleteOpen,
   handleComplete,
+  isNoPointModalOpen,
+  setIsNoPointModalOpen,
+  point,
 }: NpcShopTemplateProps) => {
   return (
     <Background backgroundImage={IMAGE_URLS.market.npc_shop_bg}>
-      {/* 모달 */}
-      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
+      {/* 구매 모달 */}
+      <Modal isOpen={isOpen}>
         <PurchaseModal
           image={selectedProduct?.imageUrl || ""}
           text={selectedProduct?.name || ""}
@@ -51,7 +59,8 @@ export const NpcShopTemplate = ({
           onClose={() => setIsOpen(false)}
         />
       </Modal>
-      <Modal isOpen={isCompleteOpen} onClose={handleComplete}>
+      {/* 구매 완료 모달 */}
+      <Modal isOpen={isCompleteOpen} >
         <CompleteModal
           text={`${selectedProduct?.name}을 구매했어요!`}
           price={selectedProduct?.price || 0}
@@ -59,6 +68,19 @@ export const NpcShopTemplate = ({
           isOpen={isCompleteOpen}
           onConfirm={handleComplete}
           onClose={handleComplete}
+        />
+      </Modal>
+      {/* 포인트 부족 모달 */}
+      <Modal isOpen={isNoPointModalOpen} >
+        <NoPointModal
+          isOpen={isNoPointModalOpen}
+          requiredPoint={selectedProduct?.price || 0}
+          currentPoint={point || 0}
+          onClose={() => {
+            playButtonSound();
+            setIsNoPointModalOpen(false);
+            setIsOpen(false);
+          }}
         />
       </Modal>
       {/* 뒤로가기 */}
@@ -73,7 +95,9 @@ export const NpcShopTemplate = ({
       <SpeechBubble
         text={currentMessage.text}
         buttonText={currentMessage.buttonText}
-        onClick={handleSpeechBubbleClick}
+        onClick={() => {  
+          handleSpeechBubbleClick()
+        }}
       />
       {/* 상품 목록 */}
       <div className="absolute bottom-24 left-1/2 -translate-x-1/2 w-75 flex items-center gap-x-14">
@@ -81,7 +105,9 @@ export const NpcShopTemplate = ({
           <div
             className="relative active:scale-95 transition-all duration-100"
             key={product.id}
-            onClick={() => handleProductClick(product)}
+            onClick={() => {
+              handleProductClick(product)
+            }}
           >
             <img src={IMAGE_URLS.items.dish} alt="dish" className="w-14 h-14 object-contain" />
             <img src={product.imageUrl} alt={product.name} className="w-8 h-8 top-0 left-3.5 absolute object-contain" />
@@ -94,7 +120,9 @@ export const NpcShopTemplate = ({
           <div
             className="flex flex-col justify-center items-center gap-y-0.5 w-26 px-4 py-1.5 bg-[#F6D8B8] border-2 border-[#97784A] rounded-md min-h-[3.5rem] active:scale-95 transition-all duration-100"
             key={product.name}
-            onClick={() => handleProductClick(product)}
+            onClick={() => {
+              handleProductClick(product)
+            }}
           >
             <div className="text-[#6E532C] text-[0.65rem] font-bold">{product.name}</div>
             <div className="flex items-center gap-1">

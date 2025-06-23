@@ -19,7 +19,10 @@ export default function MarketPage() {
 
     // 첫페이지 로드시 배경음악 설정
     useEffect(() => {
-      setNewAudio(MarketBackgroundMusic, 0.8);
+      console.log("audio.name", audio?.name);
+      if(audio?.name !== MarketBackgroundMusic) {
+        setNewAudio(MarketBackgroundMusic, 0.6);
+      }
     }, []);
   
     // 음소거 상태 변경시 배경음악 정지 또는 재생
@@ -38,22 +41,31 @@ export default function MarketPage() {
 
   const { state } = useLocation();
   const from = state?.from;
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [isAnimate, setIsAnimate] = useState<boolean | null>(null);
   const [direction, setDirection] = useState<"left" | "right">("right");
+  const [isMounted, setIsMounted] = useState(false);
   const navigate = useNavigate();
 
   // 맨처음 페이지 방문했을때 from이 어떤 페이지로 부터 왔는지 보여주는데
   // useEffect로 main 페이지에서 왔으면 포니 배태우고 오는것
   useEffect(() => {
     if (from === "main") {
-      setIsAnimating(true);
+      setIsAnimate(true);
       setDirection("right");
+    } else {
+      setIsAnimate(false);
     }
   }, [from]);
 
+  useEffect(() => {
+    if(isAnimate !== null) {
+      setIsMounted(true);
+    }
+  }, [isAnimate]);
+
   // 뒤로가기 버튼 눌렀을때 포니 배타고 나가는것
   const handleBack = () => {
-    setIsAnimating(true);
+    setIsAnimate(true);
     setDirection("left");
   };
 
@@ -61,19 +73,20 @@ export default function MarketPage() {
   const handleAnimationComplete = () => {
     // 오른쪽으로 이동할때는 맨처음 페이지 방문했을때 포니 배타고 오는것
     if (direction === "right") {
-      setIsAnimating(false);
+      setIsAnimate(false);
     }
     // 왼쪽으로 이동할때는 뒤로가기 버튼 눌렀을때 포니 배타고 나가는것
     if (direction === "left") {
-      setIsAnimating(false);
+      setIsAnimate(false);
       navigate("/");
     }
   };
 
   return (
     <MarketTemplate
-      isAnimating={isAnimating}
+      isAnimate={isAnimate}
       direction={direction}
+      isMounted={isMounted}
       handleBack={handleBack}
       handleAnimationComplete={handleAnimationComplete}
     />

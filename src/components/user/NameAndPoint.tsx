@@ -1,4 +1,4 @@
-import { useAuthStore } from "@/lib/zustand/store";
+import { useAuthStore } from "@/lib/zustand/authStore";
 import { TextWithStroke } from "../text/TextWithStroke";
 import { IMAGE_URLS } from "@/lib/constants/constants";
 
@@ -7,6 +7,7 @@ interface NameAndPointProps {
     top?: string;
     right?: string;
   };
+  pointTextColor?: string;
 }
 
 const limitNameLength = (name: string) => {
@@ -18,11 +19,11 @@ const limitNameLength = (name: string) => {
   for (let i = 0; i < name.length; i++) {
     const char = name[i];
     if (/[가-힣]/.test(char)) {
-      length += 2;
+      length += 2.1;
     } else if (/[a-z]/.test(char)) {
-      length += 1;
+      length += 1.1;
     } else {
-      length += 1.2;
+      length += 1.4;
     }
 
     if (length <= 8) {
@@ -35,13 +36,14 @@ const limitNameLength = (name: string) => {
   return result;
 };
 
-export default function NameAndPoint({ position }: NameAndPointProps) {
+export default function NameAndPoint({ position, pointTextColor = "text-main-yellow-200" }: NameAndPointProps) {
   const { name, point } = useAuthStore();
 
   const wrapperStyle = {
     top: position?.top || "0.3rem",
     right: position?.right || "0.7rem",
   };
+
 
   return (
     <div className="absolute z-10" style={wrapperStyle}>
@@ -61,7 +63,7 @@ export default function NameAndPoint({ position }: NameAndPointProps) {
         <img src={IMAGE_URLS.common.coin} alt="coin" className="w-[1.3rem]" />
         <TextWithStroke
           text={(point?.toString() || "") + "냥"}
-          textClassName="text-main-yellow-800 text-[0.7rem]"
+          textClassName={`${pointTextColor} text-[0.7rem]`}
           strokeClassName="text-main-brown-800 text-[0.7rem] text-stroke-width-[0.12rem] text-stroke-color-main-brown-800"
         />
       </div>

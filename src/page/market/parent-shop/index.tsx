@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getStoreItems, type StoreItem } from "@/lib/api/market/getStore";
 import { buyProduct } from "@/lib/api/market/buyProduct";
-import { useAuthStore } from "../../../lib/zustand/store";
+import { useAuthStore } from "../../../lib/zustand/authStore";
+import { playButtonSound } from "@/lib/utils/sound";
 
 export const TEXT_MESSAGE = {
   not_product: {
@@ -31,12 +32,13 @@ export const TEXT_MESSAGE = {
 export default function NpcShop() {
   const navigate = useNavigate();
   const [productList, setProductList] = useState<StoreItem[]>([]);
-  const { setPoint } = useAuthStore();
+  const { setPoint, point } = useAuthStore();
   const [isOpen, setIsOpen] = useState(false);
   const [productIndex, setProductIndex] = useState(0);
   const lastIndex = Math.ceil(productList.length / 3) - 1;
   const [selectedProduct, setSelectedProduct] = useState<StoreItem | null>(null);
   const [isCompleteOpen, setIsCompleteOpen] = useState(false);
+  const [isNoPointModalOpen, setIsNoPointModalOpen] = useState(false);  
 
   useEffect(() => {
     getStoreItems("parent").then((items) => {
@@ -71,6 +73,7 @@ export default function NpcShop() {
   };
 
   const handleProductClick = (product: StoreItem) => {
+    playButtonSound();
     setSelectedProduct(product);
     setIsOpen(true);
   };
@@ -80,6 +83,13 @@ export default function NpcShop() {
   };
 
   const handlePurchase = async () => {
+    playButtonSound();
+
+    if (selectedProduct?.price && point && selectedProduct.price > point) {
+      setIsNoPointModalOpen(true);
+      return;
+    }
+
     try {
       const response = await buyProduct({ productId: selectedProduct?.id || "", amount: 1 });
       setPoint(response.currentPoint);
@@ -90,6 +100,7 @@ export default function NpcShop() {
   };
 
   const handleComplete = () => {
+    playButtonSound();
     setIsCompleteOpen(false);
     setIsOpen(false);
   };
@@ -108,6 +119,9 @@ export default function NpcShop() {
       handlePurchase={handlePurchase}
       isCompleteOpen={isCompleteOpen}
       handleComplete={handleComplete}
+      isNoPointModalOpen={isNoPointModalOpen}
+      setIsNoPointModalOpen={setIsNoPointModalOpen}
+      point={point}
     />
   );
 }

@@ -1,9 +1,13 @@
 import { Link } from "react-router-dom";
-import { StockDescription } from "../../component/game-component/stock-description";
-import { BorderModal } from "../../component/game-component/border-modal";
+import { StockDescription } from "../../component/stock-description";
+import { BorderModal } from "../../component/border-modal";
 import { playButtonSound } from "@/lib/utils/sound";
 import closeSound from "@/assets/sound/back_click.mp3";
 import CloseIcon from "@/components/icon/CloseIcon";
+import { useState } from "react";
+import { GameStartModal } from "../../../investing/components/game-start-modal";
+import { Modal } from "@/components/modal/Modal";
+import { IMAGE_URLS } from "@/lib/constants/constants";
 interface GameDescription {
   image: string;
   label: string;
@@ -16,6 +20,7 @@ interface GameStartExplainProps {
   gameDescription: string;
   descriptions: GameDescription[];
   gamePlayPath: string;
+  point: number;
   textColor: string;
   stockNameColor: string;
   borderColor: string;
@@ -28,13 +33,13 @@ export const GameStartExplain = ({
   gameTitle: _gameTitle,
   gameDescription,
   descriptions,
-  gamePlayPath,
   textColor,
   stockNameColor,
   borderColor,
   borderStrokeColor,
   sirenImage,
-}: GameStartExplainProps) => {
+  gamePlayPath,
+  }: GameStartExplainProps) => {
   return (
     <BorderModal
       borderColor={borderColor}
@@ -42,6 +47,7 @@ export const GameStartExplain = ({
       className={`flex flex-col items-start px-6`}
       sirenImage={sirenImage}
     >
+
       {/* 닫기 버튼 */}
       <CloseIcon className="absolute top-3 right-3 w-5 h-5 object-contain active:scale-95 transition-all duration-100" onClick={() => {
         playButtonSound(closeSound);
@@ -68,8 +74,7 @@ export const GameStartExplain = ({
         ))}
       </section>
       {/* 게임 시작 버튼 */}
-      <Link to={gamePlayPath}>
-        <div
+        <Link to={gamePlayPath}
           className={`absolute bottom-3 right-13 px-3 py-1.5 text-white text-[0.7rem] rounded-lg active:scale-95 transition-all duration-100`}
           style={{ backgroundColor: stockNameColor }}
           onClick={() => {
@@ -77,8 +82,7 @@ export const GameStartExplain = ({
           }}
         >
           게임 시작
-        </div>
-      </Link>
+        </Link>
     </BorderModal>
   );
 };

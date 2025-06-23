@@ -1,11 +1,13 @@
 import { IMAGE_URLS } from "@/lib/constants/constants";
+import { playButtonSound } from "@/lib/utils/sound";
+import backClickSound from "@/assets/sound/back_click.mp3";
 
 interface InventoryModalProps {
   text: string;
   price?: number;
   image?: string;
   exp?: number;
-  onConfirm?: () => void;
+  onConfirm?: (exp?: number) => void;
   onClose?: () => void;
 }
 
@@ -54,13 +56,18 @@ export const InventoryModal = ({
       <div className="flex items-center gap-x-3 w-full mt-auto">
         <div
           className="py-2 text-center rounded-xl bg-[#EE9223] text-[#FFF6D5] text-sm font-bold w-full active:scale-95 transition-all duration-100"
-          onClick={onConfirm}
+          onClick={() => {
+            onConfirm?.(exp)
+          }}
         >
           {!!exp ? "이동" : "사용"}
         </div>
         <div
           className="py-2 text-center rounded-xl bg-[#FFB55B] text-[#FFF6D5] text-sm font-bold w-full active:scale-95 transition-all duration-100"
-          onClick={onClose}
+          onClick={() => {
+            playButtonSound(backClickSound);
+            onClose?.()
+          }}
         >
           취소
         </div>

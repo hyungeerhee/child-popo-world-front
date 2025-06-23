@@ -1,13 +1,13 @@
 import { Background } from "@/components/layout/Background";
 import { TextWithStroke } from "@/components/text/TextWithStroke";
-import { GamePlayStockCard } from "@/module/investing-game/component/game-component/game-play-stock-card";
-import { NewsBox } from "../../component/game-component/news-box";
+import { GamePlayStockCard } from "@/module/investing-game/component/game-play-stock-card";
+import { NewsBox } from "../../component/news-box";
 import { GamePlayTurnFinish } from "./game-play-turn-finish";
 import { Modal } from "@/components/modal/Modal";
 import type { GameState } from "@/page/investing/game/index";
 import { useState, memo } from "react";
 import { BackArrow } from "@/components/button/BackArrow";
-import { GameOutModal } from "@/module/investing-game/component/game-component/game-out-modal";
+import { GameOutModal } from "@/module/investing-game/component/game-out-modal";
 import { useNavigate } from "react-router-dom";
 import { playButtonSound } from "@/lib/utils/sound";
 import ClickSound from "@/assets/sound/button_click.mp3";

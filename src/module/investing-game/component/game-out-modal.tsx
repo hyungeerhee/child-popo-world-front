@@ -1,5 +1,4 @@
 // src/module/investing-game/component/little-pig-component/game-out-modal.tsx
-import { memo } from "react";
 import { IMAGE_URLS } from "@/lib/constants/constants";
 import { playButtonSound } from "@/lib/utils/sound";
 import ClickSound from "@/assets/sound/button_click.mp3";
@@ -12,7 +11,7 @@ interface GameOutModalProps {
   sirenImage?: string;
 }
 
-export const GameOutModal = memo(({ onConfirm, onCancel, sirenImage = IMAGE_URLS.investing_game.base.siren_popo, closeImage = IMAGE_URLS.investing_game.base.x_popo }: GameOutModalProps) => {
+export const GameOutModal = ({ onConfirm, onCancel, sirenImage = IMAGE_URLS.investing_game.base.siren_popo, closeImage = IMAGE_URLS.investing_game.base.x_popo }: GameOutModalProps) => {
   return (
     <div className="relative flex flex-col items-start px-11 mb-5 pt-7 pb-5 justify-between w-[24rem] h-[12rem]  bg-main-yellow-200 rounded-2xl border-2 lg:border-5 border-main-yellow-500">
       <h2 className="text-main-brown-850 text-xl font-bold">게임 종료</h2>
@@ -54,4 +53,4 @@ export const GameOutModal = memo(({ onConfirm, onCancel, sirenImage = IMAGE_URLS
       />
     </div>
   );
-});
+};

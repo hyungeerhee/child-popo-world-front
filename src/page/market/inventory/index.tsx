@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getInventory, type InventoryItem } from "@/lib/api/market/getInventory";
 import { useProduct } from "@/lib/api/market/useProduct";
+import { playButtonSound } from "@/lib/utils/sound";
 
 export const TEXT_MESSAGE = {
   not_product: {
@@ -59,6 +60,7 @@ export default function Inventory() {
 
   const currentMessage = getMessage();
   const handleSpeechBubbleClick = () => {
+    playButtonSound();
     if (productIndex === lastIndex) {
       return setProductIndex(0);
     }
@@ -70,6 +72,7 @@ export default function Inventory() {
   };
 
   const handleProductClick = (product: InventoryItem) => {
+    playButtonSound();
     setSelectedProduct(product);
     setIsOpen(true);
   };
@@ -79,12 +82,16 @@ export default function Inventory() {
   };
 
   const handleUseProduct = (exp?: number) => {
+    playButtonSound();
+    if (exp && exp > 0) {
+      setIsOpen(false);
+      navigate("/raising", { state: { from: "inventory" } });
+
+      return; 
+    }
+    console.log("selectedProduct", selectedProduct);
     useProduct({ productId: selectedProduct?.productId || "" });
     setIsOpen(false);
-
-    if (exp && exp > 0) {
-      navigate("/raising", { state: { from: "inventory" } });
-    }
   };
 
   return (

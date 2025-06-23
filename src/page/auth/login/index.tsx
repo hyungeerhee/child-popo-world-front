@@ -5,7 +5,7 @@ import apiClient from "../../../lib/api/axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../../../styles/toast.css";
-import { useAuthStore } from "@/lib/zustand/store";
+import { useAuthStore } from "@/lib/zustand/authStore";
 import Cookies from "js-cookie";
 import { IMAGE_URLS } from "@/lib/constants/constants";
 

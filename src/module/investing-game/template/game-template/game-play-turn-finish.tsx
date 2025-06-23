@@ -1,7 +1,7 @@
 // src/module/investing-game/template/little-pig-template/game-play-turn-finish.tsx
 import { IMAGE_URLS } from "@/lib/constants/constants";
-import { BorderModal } from "@/module/investing-game/component/game-component/border-modal";
-import { TurnFinishStockCard } from "@/module/investing-game/component/game-component/turn-finish-stock-card";
+import { BorderModal } from "@/module/investing-game/component/border-modal";
+import { TurnFinishStockCard } from "@/module/investing-game/component/turn-finish-stock-card";
 import { playButtonSound } from "@/lib/utils/sound";
 import ClickSound from "@/assets/sound/button_click.mp3";
 
@@ -76,7 +76,7 @@ export const GamePlayTurnFinish = ({
           onNextTurn();
         }}
       >
-        Let's 투자!
+        {turn + 1 <= 6 ? "Let's 투자!" : "투자 완료!"}
       </button>
     </BorderModal>
   );

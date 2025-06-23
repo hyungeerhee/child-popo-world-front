@@ -1,5 +1,6 @@
 import { useSoundStore } from "../zustand/soundStore";
 import buttonSound from "@/assets/sound/button_click.mp3";
+import  type { NamedHTMLAudioElement } from "../zustand/soundStore";
 
 export const playButtonSound = (url: string = buttonSound, volume: number = 1) => {
   const { isMuted } = useSoundStore.getState();
@@ -11,13 +12,16 @@ export const playButtonSound = (url: string = buttonSound, volume: number = 1) =
 };
 
 // 배경음악 설정
-export const setNewAudio = (url: string, volume: number = 1, loop: boolean = true) => {
+export const setNewAudio = (url: string, volume: number = 0.8, loop: boolean = true) => {
   const { audio, setAudio } = useSoundStore.getState();
   if (audio) {
     audio.pause();
     audio.src = ""; // src 제거
     audio.load(); // 메모리에서 해제
     audio.remove(); // DOM에서 제거 (필요시)
+
+    // 오디오 이름 부여 
+    audio.name = url;
 
     // 이벤트 리스너 제거 (있다면)
     audio.onloadstart = null;
@@ -28,9 +32,10 @@ export const setNewAudio = (url: string, volume: number = 1, loop: boolean = tru
     audio.onerror = null;
   }
 
-  const newAudio = new Audio(url);
+  const newAudio: NamedHTMLAudioElement = new Audio(url);
   newAudio.volume = volume;
   newAudio.loop = loop;
+  newAudio.name = url;
   setAudio(newAudio);
 };
 

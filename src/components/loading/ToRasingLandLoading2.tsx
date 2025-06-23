@@ -3,7 +3,7 @@ import { motion, useAnimation } from "framer-motion";
 import { useEffect } from "react";
 import { Background } from "../layout/Background";
 import { useState } from "react";
-
+import { playButtonSound } from "@/lib/utils/sound";
 
 export const ToRasingLandLoading2 = ({ onAnimationComplete }: { onAnimationComplete: () => void }) => {
     const controls = useAnimation();
@@ -35,6 +35,15 @@ export const ToRasingLandLoading2 = ({ onAnimationComplete }: { onAnimationCompl
 
   return (
     <Background backgroundImage={IMAGE_URLS.common.loading_bg}>
+      <div 
+      className="absolute top-4 right-4 text-white text-sm font-bold"
+      onClick={() => {
+        playButtonSound();
+        onAnimationComplete()}
+      }
+      >
+        바로가기
+      </div>
       {/* 섬 - 좌우 반전된 섬 */}
       <motion.div 
       className="absolute w-40 h-40"

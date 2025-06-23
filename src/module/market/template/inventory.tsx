@@ -9,7 +9,7 @@ import NameAndPoint from "@/components/user/NameAndPoint";
 import type { InventoryItem } from "@/lib/api/market/getInventory";
 import { TextWithStroke } from "@/components/text/TextWithStroke";
 import SoundButton from "@/components/button/SoundButton";
-
+import { playButtonSound } from "@/lib/utils/sound";
 interface InventoryTemplateProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
@@ -20,7 +20,7 @@ interface InventoryTemplateProps {
   handleProductClick: (product: InventoryItem) => void;
   productList: InventoryItem[];
   handleBack: () => void;
-  handleUseProduct: () => void;
+  handleUseProduct: (exp?: number ) => void;
 }
 
 export const InventoryTemplate = ({
@@ -49,9 +49,11 @@ export const InventoryTemplate = ({
       <InventorySpeechBubble
         text={currentMessage.text}
         buttonText={currentMessage.buttonText}
-        onClick={handleSpeechBubbleClick}
+        onClick={() => {
+          handleSpeechBubbleClick()
+        }}
       />
-      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
+      <Modal isOpen={isOpen} >
         <InventoryModal
           text={selectedProduct?.name || ""}
           price={selectedProduct?.price || 0}
@@ -71,7 +73,9 @@ export const InventoryTemplate = ({
                 <div
                   className="relative w-[3.8rem] active:scale-95 transition-all duration-100 flex flex-col items-center gap-y-1"
                   key={product.name}
-                  onClick={() => handleProductClick(product)}
+                  onClick={() => {
+                    handleProductClick(product)
+                  }}
                 >
                   <img src={product.imageUrl} alt={product.name} className="w-10 h-10 object-contain" />
                   <div className="bg-[#5C3600] py-0.5 px-1 text-[0.5rem] text-[#FFEDDA] text-center rounded-md whitespace-nowrap max-w-[3.8rem] truncate">
