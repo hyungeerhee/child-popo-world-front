@@ -54,7 +54,7 @@ const feedImageMap: Record<string, keyof typeof IMAGE_URLS.raising> = {
 // 기본 먹이 목록 (모든 가능한 먹이 정보)
 const ALL_FEEDS: Feed[] = [
   {
-    productId: "2e54bc74-2ac1-427d-8d36-db32ff3a55f1",
+    productId: "aeba1e8b-05d7-4a1c-a0f3-56b923fa1db1",
     name: "수박",
     imageUrl: "https://res.cloudinary.com/djmcg7zgu/image/upload/w_auto,f_auto,q_auto/v1749382424/watermelon_vrrndc",
     stock: 0,
@@ -63,7 +63,7 @@ const ALL_FEEDS: Feed[] = [
     price: 300
   },
   {
-    productId: "81809d00-7af4-4784-a962-6b48ddecc576",
+    productId: "e189c981-d8c8-412c-8db0-4f3cd521c993",
     name: "브로콜리",
     imageUrl: "https://res.cloudinary.com/djmcg7zgu/image/upload/w_auto,f_auto,q_auto/v1749382424/broccoli_nmpcqu",
     stock: 0,
@@ -72,7 +72,7 @@ const ALL_FEEDS: Feed[] = [
     price: 120
   },
   {
-    productId: "3e2724e3-0f74-490c-8022-ade43bdd2bb1",
+    productId: "2b6ecf6c-6232-4740-8610-f3724e808c1f",
     name: "빵",
     imageUrl: "https://res.cloudinary.com/djmcg7zgu/image/upload/w_auto,f_auto,q_auto/v1749382424/bread_nykeqe",
     stock: 0,
@@ -81,7 +81,7 @@ const ALL_FEEDS: Feed[] = [
     price: 150
   },
   {
-    productId: "b51ef10c-8974-4bb7-87a3-2be5ed8e4948",
+    productId: "996e9576-3d99-4be8-ab38-13d9f2c247a6",
     name: "사과",
     imageUrl: "https://res.cloudinary.com/djmcg7zgu/image/upload/w_auto,f_auto,q_auto/v1749382424/apple_dyzpm6",
     stock: 0,
@@ -90,7 +90,7 @@ const ALL_FEEDS: Feed[] = [
     price: 80
   },
   {
-    productId: "6de9042e-4170-4847-aeef-4d0f59fd9cb7",
+    productId: "a385e1b4-dc7c-405d-b760-0ed9682b7bb4",
     name: "당근",
     imageUrl: "https://res.cloudinary.com/djmcg7zgu/image/upload/w_auto,f_auto,q_auto/v1749382424/carrot_i3xbjj",
     stock: 0,
@@ -99,7 +99,7 @@ const ALL_FEEDS: Feed[] = [
     price: 100
   },
   {
-    productId: "40c049d1-d8cc-41f5-9947-84d9ea2352f7",
+    productId: "8663cfbd-ca38-4d7c-a0ad-9759d1ad2a95",
     name: "물고기",
     imageUrl: "https://res.cloudinary.com/djmcg7zgu/image/upload/w_auto,f_auto,q_auto/v1749382424/fish_hqsqfs",
     stock: 0,
