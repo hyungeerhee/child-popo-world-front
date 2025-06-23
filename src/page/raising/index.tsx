@@ -110,6 +110,7 @@ const ALL_FEEDS: Feed[] = [
 ];
 
 export default function RaisingPage() {
+  const navigate = useNavigate();
   // 배경음악 설정
   const { isMuted, audio } = useSoundStore();
 
@@ -312,8 +313,11 @@ export default function RaisingPage() {
 
   return (
     <Background backgroundImage={IMAGE_URLS.raising.background}>
-      {/* 뒤로가기 */}
-      <BackArrow />
+      {/* 뒤로가기 - 무조건 홈으로 이동 */}
+      <BackArrow onClick={() => {
+        playButtonSound(backClickSound, 0.3);
+        navigate("/");
+      }} />
       {/* 음소거 버튼 */}
       <SoundButton />
       {/* 제목 */}
