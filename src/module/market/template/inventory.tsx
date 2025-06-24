@@ -11,27 +11,27 @@ import { TextWithStroke } from "@/components/text/TextWithStroke";
 import SoundButton from "@/components/button/SoundButton";
 import { playButtonSound } from "@/lib/utils/sound";
 interface InventoryTemplateProps {
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
+  isUseModalOpen: boolean;
+  setIsUseModalOpen: (isOpen: boolean) => void;
   productIndex: number;
   selectedProduct: InventoryItem | null;
   currentMessage: { text: string; buttonText: string };
   handleSpeechBubbleClick: () => void;
   handleProductClick: (product: InventoryItem) => void;
-  productList: InventoryItem[];
+  storeItems: InventoryItem[];
   handleBack: () => void;
   handleUseProduct: (exp?: number ) => void;
 }
 
 export const InventoryTemplate = ({
-  isOpen,
-  setIsOpen,
+  isUseModalOpen,
+  setIsUseModalOpen,
   productIndex: _productIndex,
   selectedProduct,
   currentMessage,
   handleSpeechBubbleClick,
   handleProductClick,
-  productList,
+  storeItems,
   handleBack,
   handleUseProduct,
 }: InventoryTemplateProps) => {
@@ -53,14 +53,14 @@ export const InventoryTemplate = ({
           handleSpeechBubbleClick()
         }}
       />
-      <Modal isOpen={isOpen} >
+      <Modal isOpen={isUseModalOpen} >
         <InventoryModal
           text={selectedProduct?.name || ""}
           price={selectedProduct?.price || 0}
           image={selectedProduct?.imageUrl || ""}
           exp={selectedProduct?.exp || 0}
           onConfirm={handleUseProduct}
-          onClose={() => setIsOpen(false)}
+          onClose={() => setIsUseModalOpen(false)}
         />
       </Modal>
       {/* 상품들 */}
@@ -69,7 +69,7 @@ export const InventoryTemplate = ({
           .fill(0)
           .map((_, row) => (
             <div key={row} className="flex items-center gap-x-13">
-              {productList.slice(_productIndex * 9 + row * 3, _productIndex * 9 + (row + 1) * 3).map((product) => (
+              {storeItems.slice(_productIndex * 9 + row * 3, _productIndex * 9 + (row + 1) * 3).map((product) => (
                 <div
                   className="relative w-[3.8rem] active:scale-95 transition-all duration-100 flex flex-col items-center gap-y-1"
                   key={product.name}

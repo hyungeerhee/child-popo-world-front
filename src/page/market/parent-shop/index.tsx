@@ -1,10 +1,11 @@
 import { ParentShopTemplate } from "@/module/market/template/parent-shop";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getStoreItems, type StoreItem } from "@/lib/api/market/getStore";
-import { buyProduct } from "@/lib/api/market/buyProduct";
 import { useAuthStore } from "../../../lib/zustand/authStore";
 import { playButtonSound } from "@/lib/utils/sound";
+import { getStoreItems, type StoreItem } from "@/lib/api/market/getStore";
+import { buyProduct } from "@/lib/api/market/buyProduct";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const TEXT_MESSAGE = {
   not_product: {
@@ -31,23 +32,36 @@ export const TEXT_MESSAGE = {
 
 export default function NpcShop() {
   const navigate = useNavigate();
-  const [productList, setProductList] = useState<StoreItem[]>([]);
   const { setPoint, point } = useAuthStore();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
   const [productIndex, setProductIndex] = useState(0);
-  const lastIndex = Math.ceil(productList.length / 3) - 1;
   const [selectedProduct, setSelectedProduct] = useState<StoreItem | null>(null);
   const [isCompleteOpen, setIsCompleteOpen] = useState(false);
   const [isNoPointModalOpen, setIsNoPointModalOpen] = useState(false);  
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    getStoreItems("parent").then((items) => {
-      setProductList(items);
-    });
-  }, []);
+  const { data: storeItems } = useQuery({
+    queryKey: ["store-items", "parent"],
+    queryFn: () => getStoreItems("parent"),
+  });
+
+  const purchaseMutation = useMutation({
+    mutationFn: (productId: string) => buyProduct({ productId, amount: 1}),
+    onSuccess: (response) => {
+      setPoint(response.currentPoint); 
+      setIsCompleteOpen(true); 
+      
+      queryClient.invalidateQueries({ queryKey: ["store-items", "parent"], refetchType:"all"});
+    }, 
+    onError: (error) => {
+      console.error("Failed to buy product", error); 
+    }
+  })
+
+  const lastIndex = Math.ceil(storeItems?.length || 0 / 3) - 1;
 
   const getMessage = () => {
-    if (productList.length === 0) {
+    if (storeItems?.length === 0) {
       return TEXT_MESSAGE.not_product;
     }
     if (productIndex === 0 || productIndex === lastIndex) {
@@ -65,6 +79,8 @@ export default function NpcShop() {
   const currentMessage = getMessage();
 
   const handleSpeechBubbleClick = () => {
+    playButtonSound();
+
     if (currentMessage.buttonText === "더보기") {
       setProductIndex((prev) => prev + 1);
     } else if (currentMessage.buttonText === "처음으로") {
@@ -75,7 +91,7 @@ export default function NpcShop() {
   const handleProductClick = (product: StoreItem) => {
     playButtonSound();
     setSelectedProduct(product);
-    setIsOpen(true);
+    setIsPurchaseModalOpen(true);
   };
 
   const handleBack = () => {
@@ -85,36 +101,30 @@ export default function NpcShop() {
   const handlePurchase = async () => {
     playButtonSound();
 
-    if (selectedProduct?.price && point && selectedProduct.price > point) {
-      setIsNoPointModalOpen(true);
-      return;
-    }
+   if (selectedProduct?.price && point !== null && point >= 0 && selectedProduct.price > point) {
+    setIsNoPointModalOpen(true);
+    return;
+   }
 
-    try {
-      const response = await buyProduct({ productId: selectedProduct?.id || "", amount: 1 });
-      setPoint(response.currentPoint);
-      setIsCompleteOpen(true);
-    } catch (error) {
-      console.error("Failed to buy product", error);
-    }
+   purchaseMutation.mutate(selectedProduct?.id || "");  
   };
 
   const handleComplete = () => {
     playButtonSound();
     setIsCompleteOpen(false);
-    setIsOpen(false);
+    setIsPurchaseModalOpen(false);
   };
 
   return (
     <ParentShopTemplate
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
+      isPurchaseModalOpen={isPurchaseModalOpen}
+      setIsPurchaseModalOpen={setIsPurchaseModalOpen}
       productIndex={productIndex}
       selectedProduct={selectedProduct}
       currentMessage={currentMessage}
       handleSpeechBubbleClick={handleSpeechBubbleClick}
       handleProductClick={handleProductClick}
-      productList={productList}
+      storeItems={storeItems || []}
       handleBack={handleBack}
       handlePurchase={handlePurchase}
       isCompleteOpen={isCompleteOpen}

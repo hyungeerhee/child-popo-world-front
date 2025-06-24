@@ -13,14 +13,14 @@ import { playButtonSound } from "@/lib/utils/sound";
 import { NoPointModal } from "@/components/modal/NoPointModal";
 
 interface NpcShopTemplateProps {
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
+  isPurchaseModalOpen: boolean;
+  setIsPurchaseModalOpen: (isOpen: boolean) => void;
   productIndex: number;
   selectedProduct: StoreItem | null;
   currentMessage: { text: string; buttonText: string };
   handleSpeechBubbleClick: () => void;
   handleProductClick: (product: StoreItem) => void;
-  product_list: StoreItem[];
+  storeItems: StoreItem[];
   handleBack: () => void;
   handlePurchase: () => void;
   isCompleteOpen: boolean;
@@ -31,14 +31,14 @@ interface NpcShopTemplateProps {
 }
 
 export const NpcShopTemplate = ({
-  isOpen,
-  setIsOpen,
+  isPurchaseModalOpen,
+  setIsPurchaseModalOpen,
   productIndex,
   selectedProduct,
   currentMessage,
   handleSpeechBubbleClick,
   handleProductClick,
-  product_list,
+  storeItems,
   handleBack,
   handlePurchase,
   isCompleteOpen,
@@ -50,13 +50,13 @@ export const NpcShopTemplate = ({
   return (
     <Background backgroundImage={IMAGE_URLS.market.npc_shop_bg}>
       {/* 구매 모달 */}
-      <Modal isOpen={isOpen}>
+      <Modal isOpen={isPurchaseModalOpen}>
         <PurchaseModal
           image={selectedProduct?.imageUrl || ""}
           text={selectedProduct?.name || ""}
           price={selectedProduct?.price || 0}
           onConfirm={handlePurchase}
-          onClose={() => setIsOpen(false)}
+          onClose={() => setIsPurchaseModalOpen(false)}
         />
       </Modal>
       {/* 구매 완료 모달 */}
@@ -79,7 +79,7 @@ export const NpcShopTemplate = ({
           onClose={() => {
             playButtonSound();
             setIsNoPointModalOpen(false);
-            setIsOpen(false);
+            setIsPurchaseModalOpen(false);
           }}
         />
       </Modal>
@@ -101,7 +101,7 @@ export const NpcShopTemplate = ({
       />
       {/* 상품 목록 */}
       <div className="absolute bottom-24 left-1/2 -translate-x-1/2 w-75 flex items-center gap-x-14">
-        {product_list.slice(productIndex * 3, (productIndex + 1) * 3).map((product) => (
+        {storeItems.slice(productIndex * 3, (productIndex + 1) * 3).map((product) => (
           <div
             className="relative active:scale-95 transition-all duration-100"
             key={product.id}
@@ -116,7 +116,7 @@ export const NpcShopTemplate = ({
       </div>
       {/* 가격표 */}
       <div className="absolute bottom-8.5 left-1/2 -translate-x-1/2 w-86 flex items-stretch gap-x-2">
-        {product_list.slice(productIndex * 3, (productIndex + 1) * 3).map((product) => (
+        {storeItems.slice(productIndex * 3, (productIndex + 1) * 3).map((product) => (
           <div
             className="flex flex-col justify-center items-center gap-y-0.5 w-26 px-4 py-1.5 bg-[#F6D8B8] border-2 border-[#97784A] rounded-md min-h-[3.5rem] active:scale-95 transition-all duration-100"
             key={product.name}

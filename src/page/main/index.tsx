@@ -8,6 +8,9 @@ import { setNewAudio, stopBackgroundMusic } from "@/lib/utils/sound";
 import { IMAGE_URLS } from "@/lib/constants/constants";
 import { preload } from "react-dom";
 import MainBackgroundMusic from "@/assets/sound/main1.mp3";
+import { getDiary } from "@/lib/api/emotion/getDiary";
+import { useQueryClient } from '@tanstack/react-query';
+import { getQuest } from "@/lib/api/quest/getQuest";
 
 // 섬별 위치 정보
 const ISLAND_POSITIONS = {
@@ -22,6 +25,7 @@ const ISLAND_POSITIONS = {
 export default function Main() {
   const { logout } = useAuthStore();
   const { toggleMute, isMuted, audio } = useSoundStore();
+  const queryClient = useQueryClient();
 
   // 첫페이지 로드시 배경음악 설정
   useEffect(() => {
@@ -77,6 +81,7 @@ export default function Main() {
       investingPageImages.forEach((image) => {
         preload(image, { as: "image" });
       });
+      
     }
 
     if (island === "market") {
@@ -101,24 +106,22 @@ export default function Main() {
     }
 
     if (island == "emotionDiary") {
-      const emotionDiaryImages = [...Object.values(IMAGE_URLS.emotionList)];
+      const emotionDiaryImages = [...Object.values(IMAGE_URLS.emotionList), ...Object.values(IMAGE_URLS.emotionDiary)];
       emotionDiaryImages.forEach((image) => {
         preload(image, { as: "image" });
       });
+      // 일기 데이터 미리 가져오기
+      queryClient.prefetchQuery({ queryKey: ["diary"], queryFn: getDiary });
     }
 
     if (island === "quest") {
-      const questPageImages = [...Object.values(IMAGE_URLS.quest)];
+      const questPageImages = [...Object.values(IMAGE_URLS.quest), ...Object.values(IMAGE_URLS.quest_detail)];
       questPageImages.forEach((image) => {
         preload(image, { as: "image" });
       });
-    }
 
-    if(island === "emotionDiary") {
-      const emotionDiaryImages = [...Object.values(IMAGE_URLS.emotionList)];
-      emotionDiaryImages.forEach((image) => {
-        preload(image, { as: "image" });
-      });
+      queryClient.prefetchQuery({ queryKey: ["quest", "daily"], queryFn: () => getQuest("daily") });
+      queryClient.prefetchQuery({ queryKey: ["quest", "parent"], queryFn: () => getQuest("parent") });
     }
   };
 

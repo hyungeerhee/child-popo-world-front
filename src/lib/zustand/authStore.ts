@@ -35,7 +35,6 @@ interface AuthStore extends AuthState {
   setPoint: (point: number | null) => void; // 포인트 설정
   login: (name: string, point: number) => void; // 로그인
   logout: () => void; // 로그아웃
-  refreshAccessToken: () => Promise<void>; // 페이지 로드 시 인증 상태 확인
 }
 
 /**
@@ -78,33 +77,8 @@ export const useAuthStore = create<AuthStore>()(
         Cookies.remove("refreshToken");
         set(INITIAL_AUTH_STATE);
       },
-
       // 액세스 토큰 설정
       setAccessToken: (accessToken) => set({ accessToken }),
-
-      // 페이지 로드 시 인증 상태 확인
-      refreshAccessToken: async () => {
-        try {
-          const refreshToken = Cookies.get("refreshToken");
-          if (!refreshToken) {
-            throw new Error("No refresh token");
-          }
-
-          const response = await apiClient.post(`/auth/token/refresh`, {
-            withCredentials: true,
-            headers: {
-              ["Refresh-Token"]: `${refreshToken}`,
-            },
-          });
-          const accessToken = response.headers["authorization"]?.replace("Bearer ", "");
-
-          if (accessToken) {
-            set({ accessToken, isAuthenticated: true });
-          }
-        } catch (error) {
-          set(INITIAL_AUTH_STATE);
-        }
-      },
     }),
     {
       name: "auth-storage",

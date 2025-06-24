@@ -118,29 +118,31 @@ export const InvestingTemplate = ({
         textClassName="text-main-yellow-150 text-[1.3rem]"
         strokeClassName="text-investing-orange-100 text-[1.3rem] text-stroke-width-[0.6rem] text-stroke-color-main-brown-800"
       />
-      <Info price="700냥" className="absolute left-[4.3rem] top-[1.7rem]" />
+      <Info price="1000냥" className="absolute left-[4.3rem] top-[1.7rem]" />
+      {/* 푸드트럭 */}
       <TextWithStroke
         text="푸드트럭 왕국"
         className="absolute left-[18.7rem] bottom-[3.85rem]"
         textClassName="text-main-yellow-150 text-[1.3rem]"
         strokeClassName="text-investing-yellow-100 text-[1.3rem] text-stroke-width-[0.6rem] text-stroke-color-main-brown-800"
       />
-      <Info price="1000냥" className="absolute right-[4.6rem] top-[1.7rem]" />
+      <Info price="2000냥" className="absolute right-[4.6rem] top-[1.7rem]" />
+      {/* 마법 */}
       <TextWithStroke
         text="마법 왕국"
         className="absolute right-[12.1rem] top-[15.5rem]"
         textClassName="text-main-yellow-150 text-[1.3rem]"
         strokeClassName="text-investing-purple-100 text-[1.3rem] text-stroke-width-[0.6rem] text-stroke-color-main-brown-800"
       />
-      <Info price="700냥" className="absolute left-[4.5rem] bottom-[1rem]" />
+      <Info price="3000냥" className="absolute left-[4.5rem] bottom-[1rem]" />
+      {/* 달빛 */}
       <TextWithStroke
         text="달빛 도둑"
         className="absolute left-[7.4rem] top-[15.5rem]"
         textClassName="text-main-yellow-150 text-[1.3rem]"
         strokeClassName="text-investing-blue-100 text-[1.3rem] text-stroke-width-[0.6rem] text-stroke-color-main-brown-800"
       />
-
-      <Info price="2000냥" className="absolute right-[4rem] bottom-[1rem]" />
+      <Info price="4000냥" className="absolute right-[4rem] bottom-[1rem]" />
 
       {/* 챕터 클릭 포지션 */}
       <div

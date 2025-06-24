@@ -36,6 +36,8 @@ const IMAGE_URLS = {
     back_arrow_black:"https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1750335615/back_arrow_black_gpxrtd",
     back_arrow_white:"https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1750335615/back_arrow_white_qabhqn",
     back_arrow_gray:"https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1750335615/back_arrow_gray_pm2mvr",
+    point_popo:"https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1750725203/point_popo_g0js7h",
+    cry_popo:"https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1750748431/cry_popo_dlbbio",
   },
   main: {
     bg: "https://res.cloudinary.com/dgmbxvpv9/image/upload/f_auto,q_auto/v1749831440/main-background_lviawu",
@@ -111,7 +113,7 @@ const IMAGE_URLS = {
   },
   attandance: {
     circle_popo:
-      "https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1749515991/circle_popo_weqpf5",
+      "https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1750725227/attandance_circle_mhq4yb",
     masic_popo:
       "https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1749515991/masic_popo_sgclsk",
   },
@@ -193,8 +195,7 @@ const IMAGE_URLS = {
   },
 
   quest: {
-    modal_popo:
-      "https://res.cloudinary.com/dgmbxvpv9/image/upload/f_auto,q_auto/v1750166596/quest-modal-popo_l4ldtl",
+    modal_popo:"https://res.cloudinary.com/dgmbxvpv9/image/upload/f_auto,q_auto/v1750166596/quest-modal-popo_l4ldtl",
     quest_map_page: "https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749002225/quest-map-page.webp",
     quest_map_page_parent: "https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749003144/quest-map-page-parent.webp",
     quest_map_page_daily: "https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749003248/quest-map-page-daily.webp",
@@ -204,14 +205,19 @@ const IMAGE_URLS = {
     quest_map_daily_poni_parent: "https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749014888/image-Photoroom_5_calb9b.webp",
     quest_map_daily_poni_parent_2: "https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749020143/image-Photoroom_8_bfxs5w.webp",
     quest_map_daily_poni_parent_3: "https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749021774/Group-1000002186_mxtdvh.webp"
-
+  },
+  quest_detail:{
+    quest_detail_bg:"https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749086237/iPad_Pro_12.9__-_63_fl49sp.webp",
+    quest_detail_popo:"https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749107825/ChatGPT_Image_May_26__2025__04_02_46_PM-removebg-preview_1_1_swqc8d.webp",
+    quest_detail_signs:"https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749086355/image_437_pgtezv.webp",
+    quest_detail_mini_popo:"https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749524170/ChatGPT_Image_2025%E1%84%82%E1%85%A7%E1%86%AB_6%E1%84%8B%E1%85%AF%E1%86%AF_10%E1%84%8B%E1%85%B5%E1%86%AF_%E1%84%8B%E1%85%A9%E1%84%8C%E1%85%A5%E1%86%AB_11_55_17-Photoroom_er3mem.webp",
   },
   raising: {
     apple:
       "https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1750155644/raising_apple_nvewgu",
     watermelon:
       "https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1750155644/raising_watermelon_mtkh5k",
-    nest: "https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1750155644/raising_nest_gbvvtg",
+    nest: "https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1750728025/raising_nest_g7swed",
     fish: "https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1750155644/raising_fish_b6v2o5",
     character5:
       "https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1750155644/raising_character5_oygkcg",
@@ -230,7 +236,7 @@ const IMAGE_URLS = {
     bread:
       "https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1750155644/raising_bread_rjrnm2",
     background:
-      "https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1750155644/raising_background_nuax5h",
+      "https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1750725132/rasing_bg_cthfbm",
   },
 
   login: {
@@ -241,6 +247,12 @@ const IMAGE_URLS = {
     bg: "https://res.cloudinary.com/djmcg7zgu/image/upload/v1750155990/savings_background_bf0hz5.webp",
     star: "https://res.cloudinary.com/djmcg7zgu/image/upload/v1750155990/savings_star_jtuc8d.webp",
     popo: "https://res.cloudinary.com/djmcg7zgu/image/upload/v1750155990/savings_character_ofguqf.webp",
+  },
+
+  emotionDiary: {
+    bg: "https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749237608/ChatGPT_Image_2025%E1%84%82%E1%85%A7%E1%86%AB_6%E1%84%8B%E1%85%AF%E1%86%AF_7%E1%84%8B%E1%85%B5%E1%86%AF_%E1%84%8B%E1%85%A9%E1%84%8C%E1%85%A5%E1%86%AB_04_17_24_1_yzgzkl.webp",
+    left_arrow: "https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749614463/Polygon_4_bejfpz.webp",
+    right_arrow: "https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749614463/Polygon_4_bejfpz.webp",
   },
 
   emotionList: {

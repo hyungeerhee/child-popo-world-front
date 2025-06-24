@@ -23,9 +23,9 @@ export const NoPointModal = ({ requiredPoint, currentPoint, isOpen, onClose }: N
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.6 }}
-          src={IMAGE_URLS.market.modal_popo}
+          src={IMAGE_URLS.common.cry_popo}
           alt="modal_popo"
-          className="w-24 h-24 object-contain absolute -bottom-3 -left-6 drop-shadow-md z-10"
+          className="w-24 h-24 object-contain absolute -bottom-3 -left-8 drop-shadow-md z-10"
         />
 
         <motion.div

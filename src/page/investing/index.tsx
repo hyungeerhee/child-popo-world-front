@@ -8,31 +8,37 @@ import ClickSound from "@/assets/sound/button_click.mp3";
 import { useSoundStore } from "@/lib/zustand/soundStore";
 import InvestingBackgroundMusic from "@/assets/sound/invest.mp3";
 import { IMAGE_URLS } from "@/lib/constants/constants";
+import {getChapterData} from "@/lib/api/invest-game/getChapterData";
+import { useQueryClient } from '@tanstack/react-query';
 
 export const chaptersInfo = {
   "little-pig":{
     sirenImage: IMAGE_URLS.investing_game.little_pig.little_siren_pig,
     newsImage: IMAGE_URLS.investing_game.little_pig.little_news_pig,
     name: "아기돼지 삼형제",
-    price: 700,
+    price: 1000,
+    id: "1111",
   },
   "truck":{
     sirenImage: IMAGE_URLS.investing_game.base.siren_popo,
     newsImage: IMAGE_URLS.investing_game.base.news_popo,
     name: "푸드트럭 왕국",
-    price: 1000,
+    price: 2000,
+    id: "2222",
   },
   "masic":{
     sirenImage: IMAGE_URLS.investing_game.base.siren_popo,
     newsImage: IMAGE_URLS.investing_game.base.news_popo,
     name: "마법 왕국",
-    price: 700,
+    price: 3000,
+    id: "3333",
   },
   "ninja":{
     sirenImage: IMAGE_URLS.investing_game.base.siren_popo,
     newsImage: IMAGE_URLS.investing_game.base.news_popo,
     name: "달빛 도둑",
-    price: 2000,
+    price: 4000,
+    id: "4444",
   },
 }
 
@@ -45,7 +51,8 @@ export default function InvestingPage() {
   const [isNoPointModalOpen, setIsNoPointModalOpen] = useState(false);
   const [chapter, setChapter] = useState<string>("");
   const { isMuted, audio } = useSoundStore();
-  
+  const queryClient = useQueryClient();
+
   useEffect(() => {
     setNewAudio(InvestingBackgroundMusic);
   }, []);
@@ -83,6 +90,13 @@ export default function InvestingPage() {
     // 게임 가격만큼 포인트 차감은 게임 시작 페이지에서 진행, 즉 여기서 안함 
     setIsGameStartModalOpen(false);
     const { x, y } = chapterPositions[chapter];
+    
+    queryClient.prefetchQuery({
+      queryKey: ['invest-game', chaptersInfo[chapter as keyof typeof chaptersInfo].id],
+      queryFn: () => getChapterData(chaptersInfo[chapter as keyof typeof chaptersInfo].id),
+      staleTime: 1000 * 6, // 6초 
+    }); 
+    
     await animation.start({
       rotate: Array.from({ length: 37 }, (_, i) => i * 25),
       scale: [1, 0.95, 0.8, 0.5],

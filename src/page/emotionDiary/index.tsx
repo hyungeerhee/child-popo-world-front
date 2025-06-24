@@ -1,30 +1,30 @@
 import { useNavigate } from "react-router-dom";
 import { EmotionDiaryTemplate } from "../../module/emotionDiary/template";
 import { useEffect, useState } from "react";
-import apiClient, { ApiError } from "@/lib/api/axios";
 import type { Diary } from "@/module/emotionDiary/types/diary";
 import { setNewAudio, stopBackgroundMusic, playButtonSound } from "@/lib/utils/sound";
 import { useSoundStore } from "@/lib/zustand/soundStore";
 import EmotionDiaryBackgroundMusic from "@/assets/sound/diary.mp3";
-import backClickSound from "@/assets/sound/back_click.mp3";
-
-const API_URL = "/api/diary";
+import { getDiary } from "@/lib/api/emotion/getDiary";
+import { useQuery } from "@tanstack/react-query";
 
 export default function EmotionDiaryPage() {
   const navigate = useNavigate();
-
-  const [diaryData, setDiaryData] = useState<Diary[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [isWrittenToday, setIsWrittenToday] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const { isMuted, audio } = useSoundStore();
 
+  const { data: diaryData, isLoading, isError } = useQuery<Diary[]>({
+    queryKey: ["diary"],
+    queryFn: getDiary,
+  });
+
   useEffect(() => {
     setNewAudio(EmotionDiaryBackgroundMusic, 0.6);
   }, []);
+  
   // 음소거 상태 변경시 배경음악 정지 또는 재생
   useEffect(() => {
     if (isMuted && audio) stopBackgroundMusic();
@@ -37,28 +37,8 @@ export default function EmotionDiaryPage() {
   
   // 작성한 일기 목록 조회
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await apiClient.get(API_URL);
-        const data = response.data;
-
-        setDiaryData(data);
-        setIsWrittenToday(isTodayDiaryExists(data));
-        console.log(data);
-      } catch (err: any) {
-        if (err instanceof ApiError) {
-          setError(err.message);
-        } else {
-          setError("알 수 없는 오류 발생");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+    setIsWrittenToday(isTodayDiaryExists(diaryData || []));
+  }, [diaryData]);
 
   // 왼쪽 화살표
   const handlePrevMonth = () => {
@@ -77,7 +57,7 @@ export default function EmotionDiaryPage() {
   };
 
   // 일기 월별 필터링
-  const filteredDiaryData = diaryData.filter((diary) => {
+  const filteredDiaryData = diaryData?.filter((diary) => {
     const createdAt = new Date(diary.createdAt);
     return (
       createdAt.getFullYear() === currentDate.getFullYear() &&
@@ -116,10 +96,10 @@ export default function EmotionDiaryPage() {
 
   return (
     <div>
-      {!loading && !error && (
+      {!isLoading && !isError && (
         <EmotionDiaryTemplate
           onBack={handleBack}
-          diaryData={filteredDiaryData}
+          diaryData={filteredDiaryData || []}
           onClickWrite={handleClickWrite}
           isModalOpen={isModalOpen}
           onCloseModal={handleCloseModal}
