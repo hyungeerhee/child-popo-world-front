@@ -104,12 +104,7 @@ export function AttandanceTemplate({
         {/* 출석하기 버튼 */}
         <div
           className="mt-8 mx-auto w-fit py-2 px-10 bg-[#F48A00] text-white text-lg rounded-xl active:scale-95 transition-all duration-100"
-          onClick={
-            () => {
-              playButtonSound();
-              handleAttendance();
-            }
-          }
+          onClick={handleAttendance}
         >
           출석하기
         </div>
