@@ -8,6 +8,8 @@ import { setNewAudio, stopBackgroundMusic } from "@/lib/utils/sound";
 import { IMAGE_URLS } from "@/lib/constants/constants";
 import { preload } from "react-dom";
 import MainBackgroundMusic from "@/assets/sound/main1.mp3";
+import { getDiary } from "@/lib/api/emotion/getDiary";
+import { useQueryClient } from '@tanstack/react-query';
 
 // 섬별 위치 정보
 const ISLAND_POSITIONS = {
@@ -22,6 +24,7 @@ const ISLAND_POSITIONS = {
 export default function Main() {
   const { logout } = useAuthStore();
   const { toggleMute, isMuted, audio } = useSoundStore();
+  const queryClient = useQueryClient();
 
   // 첫페이지 로드시 배경음악 설정
   useEffect(() => {
@@ -106,6 +109,8 @@ export default function Main() {
       emotionDiaryImages.forEach((image) => {
         preload(image, { as: "image" });
       });
+      // 일기 데이터 미리 가져오기
+      queryClient.prefetchQuery({ queryKey: ["diary"], queryFn: getDiary });
     }
 
     if (island === "quest") {

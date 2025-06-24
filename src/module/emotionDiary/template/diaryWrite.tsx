@@ -3,6 +3,7 @@ import { Background } from "@/components/layout/Background";
 import { emotionList } from "../constants/emotionList";
 import SoundButton from "@/components/button/SoundButton";
 import { playButtonSound } from "@/lib/utils/sound";
+import { AlertModal } from "../components/AlretModal";
 
 interface DiaryWriteTemplateProps {
   onBack: () => void;
@@ -10,6 +11,8 @@ interface DiaryWriteTemplateProps {
   onChangeDescription: (desc: string) => void;
   onSubmit: () => void;
   selectedEmotion: string | null;
+  isAlertModalOpen: boolean;
+  onCloseAlertModal: () => void;
 }
 export const DiaryWriteTemplate = ({
   onBack,
@@ -17,9 +20,13 @@ export const DiaryWriteTemplate = ({
   onChangeDescription,
   onSubmit,
   selectedEmotion,
+  isAlertModalOpen,
+  onCloseAlertModal,
 }: DiaryWriteTemplateProps) => {
   return (
     <Background backgroundImage="https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749622517/diary-write-bg_bld452.webp">
+      <AlertModal isOpen={isAlertModalOpen} onClose={onCloseAlertModal} />
+
       {/* 뒤로가기 */}
       <BackArrow onClick={onBack} />
       {/* 음소거 버튼 */}
