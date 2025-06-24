@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { postDiary } from "@/lib/api/emotion/postDiary";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { playButtonSound } from "@/lib/utils/sound";
 
 export default function EmotionDiaryWritePage() {
   const navigate = useNavigate();
@@ -34,6 +35,11 @@ export default function EmotionDiaryWritePage() {
     }
     postDiaryMutation.mutate({emotion, description: description || ""});
   };
+
+  const handleCloseAlertModal = () => {
+    playButtonSound();
+    setIsAlertModalOpen(false);
+  };
   
   return (
     <DiaryWriteTemplate
@@ -43,7 +49,7 @@ export default function EmotionDiaryWritePage() {
       onSubmit={handleSubmit}
       selectedEmotion={emotion}
       isAlertModalOpen={isAlertModalOpen}
-      onCloseAlertModal={() => setIsAlertModalOpen(false)}
+      onCloseAlertModal={handleCloseAlertModal}
     />
   );
 }

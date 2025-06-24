@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { getKSTDateTime } from "@/lib/utils/getKSTDateTime";
 import { getAttendance, postAttendance } from "@/lib/api/attandance/attendance";
 import { useAuthStore } from "@/lib/zustand/authStore";
 import { AttandanceTemplate } from "@/module/attandance/template";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { playButtonSound } from "@/lib/utils/sound";
+import { getToday, getYesterday } from "@/lib/utils/utils";
 
 export const WEEK = ["월", "화", "수", "목", "금", "토", "일"];
 
@@ -23,6 +23,8 @@ export interface Attendance {
   dayOfWeek: string;
   attended: boolean;
 }
+
+
 
 export default function AttandancePage() {
   const [isPointModalOpen, setIsPointModalOpen] = useState(false);
@@ -84,18 +86,7 @@ export default function AttandancePage() {
     return getConsecutive();
   }, [attendanceData]);
 
-  const getToday = () => {
-    const today = getKSTDateTime();
-    const date = new Date(today);
-    return WEEK[date.getDay() - 1 < 0 ? 6 : date.getDay() - 1];
-  };
 
-  const getYesterday = () => {
-    const today = getKSTDateTime();
-    const date = new Date(today);
-    return WEEK[date.getDay() - 2 < 0 ? 6 : date.getDay() - 2];
-  };
-  
   const handleAttendance = () => {
     playButtonSound();
     attendanceMutation.mutate(getToday());

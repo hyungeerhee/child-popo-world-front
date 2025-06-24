@@ -17,7 +17,7 @@ export const StateChangeModal = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div
-        className="relative bg-white px-[4rem] pt-[3.5rem] pb-[1.5rem] rounded-2xl text-center shadow-lg border-[0.6rem] border-[#ff8442]"
+        className="relative bg-white px-[4rem] pt-[3.5rem] pb-[1.5rem] rounded-2xl text-center shadow-lg border-[0.4rem] border-[#ff8442]"
         onClick={(e) => e.stopPropagation()}
       >
         <p className="text-[#5e4632] font-bold text-[1.2rem]">{text}</p>

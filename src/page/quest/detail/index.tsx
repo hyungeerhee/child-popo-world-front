@@ -7,6 +7,9 @@ import { StateChangeModal } from "@/module/quest/components/StateChangeModal";
 import { useAuthStore } from "@/lib/zustand/authStore";
 import { playButtonSound,  } from "@/lib/utils/sound";
 import backClickSound from "@/assets/sound/back_click.mp3";
+import { getQuest } from "@/lib/api/quest/getQuest";
+import { useQuery } from "@tanstack/react-query";
+
 const questStateMap: Record<string, Quest["state"]> = {
   PENDING_ACCEPT: "수락하기",
   IN_PROGRESS: "다 했어요",
@@ -40,7 +43,7 @@ const MatchModalText: Record<string, string> = {
 };
 
 export default function QuestDetail() {
-  const { questType } = useParams() as { questType: string };
+  const { questType } = useParams() as { questType: "daily" | "parent" };
   const navigate = useNavigate();
   const [questData, setQuestData] = useState<Quest[]>([]);
   const [selectedState, setSelectedState] = useState<Quest["state"] | null>(
@@ -53,8 +56,7 @@ export default function QuestDetail() {
     childId: string;
     state: Quest["state"];
   } | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+
   const { setPoint } = useAuthStore();
 
   const total = questData.filter(
@@ -68,32 +70,27 @@ export default function QuestDetail() {
   const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
 
   // 퀘스트 목록 조회후 퀘스트 데이터 저장
+  const {data: responseQuestData, isLoading, error} = useQuery({
+    queryKey: ["quest", questType],
+    queryFn: () => getQuest(questType),
+  });
+
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await apiClient.get(
-          `/api/quest?type=${questType}`
-        );
+    if(isLoading || error) return;
 
-        const data = await response.data;
-        setPoint(data.currentPoint);
-        const mapped = data.quests.map((item: any) => ({
-          ...item,
-          state: questStateMap[item.state],
-        }));
-        const sorted = sortQuests(mapped);
-        setQuestData(sorted);
-      } catch (err: any) {
-        setError(err.message || "알 수 없는 오류 발생");
-      } finally {
-        setLoading(false);
-      }
-    };
+    // 데이터 동기화 
+    setPoint(responseQuestData.currentPoint);
+    
+    // 받은 퀘스트 데이터 객체에 {KEY, VALUE} 추가 (state: "수락하기" 등) 
+    const mapped = responseQuestData.quests.map((item: any) => ({
+      ...item,
+      state: questStateMap[item.state],
+    }));
 
-    fetchData();
-  }, [questType]);
+    // 매핑된 객체 정렬 (각 상태를 인덱스 순서대로 오름차순 정렬)
+    const sorted = sortQuests(mapped);
+    setQuestData(sorted);
+  }, [responseQuestData]);
 
   // 퀘스트 정렬하기
   const sortQuests = (quests: Quest[]) => {
@@ -109,18 +106,18 @@ export default function QuestDetail() {
     return quests.sort((a, b) => {
       const stateA = stateOrder.indexOf(a.state);
       const stateB = stateOrder.indexOf(b.state);
-      if (stateA !== stateB) return stateA - stateB;
+      if (stateA !== stateB) return stateA - stateB; 
       return new Date(a.end_date).getTime() - new Date(b.end_date).getTime();
     });
   };
 
   // 완료 버튼
-  const handleComplete = useCallback(() => {
+  const handleComplete = () => {
     playButtonSound();
     navigate("/quest/detail/complete", {
       state: { questType },
     });
-  }, [navigate, questType]);
+  };
 
   // 뒤로가기 버튼
   const handleBack = () => {
@@ -171,13 +168,7 @@ export default function QuestDetail() {
       // reward 저장
       console.log(state);
     } catch (err) {
-      if (err instanceof ApiError) {
-        setError(err.message);
-      } else {
-        setError("알 수 없는 오류 발생");
-      }
-    } finally {
-      setLoading(false);
+      console.log(err);
     }
   };
 
@@ -201,7 +192,7 @@ export default function QuestDetail() {
 
   return (
     <div>
-      {!loading && !error && (
+      {!isLoading && !error && (
         <>
           <QuestDetailTemplate
             questType={questType}

@@ -10,6 +10,7 @@ import { preload } from "react-dom";
 import MainBackgroundMusic from "@/assets/sound/main1.mp3";
 import { getDiary } from "@/lib/api/emotion/getDiary";
 import { useQueryClient } from '@tanstack/react-query';
+import { getQuest } from "@/lib/api/quest/getQuest";
 
 // 섬별 위치 정보
 const ISLAND_POSITIONS = {
@@ -114,10 +115,13 @@ export default function Main() {
     }
 
     if (island === "quest") {
-      const questPageImages = [...Object.values(IMAGE_URLS.quest)];
+      const questPageImages = [...Object.values(IMAGE_URLS.quest), ...Object.values(IMAGE_URLS.quest_detail)];
       questPageImages.forEach((image) => {
         preload(image, { as: "image" });
       });
+
+      queryClient.prefetchQuery({ queryKey: ["quest", "daily"], queryFn: () => getQuest("daily") });
+      queryClient.prefetchQuery({ queryKey: ["quest", "parent"], queryFn: () => getQuest("parent") });
     }
   };
 

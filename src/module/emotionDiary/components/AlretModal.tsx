@@ -7,7 +7,7 @@ interface AlertModalProps {
 
 export const AlertModal = ({ isOpen, onClose }: AlertModalProps) => {
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen}>
       <div
         className="relative bg-white px-[3rem] pt-[3rem] pb-[1.5rem] rounded-2xl text-center shadow-lg border-[0.6rem] border-[#fdbfca]"
         onClick={(e) => e.stopPropagation()}

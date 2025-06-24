@@ -36,7 +36,8 @@ const IMAGE_URLS = {
     back_arrow_black:"https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1750335615/back_arrow_black_gpxrtd",
     back_arrow_white:"https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1750335615/back_arrow_white_qabhqn",
     back_arrow_gray:"https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1750335615/back_arrow_gray_pm2mvr",
-    point_popo:"https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1750725203/point_popo_g0js7h"
+    point_popo:"https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1750725203/point_popo_g0js7h",
+    cry_popo:"https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1750748431/cry_popo_dlbbio",
   },
   main: {
     bg: "https://res.cloudinary.com/dgmbxvpv9/image/upload/f_auto,q_auto/v1749831440/main-background_lviawu",
