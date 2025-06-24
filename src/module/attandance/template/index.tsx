@@ -1,80 +1,35 @@
 import { BackArrow } from "@/components/button/BackArrow";
 import { IMAGE_URLS } from "@/lib/constants/constants";
-import { useEffect, useState } from "react";
-import { getKSTDateTime } from "@/lib/utils/getKSTDateTime";
-import { getAttendance, postAttendance } from "@/lib/api/attandance/attendance";
 import { PointModal } from "@/components/modal/PointModal";
-import { useAuthStore } from "@/lib/zustand/authStore";
 import { playButtonSound } from "@/lib/utils/sound";
 import { Modal } from "@/components/modal/Modal";
 import SoundButton from "@/components/button/SoundButton";
-// text F48A00
-// button_bg F48A00
-// bg FFF4BF
-const WEEK = ["월", "화", "수", "목", "금", "토", "일"];
+import { WEEK, cheeringText, rewardText, type Attendance } from "@/page/attandance";
 
-const rewardText = {
-  day: "출석체크 보상을 받았어요!",
-  week: "일주일 연속성공 보상을 받았어요!",
+interface AttandanceTemplateProps {
+  consecutive: number;
+  isPointModalOpen: boolean;
+  setIsPointModalOpen: (isOpen: boolean) => void;
+  rewardPoints: number;
+  isWeekCompleted: boolean;
+  isAlreadyAttended: boolean;
+  setIsAlreadyAttended: (isAttended: boolean) => void;
+  handleAttendance: () => void;
+  attendance: Attendance[];
 }
 
-interface Attendance {
-  dayOfWeek: string;
-  attended: boolean;
-}
-
-export function AttandanceTemplate() {
-  const [attendance, setAttendance] = useState<Attendance[]>([]);
-  const [isPointModalOpen, setIsPointModalOpen] = useState(false);
-  const [rewardPoints, setRewardPoints] = useState(0); 
-  const [isWeekCompleted, setIsWeekCompleted] = useState(false);
-  const [isAlreadyAttended, setIsAlreadyAttended] = useState(false);
-  const {setPoint, point} = useAuthStore();
-
-  useEffect(() => {
-    getAttendance().then((data) => {
-      setAttendance(data);
-    });
-  }, []);
-
-  const getToday = () => {
-    const today = getKSTDateTime();
-    const date = new Date(today);
-    return WEEK[date.getDay() - 1 < 0 ? 6 : date.getDay() - 1];
-  };
-
-  const handleAttendance = () => {
-    postAttendance(getToday()).then((data) => {
-
-      setAttendance(data.weekAttendance);
-      setRewardPoints(data.rewardPoints);
-      if(point !== null) setPoint(point + data.rewardPoints);
-      setIsWeekCompleted(data.weekCompleted);
-      setIsPointModalOpen(true);
-    }).catch((error) => {
-        setIsAlreadyAttended(true);
-    });
-  };
-
-  const getConsecutive = () => {
-    const day = getToday();
-    let consecutive = 0;
-
-    for (let i = 0; i < attendance.length; i++) {
-      if (attendance[i].attended) {
-        consecutive++;
-      } else {
-        consecutive = 0;
-      }
-
-      if (attendance[i].dayOfWeek === day) break;
-    }
-
-    return consecutive;
-  };
-
-  const consecutive = getConsecutive();
-
+export function AttandanceTemplate({
+  consecutive,
+  isPointModalOpen,
+  setIsPointModalOpen,
+  rewardPoints,
+  isWeekCompleted,
+  isAlreadyAttended,
+  setIsAlreadyAttended,
+  handleAttendance,
+  attendance,
+}: AttandanceTemplateProps) {
+ 
   return (
     <div className="w-screen h-screen bg-black font-TJ overflow-hidden flex justify-center items-center">
       <div
@@ -118,7 +73,7 @@ export function AttandanceTemplate() {
             축하해요! 연속성공 <br />
             {consecutive}일을 달성했어요.
           </h3>
-          <span className="text-lg text-center font-bold">이제부터 시작입니다!</span>
+          <span className="text-lg text-center font-bold">{cheeringText[consecutive <= 2 ? "start" : consecutive === 7 ? "end" : "middle"]}</span>
         </div>
         {/* 마법사 포포 */}
         <img

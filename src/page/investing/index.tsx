@@ -14,25 +14,25 @@ export const chaptersInfo = {
     sirenImage: IMAGE_URLS.investing_game.little_pig.little_siren_pig,
     newsImage: IMAGE_URLS.investing_game.little_pig.little_news_pig,
     name: "아기돼지 삼형제",
-    price: 700,
+    price: 1000,
   },
   "truck":{
     sirenImage: IMAGE_URLS.investing_game.base.siren_popo,
     newsImage: IMAGE_URLS.investing_game.base.news_popo,
     name: "푸드트럭 왕국",
-    price: 1000,
+    price: 2000,
   },
   "masic":{
     sirenImage: IMAGE_URLS.investing_game.base.siren_popo,
     newsImage: IMAGE_URLS.investing_game.base.news_popo,
     name: "마법 왕국",
-    price: 700,
+    price: 3000,
   },
   "ninja":{
     sirenImage: IMAGE_URLS.investing_game.base.siren_popo,
     newsImage: IMAGE_URLS.investing_game.base.news_popo,
     name: "달빛 도둑",
-    price: 2000,
+    price: 4000,
   },
 }
 

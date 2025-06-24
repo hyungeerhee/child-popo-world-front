@@ -5,6 +5,7 @@ import { BackArrow } from "@/components/button/BackArrow";
 import NameAndPoint from "@/components/user/NameAndPoint";
 import type { Quest } from "../types/quest";
 import SoundButton from "@/components/button/SoundButton";
+import { IMAGE_URLS } from "@/lib/constants/constants";
 
 interface QuestDetailTemplateProps {
   questType: string;
@@ -64,7 +65,7 @@ export const QuestDetailTemplate = ({
 }: QuestDetailTemplateProps) => {
   return (
     // 배경 이미지
-    <Background backgroundImage="https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749086237/iPad_Pro_12.9__-_63_fl49sp.webp">
+    <Background backgroundImage={IMAGE_URLS.quest_detail.quest_detail_bg}>
       {/* 뒤로가기 */}
       <BackArrow onClick={onBack} />
       {/* 사운드 */}
@@ -74,7 +75,7 @@ export const QuestDetailTemplate = ({
 
       {/* 포포 이미지 */}
       <img
-        src="https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749107825/ChatGPT_Image_May_26__2025__04_02_46_PM-removebg-preview_1_1_swqc8d.webp"
+        src={IMAGE_URLS.quest_detail.quest_detail_popo}
         alt="포포 캐릭터"
         className="absolute z-20 h-[13rem] left-[29rem] top-[15rem]"
       />
@@ -89,7 +90,7 @@ export const QuestDetailTemplate = ({
 
       {/* 퀘스트 목록 표지판 */}
       <img
-        src="https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749086355/image_437_pgtezv.webp"
+        src={IMAGE_URLS.quest_detail.quest_detail_signs}
         alt="퀘스트 목록 표지판"
         className="absolute w-[29rem] h-[20.5rem] left-[4.8rem] top-[6rem] "
       />
@@ -124,7 +125,7 @@ export const QuestDetailTemplate = ({
 
           {/* 이미지 */}
           <img
-            src="https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749524170/ChatGPT_Image_2025%E1%84%82%E1%85%A7%E1%86%AB_6%E1%84%8B%E1%85%AF%E1%86%AF_10%E1%84%8B%E1%85%B5%E1%86%AF_%E1%84%8B%E1%85%A9%E1%84%8C%E1%85%A5%E1%86%AB_11_55_17-Photoroom_er3mem.webp"
+            src={IMAGE_URLS.quest_detail.quest_detail_mini_popo}
             alt="cursor"
             className="absolute sm:top-[-0.2rem] md:top-[-0.2rem] xl:top-[-0.19rem] w-[1.5rem]  ease-in-out"
             style={{
@@ -146,7 +147,7 @@ export const QuestDetailTemplate = ({
             >
               {selectedState === label && (
                 <img
-                  src="https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749524170/ChatGPT_Image_2025%E1%84%82%E1%85%A7%E1%86%AB_6%E1%84%8B%E1%85%AF%E1%86%AF_10%E1%84%8B%E1%85%B5%E1%86%AF_%E1%84%8B%E1%85%A9%E1%84%8C%E1%85%A5%E1%86%AB_11_55_17-Photoroom_er3mem.webp"
+                  src={IMAGE_URLS.quest_detail.quest_detail_mini_popo}
                   alt="선택 표시"
                   className="absolute -top-[0.14rem] left-[0.04rem] h-[1.7rem] z-10 pointer-events-none"
                 />

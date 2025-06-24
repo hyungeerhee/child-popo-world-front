@@ -85,7 +85,7 @@ export const INITIAL_CHAPTER_DATA: Record<string, ChapterData> = {
   "little-pig": {
     id: "1111",
     name: "little-pig",
-    price: 700,
+    price: 1000,
     sound: LittlePigSound,
     sirenImage: IMAGE_URLS.investing_game.little_pig.little_siren_pig,
     closeImage: IMAGE_URLS.investing_game.little_pig.little_pig_close,
@@ -93,7 +93,7 @@ export const INITIAL_CHAPTER_DATA: Record<string, ChapterData> = {
   truck: {
     id: "2222",
     name: "truck",
-    price: 1000,
+    price: 2000,
     sound: TruckSound,
     sirenImage: IMAGE_URLS.investing_game.base.siren_popo,
     closeImage: IMAGE_URLS.investing_game.base.x_popo,
@@ -101,7 +101,7 @@ export const INITIAL_CHAPTER_DATA: Record<string, ChapterData> = {
   masic: {
     id: "3333",
     name: "masic",
-    price: 700,
+    price: 3000,
     sound: MasicSound,
     sirenImage: IMAGE_URLS.investing_game.base.siren_popo,
     closeImage: IMAGE_URLS.investing_game.base.x_popo,
@@ -109,7 +109,7 @@ export const INITIAL_CHAPTER_DATA: Record<string, ChapterData> = {
   ninja: {
     id: "4444",
     name: "ninja",
-    price: 2000,
+    price: 4000,
     sound: NinjaSound,
     sirenImage: IMAGE_URLS.investing_game.base.siren_popo,
     closeImage: IMAGE_URLS.investing_game.base.x_popo,

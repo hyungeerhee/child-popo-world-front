@@ -348,14 +348,6 @@ export const GameEnd = ({
       }
     });
 
-    // 범례 그리기
-    const legend = g
-      .append("g")
-      .attr("transform", `translate(${width - 270}, -40)`)
-      .attr("class", "legend")
-      .attr("fill", "#7b5025") // --color-main-brown-575
-      .attr("font-size", "0.6rem") // 폰트 크기
-      .attr("font-weight", "bold"); // 폰트 굵기
 
     const legendItems = [
       { color: COLORS.first, name: stockNames[0] },
@@ -363,11 +355,40 @@ export const GameEnd = ({
       { color: COLORS.third, name: stockNames[2] },
     ];
 
+    // 길이 측적용 임시 SVG 텍스트
+    const tempText = g.append("g").attr("visibility", "hidden");
+    
+    // 텍스트 길이 측정
+    const textWidths = legendItems.map(item => {
+      const temp = tempText.append("text").text(item.name)
+        .attr("font-size", `${Math.max(20, width * 0.012)}px`)
+        .attr("font-weight", "bold");
+      const textWidth = temp.node()?.getBBox().width || 0;
+      temp.remove();
+      return textWidth; // 여백 포함
+    });
+
+    // 텍스트 길이 합산
+    const totalLegendWidth = textWidths.reduce((a, b) => a + b, 0);
+    // 중앙 정렬 기준
+    const startX = width - totalLegendWidth ; // 20은 여백
+        // 범례 그리기
+        const legend = g
+        .append("g")
+        .attr("transform", `translate(${startX}, -40)`)
+        .attr("class", "legend")
+        .attr("fill", "#7b5025") // --color-main-brown-575
+        .attr("font-size", `${Math.max(20, width * 0.012)}px`) // 폰트 크기
+        .attr("font-weight", "bold"); // 폰트 굵기
+
+    // 간격을 위해서 변수 지정 2025.06.24 추가
+    let offsetX = 0;
+
     legendItems.forEach((item, i) => {
       const legendItem = legend
         .append("g")
-        .attr("transform", `translate(${i * 100}, 0)`);
-
+        .attr("transform", `translate(${offsetX}, 0)`);
+      // 원 그리기
       const circle = rc.circle(0, 0, 10, {
         roughness: 1,
         fill: item.color,
@@ -377,17 +398,24 @@ export const GameEnd = ({
       });
       legendItem.node()?.appendChild(circle);
 
-      legendItem
+      // 텍스트 그리기
+      const text = legendItem
         .append("text")
         .attr("x", 10) // x축 간격 조정
         .attr("y", 5) // y축 간격 조정
         .attr("fill", "#7b5025") // --color-main-brown-575
-        .attr("font-size", "0.6rem") // 폰트 크기
+        .attr("font-size", `${Math.max(20, width * 0.012)}px`) // 폰트 크기
         .attr("font-weight", "bold") // 폰트 굵기
         .text(item.name);
+
+        // 텍스트 너비 측정 후 다음 아이템 간격 계산 2025.06.24 추가
+        const textNode = text.node();
+        if (textNode) {
+          const textWidth = textNode.getBBox().width;
+          offsetX += Math.max(textWidth + 33, textWidth + width * 0.05); // 40은 여백 (텍스트 + 다음 원과의 거리)
+        }
     });
 
-    // 애니메이션 효과
   }, [data]);
 
   return (

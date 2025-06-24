@@ -5,6 +5,8 @@ import type { Diary } from "../types/diary";
 import { WriteLimitModal } from "../components/writeLimitModal";
 import SoundButton from "@/components/button/SoundButton";
 import NameAndPoint from "@/components/user/NameAndPoint";
+import { IMAGE_URLS } from "@/lib/constants/constants";
+
 interface EmotionDiaryTemplateProps {
   onClickWrite: () => void;
   onBack: () => void;
@@ -33,7 +35,7 @@ export const EmotionDiaryTemplate = ({
   };
 
   return (
-    <Background backgroundImage="https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749237608/ChatGPT_Image_2025%E1%84%82%E1%85%A7%E1%86%AB_6%E1%84%8B%E1%85%AF%E1%86%AF_7%E1%84%8B%E1%85%B5%E1%86%AF_%E1%84%8B%E1%85%A9%E1%84%8C%E1%85%A5%E1%86%AB_04_17_24_1_yzgzkl.webp">
+    <Background backgroundImage={IMAGE_URLS.emotionDiary.bg}>
       {/* 뒤로가기 */}
       <BackArrow onClick={onBack} />
       {/* 음소거 버튼 */}
@@ -52,7 +54,7 @@ export const EmotionDiaryTemplate = ({
       <div className="flex justify-center items-center gap-[0.25rem] mt-[0.5rem]">
         {/* 왼쪽 화살표 버튼 */}
         <img
-          src="https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749614463/Polygon_4_bejfpz.webp"
+          src={IMAGE_URLS.emotionDiary.left_arrow}
           alt="왼쪽 화살표"
           className="h-[0.8rem] scale-x-[-1] cursor-pointer "
           onClick={onPrevMonth}
@@ -68,7 +70,7 @@ export const EmotionDiaryTemplate = ({
         </div>
         {/* 오른쪽 화살표 버튼 */}
         <img
-          src="https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749614463/Polygon_4_bejfpz.webp"
+          src={IMAGE_URLS.emotionDiary.right_arrow}
           alt="오른쪽 화살표"
           className="h-[0.8rem] cursor-pointer "
           onClick={onNextMonth}

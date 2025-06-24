@@ -31,9 +31,9 @@ export const PointModal = ({ title, text, price, isOpen, onConfirm, onClose }: P
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.6 }}
           onAnimationComplete={() => setShouldPlayAnimation(true)}
-          src={IMAGE_URLS.market.modal_popo}
+          src={IMAGE_URLS.common.point_popo}
           alt="modal_popo"
-          className="w-24 h-24 object-contain absolute -bottom-3 -left-6 drop-shadow-md z-20"
+          className="w-24 h-24 object-contain absolute -bottom-3 -left-8.5 drop-shadow-md z-20"
         />
 
         <motion.div

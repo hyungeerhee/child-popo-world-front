@@ -6,9 +6,6 @@ import type { Diary } from "@/module/emotionDiary/types/diary";
 import { setNewAudio, stopBackgroundMusic, playButtonSound } from "@/lib/utils/sound";
 import { useSoundStore } from "@/lib/zustand/soundStore";
 import EmotionDiaryBackgroundMusic from "@/assets/sound/diary.mp3";
-import backClickSound from "@/assets/sound/back_click.mp3";
-
-const API_URL = "/api/diary";
 
 export default function EmotionDiaryPage() {
   const navigate = useNavigate();
@@ -41,7 +38,7 @@ export default function EmotionDiaryPage() {
       setLoading(true);
       setError(null);
       try {
-        const response = await apiClient.get(API_URL);
+        const response = await apiClient.get("/api/diary");
         const data = response.data;
 
         setDiaryData(data);

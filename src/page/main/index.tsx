@@ -101,7 +101,7 @@ export default function Main() {
     }
 
     if (island == "emotionDiary") {
-      const emotionDiaryImages = [...Object.values(IMAGE_URLS.emotionList)];
+      const emotionDiaryImages = [...Object.values(IMAGE_URLS.emotionList), ...Object.values(IMAGE_URLS.emotionDiary)];
       emotionDiaryImages.forEach((image) => {
         preload(image, { as: "image" });
       });
@@ -110,13 +110,6 @@ export default function Main() {
     if (island === "quest") {
       const questPageImages = [...Object.values(IMAGE_URLS.quest)];
       questPageImages.forEach((image) => {
-        preload(image, { as: "image" });
-      });
-    }
-
-    if(island === "emotionDiary") {
-      const emotionDiaryImages = [...Object.values(IMAGE_URLS.emotionList)];
-      emotionDiaryImages.forEach((image) => {
         preload(image, { as: "image" });
       });
     }
