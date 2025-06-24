@@ -77,6 +77,7 @@ export default function Main() {
       investingPageImages.forEach((image) => {
         preload(image, { as: "image" });
       });
+      
     }
 
     if (island === "market") {

@@ -4,10 +4,10 @@ import { GamePlayTemplate } from "@/module/investing-game/template/game-play-tem
 import { GameEndTemplate } from "@/module/investing-game/template/game-end-template";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { endGame } from "@/lib/api/invest-game/investClearAPi";
+import { postEndGame } from "@/lib/api/invest-game/postEndGame";
 import { getKSTDateTime } from "@/lib/utils/getKSTDateTime";
-import { sendTurnData } from "@/lib/api/invest-game/investTurnUpdate";
-import { getChapterData } from "@/lib/api/invest-game/investChapterApi";
+import { postSendTurnData } from "@/lib/api/invest-game/postSendTurnData";
+import { getChapterData } from "@/lib/api/invest-game/getChapterData";
 import { setNewAudio, stopBackgroundMusic } from "@/lib/utils/sound";
 import { useSoundStore } from "@/lib/zustand/soundStore";
 import { useAuthStore } from "@/lib/zustand/authStore";
@@ -16,6 +16,7 @@ import TruckSound from "@/assets/sound/chapter2.mp3";
 import MasicSound from "@/assets/sound/chapter3.mp3";
 import NinjaSound from "@/assets/sound/chapter4.mp3";
 import { IMAGE_URLS } from "@/lib/constants/constants";
+import { useQuery } from '@tanstack/react-query';
 
 // 게임 관련 타입 정의
 export interface Stock {
@@ -155,6 +156,12 @@ export default function InvestingGame() {
   const { isMuted, audio } = useSoundStore();
   const { point, setPoint } = useAuthStore();
   
+  const { data, isSuccess } = useQuery({
+    queryKey: ['invest-game', INITIAL_CHAPTER_DATA[gametype].id],
+    queryFn: () => getChapterData(INITIAL_CHAPTER_DATA[gametype].id),
+    enabled: gameStage === "game-start",
+  });
+
   // 첫페이지 로드시 배경음악 설정
   useEffect(() => {
     setNewAudio(INITIAL_CHAPTER_DATA[gametype].sound, 1);
@@ -170,44 +177,38 @@ export default function InvestingGame() {
     }
   }, [isMuted, audio]);
 
-  // 게임 상태 업데이트 헬퍼 함수
-  const updateGameState = (updates: Partial<GameState>) => {
-    setGameState((prev) => ({ ...prev, ...updates }));
-  };
-
   // 시나리오 데이터 로드
   useEffect(() => {
-    if (gameStage === "game-start") {
-      const fetchChapterData = async () => {
-        const result = await getChapterData(INITIAL_CHAPTER_DATA[gametype].id);
-        if (result.success && result.data) {
-          if (point !== null) setPoint(point - INITIAL_CHAPTER_DATA[gametype].price);
-          const data = result.data;
-          const sessionId = data.sessionId; // 게임 세션 id 추출
-          setSessionId(sessionId); // 게임 세션 id 저장
-          const story = JSON.parse(data.story); // 게임 시나리오 추출
-          console.log(data.story);
-          setGameState((prev) => ({
-            ...prev,
-            point: INITIAL_CHAPTER_DATA[gametype].price || 0,
-            scenario: story, // 게임 시나리오 저장
-            currentScenario: story[0], // 첫번째 시나리오 저장
-            result: story[1].result, // 뉴스에 대한 결과 초기화 (이번턴 뉴스에 대한 결과는 다음턴 시나리오에 있음)
-            price: story[0].stocks.map((stock: Stock) => stock.current_value), // 첫번째 시나리오의 주식 가격 저장
-            nextPrice: story[1].stocks.map((stock: Stock) => stock.current_value), // 다음 턴 주식 가격 저장
-            turnMax: story.length - 1, // 게임 시나리오 길이 저장
-            news_tag: story[0].news_tag, // 뉴스 태그
-          }));
+    if (!isSuccess || gameStage !== "game-start") return;
+    
+    const chapterData = data; 
+    if(!chapterData) return;
 
-          const nowKST = getKSTDateTime();
-          setStartAt(nowKST);
-        } else {
-          console.error("챕터 데이터 조회 실패:", result.message);
-        }
-      };
+    // 포인트 차감
+    if(point !== null) setPoint(point - INITIAL_CHAPTER_DATA[gametype].price);
 
-      fetchChapterData();
-    }
+    // 게임 세션 id 저장
+    const sessionId = chapterData.sessionId;
+    setSessionId(sessionId);
+
+    // 현재 시간 업데이트
+    const nowKST = getKSTDateTime();
+    setStartAt(nowKST);
+
+    // 게임 시나리오 추출
+    const story = JSON.parse(chapterData.story);
+    setGameState((prev) => ({
+      ...prev,
+      point: INITIAL_CHAPTER_DATA[gametype].price || 0,
+      scenario: story, // 게임 시나리오 저장
+      currentScenario: story[0], // 첫번째 시나리오 저장
+      result: story[1].result, // 뉴스에 대한 결과 초기화 (이번턴 뉴스에 대한 결과는 다음턴 시나리오에 있음)
+      price: story[0].stocks.map((stock: Stock) => stock.current_value), // 첫번째 시나리오의 주식 가격 저장
+      nextPrice: story[1].stocks.map((stock: Stock) => stock.current_value), // 다음 턴 주식 가격 저장
+      turnMax: story.length - 1, // 게임 시나리오 길이 저장
+      news_tag: story[0].news_tag, // 뉴스 태그
+    }))
+
   }, [gameStage]);
 
   // 거래 타입 결정 헬퍼 함수
@@ -220,7 +221,13 @@ export default function InvestingGame() {
       return "KEEP";
     }
   };
+  
+  // 게임 상태 업데이트 헬퍼 함수
+  const updateGameState = (updates: Partial<GameState>) => {
+    setGameState((prev) => ({ ...prev, ...updates }));
+  };
 
+  // 턴 종료 핸들러
   const handleTurnFinish = () => {
     // TurnData 생성
     const nowKST = getKSTDateTime();
@@ -252,7 +259,7 @@ export default function InvestingGame() {
       };
 
       // 각 주식별로 턴 데이터 전송
-      sendTurnData(sessionId, INITIAL_CHAPTER_DATA[gametype].id, gameState.turn, turnData);
+      postSendTurnData(sessionId, INITIAL_CHAPTER_DATA[gametype].id, gameState.turn, turnData);
     });
 
     // 턴 끝남
@@ -263,7 +270,7 @@ export default function InvestingGame() {
       updateGameState({ isGameOver: true });
       // 게임 결과 페이지로 이동
       navigate(`/investing/game/${gametype}?stage=game-end`);
-      endGame(sessionId, INITIAL_CHAPTER_DATA[gametype].id, true, lastPoint - INITIAL_CHAPTER_DATA[gametype].price);
+      postEndGame(sessionId, INITIAL_CHAPTER_DATA[gametype].id, true, lastPoint - INITIAL_CHAPTER_DATA[gametype].price);
       return;
     }
 
@@ -317,7 +324,7 @@ export default function InvestingGame() {
 
   const handleGameOut = () => {
     navigate("/investing");
-    endGame(sessionId, INITIAL_CHAPTER_DATA[gametype].id, false, 0);
+    postEndGame(sessionId, INITIAL_CHAPTER_DATA[gametype].id, false, 0);
   };
 
   // 예시

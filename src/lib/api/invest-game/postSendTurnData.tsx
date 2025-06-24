@@ -21,7 +21,7 @@ interface SendTurnResult {
   message: string;
 }
 
-export async function sendTurnData(
+export async function postSendTurnData(
   sessionId: string,
   chapterId: string,
   turnNumber: number,

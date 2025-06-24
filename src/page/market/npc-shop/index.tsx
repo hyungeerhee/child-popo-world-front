@@ -1,10 +1,11 @@
 import { NpcShopTemplate } from "@/module/market/template/npc-shop";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getStoreItems, type StoreItem } from "@/lib/api/market/getStore";
-import { buyProduct } from "@/lib/api/market/buyProduct";
 import { useAuthStore } from "../../../lib/zustand/authStore";
 import { playButtonSound } from "@/lib/utils/sound";
+import { getStoreItems, type StoreItem } from "@/lib/api/market/getStore";
+import { buyProduct } from "@/lib/api/market/buyProduct";
+import {useQuery} from "@tanstack/react-query";
 
 export const TEXT_MESSAGE = {
   not_product: {
@@ -31,18 +32,20 @@ export default function NpcShop() {
   const [isCompleteOpen, setIsCompleteOpen] = useState(false);
   const [isNoPointModalOpen, setIsNoPointModalOpen] = useState(false);
   const [productIndex, setProductIndex] = useState(0);
-  const [storeItems, setStoreItems] = useState<StoreItem[]>([]);
-  const lastIndex = Math.ceil(storeItems.length / 3) - 1;
   const [selectedProduct, setSelectedProduct] = useState<StoreItem | null>(null);
   const { setPoint, point } = useAuthStore();
-  useEffect(() => {
-    getStoreItems("npc").then((items) => {
-      setStoreItems(items);
-    });
-  }, []);
+  
+  // 상점 아이템 조회
+  const { data: storeItems } = useQuery({
+    queryKey: ["store-items", "npc"],
+    queryFn: () => getStoreItems("npc"),
+  });
 
+  // 마지막 페이지 인덱스
+  const lastIndex = Math.ceil((storeItems?.length || 0) / 3) - 1;
+  
   const getMessage = () => {
-    if (storeItems.length === 0) {
+    if (storeItems?.length === 0) {
       return TEXT_MESSAGE.not_product;
     }
     if (productIndex === 0) {
@@ -107,7 +110,7 @@ export default function NpcShop() {
       currentMessage={currentMessage}
       handleSpeechBubbleClick={handleSpeechBubbleClick}
       handleProductClick={handleProductClick}
-      product_list={storeItems}
+      product_list={storeItems || []}
       handleBack={handleBack}
       handlePurchase={handlePurchase}
       isCompleteOpen={isCompleteOpen}

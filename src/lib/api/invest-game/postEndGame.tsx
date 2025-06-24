@@ -8,7 +8,7 @@ type EndGameResult = {
   message: string;
 };
 
-export async function endGame(
+export async function postEndGame(
   sessionId: string,
   chapterId: string,
   isSuccess: boolean,

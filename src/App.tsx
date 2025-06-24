@@ -21,12 +21,12 @@ import ProtectedRouter from "@/components/auth/ProtectedRouter";
 import LoginPage from "./page/auth/login";
 import RegisterPage from "./page/auth/register";
 import { BrowserRouter } from "react-router-dom";
+
 // QueryClient 인스턴스 생성
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 1, // 실패시 1번만 재시도
-      refetchOnWindowFocus: false, // 윈도우 포커스시 자동 리페치 비활성화
       staleTime: 5 * 60 * 1000, // 5분 동안 데이터를 신선한 상태로 유지
     },
   },
@@ -51,6 +51,7 @@ function App() {
               <Route path="npc" element={<NpcShop />} />
               <Route path="inventory" element={<Inventory />} />
             </Route>
+            {/* 저축통장 */}
             <Route path="/savings" element={<Savings />} />
             {/* 퀘스트 */}
             <Route path="/quest">
@@ -65,7 +66,9 @@ function App() {
               <Route index element={<EmotionDiary />} />
               <Route path="write" element={<DiaryWrite />}></Route>
             </Route>
+            {/* 출석 */}
             <Route path="/attandance" element={<Attandance />} />
+            {/* 퀴즈 */}
             <Route path="/quiz" element={<Quiz />} />
           </Route>
           {/* 로그인 */}
