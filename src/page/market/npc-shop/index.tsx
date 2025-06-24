@@ -5,11 +5,16 @@ import { useAuthStore } from "../../../lib/zustand/authStore";
 import { playButtonSound } from "@/lib/utils/sound";
 import { getStoreItems, type StoreItem } from "@/lib/api/market/getStore";
 import { buyProduct } from "@/lib/api/market/buyProduct";
-import {useQuery} from "@tanstack/react-query";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+
 
 export const TEXT_MESSAGE = {
   not_product: {
     text: "아직 상품이 없어요. \n 다음에 찾아주세요!",
+    buttonText: "",
+  },
+  first_and_last: {
+    text: "상점을 구경해봐요!",
     buttonText: "",
   },
   first: {
@@ -28,17 +33,32 @@ export const TEXT_MESSAGE = {
 
 export default function NpcShop() {
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
   const [isCompleteOpen, setIsCompleteOpen] = useState(false);
   const [isNoPointModalOpen, setIsNoPointModalOpen] = useState(false);
   const [productIndex, setProductIndex] = useState(0);
   const [selectedProduct, setSelectedProduct] = useState<StoreItem | null>(null);
   const { setPoint, point } = useAuthStore();
-  
+  const queryClient = useQueryClient();
+
   // 상점 아이템 조회
   const { data: storeItems } = useQuery({
     queryKey: ["store-items", "npc"],
     queryFn: () => getStoreItems("npc"),
+  });
+
+  const purchaseMutation = useMutation({
+    mutationFn: (productId: string) => buyProduct({ productId, amount: 1 }),
+    onSuccess: (response) => {
+      setPoint(response.currentPoint);
+      setIsCompleteOpen(true);
+
+      // 상점 아이템 캐시 무효화, 모든 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ["store-items", "npc"], refetchType: "all" });
+    },
+    onError: (error) => {
+      console.error("Failed to buy product", error);
+    }
   });
 
   // 마지막 페이지 인덱스
@@ -48,12 +68,15 @@ export default function NpcShop() {
     if (storeItems?.length === 0) {
       return TEXT_MESSAGE.not_product;
     }
+    if (productIndex === 0 || productIndex === lastIndex) {
+      return TEXT_MESSAGE.first_and_last;
+    }
     if (productIndex === 0) {
       return TEXT_MESSAGE.first;
     }
     if (productIndex === lastIndex) {
       return TEXT_MESSAGE.last;
-    }
+    } 
     return TEXT_MESSAGE.middle;
   };
 
@@ -61,6 +84,7 @@ export default function NpcShop() {
 
   const handleSpeechBubbleClick = () => {
     playButtonSound();
+
     if (currentMessage.buttonText === "더보기") {
       setProductIndex((prev) => prev + 1);
     } else if (currentMessage.buttonText === "처음으로") {
@@ -71,7 +95,7 @@ export default function NpcShop() {
   const handleProductClick = (product: StoreItem) => {
     playButtonSound();
     setSelectedProduct(product);
-    setIsOpen(true);
+    setIsPurchaseModalOpen(true);
   };
 
   const handleBack = () => {
@@ -81,36 +105,30 @@ export default function NpcShop() {
   const handlePurchase = async () => {
     playButtonSound();
 
-    // 포인트가 부족하면 모달 띄우기
     if (selectedProduct?.price && point !== null && point >= 0 && selectedProduct.price > point) {
       setIsNoPointModalOpen(true);
       return;
     } 
-    try {
-      const response = await buyProduct({ productId: selectedProduct?.id || "", amount: 1 });
-      setPoint(response.currentPoint);
-      setIsCompleteOpen(true);
-    } catch (error) {
-      console.error("Failed to buy product", error);
-    }
+    
+    purchaseMutation.mutate(selectedProduct?.id || "");
   };
 
   const handleComplete = () => {
     playButtonSound();
     setIsCompleteOpen(false);
-    setIsOpen(false);
+    setIsPurchaseModalOpen(false);
   };
 
   return (
     <NpcShopTemplate
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
+      isPurchaseModalOpen={isPurchaseModalOpen}
+      setIsPurchaseModalOpen={setIsPurchaseModalOpen}
       productIndex={productIndex}
       selectedProduct={selectedProduct}
       currentMessage={currentMessage}
       handleSpeechBubbleClick={handleSpeechBubbleClick}
       handleProductClick={handleProductClick}
-      product_list={storeItems || []}
+      storeItems={storeItems || []}
       handleBack={handleBack}
       handlePurchase={handlePurchase}
       isCompleteOpen={isCompleteOpen}

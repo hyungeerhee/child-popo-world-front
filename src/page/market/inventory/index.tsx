@@ -1,9 +1,10 @@
 import { InventoryTemplate } from "@/module/market/template/inventory";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { playButtonSound } from "@/lib/utils/sound";
 import { getInventory, type InventoryItem } from "@/lib/api/market/getInventory";
 import { useProduct } from "@/lib/api/market/useProduct";
-import { playButtonSound } from "@/lib/utils/sound";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const TEXT_MESSAGE = {
   not_product: {
@@ -30,20 +31,35 @@ export const TEXT_MESSAGE = {
 
 export default function Inventory() {
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isUseModalOpen, setIsUseModalOpen] = useState(false);
   const [productIndex, setProductIndex] = useState(0);
   const [selectedProduct, setSelectedProduct] = useState<InventoryItem | null>(null);
-  const [productList, setProductList] = useState<InventoryItem[]>([]);
-  const lastIndex = Math.ceil(productList.length / 3) - 1;
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    getInventory().then((items) => {
-      setProductList(items);
-    });
-  }, []);
+  // 인벤토리 아이템 조회
+  const { data: storeItems } = useQuery({
+    queryKey: ["inventory-items"], 
+    queryFn: () => getInventory(),
+  })
+
+  const useProductMutation = useMutation({
+    mutationFn: (productId: string) => useProduct({ productId }), 
+    onSuccess: () => {
+      setIsUseModalOpen(false);
+
+      // 인벤토리 아이템 캐시 무효화, 리패치
+      queryClient.invalidateQueries({ queryKey: ["inventory-items"], refetchType: "all" });
+    },
+    onError: (error) => {
+      console.error("Failed to use product", error);
+    }
+  })
+
+  // 마지막 페이지 인덱스 
+  const lastIndex = Math.ceil(storeItems?.length || 0 / 3) - 1;
 
   const getMessage = () => {
-    if (productList.length === 0) {
+    if (storeItems?.length === 0) {
       return TEXT_MESSAGE.not_product;
     }
     if (productIndex === 0 && lastIndex === 0) {
@@ -59,11 +75,10 @@ export default function Inventory() {
   };
 
   const currentMessage = getMessage();
+
   const handleSpeechBubbleClick = () => {
     playButtonSound();
-    if (productIndex === lastIndex) {
-      return setProductIndex(0);
-    }
+    
     if (currentMessage.buttonText === "더보기") {
       setProductIndex((prev) => prev + 1);
     } else if (currentMessage.buttonText === "처음으로") {
@@ -74,7 +89,7 @@ export default function Inventory() {
   const handleProductClick = (product: InventoryItem) => {
     playButtonSound();
     setSelectedProduct(product);
-    setIsOpen(true);
+    setIsUseModalOpen(true);
   };
 
   const handleBack = () => {
@@ -83,22 +98,22 @@ export default function Inventory() {
 
   const handleUseProduct = (exp?: number) => {
     playButtonSound();
+    
     if (exp && exp > 0) {
-      setIsOpen(false);
+      setIsUseModalOpen(false);
       navigate("/raising", { state: { from: "inventory" } });
-
       return; 
     }
-    console.log("selectedProduct", selectedProduct);
-    useProduct({ productId: selectedProduct?.productId || "" });
-    setIsOpen(false);
+
+    useProductMutation.mutate(selectedProduct?.productId || "" )
+    setIsUseModalOpen(false);
   };
 
   return (
     <InventoryTemplate
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      productList={productList}
+      isUseModalOpen={isUseModalOpen}
+      setIsUseModalOpen={setIsUseModalOpen}
+      storeItems={storeItems || []}
       productIndex={productIndex}
       selectedProduct={selectedProduct}
       currentMessage={currentMessage}

@@ -14,14 +14,14 @@ import SoundButton from "@/components/button/SoundButton";
 import { playButtonSound } from "@/lib/utils/sound";  
 import { NoPointModal } from "@/components/modal/NoPointModal";
 interface ParentShopTemplateProps {
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
+  isPurchaseModalOpen: boolean;
+  setIsPurchaseModalOpen: (isOpen: boolean) => void;
   productIndex: number;
   selectedProduct: StoreItem | null;
   currentMessage: { text: string; buttonText: string };
   handleSpeechBubbleClick: () => void;
   handleProductClick: (product: StoreItem) => void;
-  productList: StoreItem[];
+  storeItems: StoreItem[];
   handleBack: () => void;
   handlePurchase: () => void;
   isCompleteOpen: boolean;
@@ -32,14 +32,14 @@ interface ParentShopTemplateProps {
 }
 
 export const ParentShopTemplate = ({
-  isOpen,
-  setIsOpen,
+  isPurchaseModalOpen,
+  setIsPurchaseModalOpen,
   productIndex,
   selectedProduct,
   currentMessage,
   handleSpeechBubbleClick,
   handleProductClick,
-  productList,
+  storeItems,
   handleBack,
   handlePurchase,
   isCompleteOpen,
@@ -80,13 +80,13 @@ export const ParentShopTemplate = ({
       )}
       <Background backgroundImage={IMAGE_URLS.market.parent_shop_bg}>
         {/* 구매 모달 */}
-        <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
+        <Modal isOpen={isPurchaseModalOpen} onClose={() => setIsPurchaseModalOpen(false)}>
           <PurchaseModal
             image={selectedProduct?.imageUrl || ""}
             text={selectedProduct?.name || ""}
             price={selectedProduct?.price || 0}
             onConfirm={handlePurchase}
-            onClose={() => setIsOpen(false)}
+            onClose={() => setIsPurchaseModalOpen(false)}
           />
         </Modal>
         {/* 구매 완료 모달 */}
@@ -127,7 +127,7 @@ export const ParentShopTemplate = ({
         />
         {/* 상품들 */}
         <div className="absolute bottom-29 left-1/2 -translate-x-1/2 w-75 flex items-center gap-x-14">
-          {productList.slice(productIndex * 3, (productIndex + 1) * 3).map((product) => (
+          {storeItems.slice(productIndex * 3, (productIndex + 1) * 3).map((product) => (
             <div
               className="relative active:scale-95 transition-all duration-100"
               key={product.id}
@@ -146,7 +146,7 @@ export const ParentShopTemplate = ({
         </div>
         {/* 가격표 */}
         <div className="absolute bottom-12 left-1/2 -translate-x-1/2 w-86 flex items-stretch gap-x-2">
-          {productList.slice(productIndex * 3, (productIndex + 1) * 3).map((product) => (
+          {storeItems.slice(productIndex * 3, (productIndex + 1) * 3).map((product) => (
             <div
               className="flex flex-col justify-center items-center gap-y-0.5 w-26 px-4 py-1.5 bg-[#F6D8B8] border-2 border-[#97784A] rounded-md min-h-[3.5rem] active:scale-95 transition-all duration-100"
               key={product.name}
