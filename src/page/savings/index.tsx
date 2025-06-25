@@ -1,6 +1,7 @@
 import { Background } from "../../components/layout/Background";
 
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { BackArrow } from "../../components/button/BackArrow";
@@ -17,7 +18,7 @@ import SoundButton from "@/components/button/SoundButton";
 import backClickSound from "@/assets/sound/back_click.mp3";
 import NameAndPoint from "@/components/user/NameAndPoint";
 
-const IS_TEST_MODE = false;
+const IS_TEST_MODE = true;
 
 // 상수 선언
 const MAX_DEPOSIT_RATE = 0.2; // 20%
@@ -42,7 +43,7 @@ async function createSavingsAccount(goalAmount: number, createdAt: string, endDa
 }
 
 export default function SavingsPage() {
-
+  const navigate = useNavigate();
   const { isMuted, audio } = useSoundStore();
 
   // 첫페이지 로드시 배경음악 설정
@@ -114,6 +115,10 @@ export default function SavingsPage() {
     setDepositError("");
     setOpenInput(null);
     setInputValue("");
+    // 오늘 날짜의 입금 기록 삭제
+    const todayKey = `savings_deposit_${new Date().toISOString().slice(0, 10)}`;
+    localStorage.removeItem(todayKey);
+    setHasDepositedToday(false);
   };
 
   // ========== 이벤트 핸들러 함수들 ==========
@@ -443,8 +448,11 @@ export default function SavingsPage() {
 
       {/* 메인 컨테이너 */}
       <Background backgroundImage={IMAGE_URLS.savings.bg}>
-        {/* 뒤로가기 */}
-        <BackArrow />
+        {/* 뒤로가기 - 무조건 홈으로 이동 */}
+        <BackArrow onClick={() => {
+          playButtonSound(backClickSound, 0.3);
+          navigate("/");
+        }} />
         {/* 음소거 버튼 */}
         <SoundButton /> 
         {/* 오른쪽 상단 총 금액 표시 (실제 포인트) */}
@@ -835,7 +843,7 @@ export default function SavingsPage() {
               <div className="text-lg text-[#573924] mb-4">
                 목표를 달성해서
                 <br />
-                <span className="font-extrabold text-[#BBA14F]">보너스 {bonusAmount}냥</span>을 받았습니다!
+                <span className="font-extrabold text-[#BBA14F]">+{bonusAmount}냥</span>을 받았습니다!
               </div>
 
               {/* 확인 버튼 */}
