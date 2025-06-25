@@ -16,7 +16,7 @@ import TruckSound from "@/assets/sound/chapter2.mp3";
 import MasicSound from "@/assets/sound/chapter3.mp3";
 import NinjaSound from "@/assets/sound/chapter4.mp3";
 import { IMAGE_URLS } from "@/lib/constants/constants";
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 // 게임 관련 타입 정의
 export interface Stock {
@@ -153,13 +153,22 @@ export default function InvestingGame() {
   const [sessionId, setSessionId] = useState("");
   const [startedAt, setStartAt] = useState("");
   const navigate = useNavigate();
+  // 소리 
   const { isMuted, audio } = useSoundStore();
+  // 포인트
   const { point, setPoint } = useAuthStore();
-  
+  const queryClient = useQueryClient();
   const { data, isSuccess } = useQuery({
     queryKey: ['invest-game', INITIAL_CHAPTER_DATA[gametype].id],
     queryFn: () => getChapterData(INITIAL_CHAPTER_DATA[gametype].id),
     enabled: gameStage === "game-start",
+  });
+
+  const useEndGameMutation = useMutation({
+    mutationFn: ({ sessionId, chapterId, isSuccess, profitValue }: { sessionId: string, chapterId: string, isSuccess: boolean, profitValue: number }) => postEndGame(sessionId, chapterId, isSuccess, profitValue),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["invest-game"], refetchType: "all" });
+    },
   });
 
   // 첫페이지 로드시 배경음악 설정
@@ -271,7 +280,7 @@ export default function InvestingGame() {
       // 게임 결과 페이지로 이동
       navigate(`/investing/game/${gametype}?stage=game-end`); 
       // 단순 요청이므로 탄스택 쿼리 일단 안씀 
-      postEndGame(sessionId, INITIAL_CHAPTER_DATA[gametype].id, true, lastPoint - INITIAL_CHAPTER_DATA[gametype].price);
+      useEndGameMutation.mutate({ sessionId, chapterId: INITIAL_CHAPTER_DATA[gametype].id, isSuccess: true, profitValue: lastPoint - INITIAL_CHAPTER_DATA[gametype].price });
       return;
     }
 
@@ -325,7 +334,7 @@ export default function InvestingGame() {
 
   const handleGameOut = () => {
     navigate("/investing");
-    postEndGame(sessionId, INITIAL_CHAPTER_DATA[gametype].id, false, 0);
+    useEndGameMutation.mutate({ sessionId, chapterId: INITIAL_CHAPTER_DATA[gametype].id, isSuccess: false, profitValue: 0 });
   };
 
   // 예시
