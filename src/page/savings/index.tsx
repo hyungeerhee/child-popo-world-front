@@ -7,7 +7,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import { BackArrow } from "../../components/button/BackArrow";
 import { ko, pl } from "date-fns/locale";
 import { addDays, isAfter as _isAfter, isSameDay as _isSameDay } from "date-fns";
-import { TextWithStroke } from "../../components/text/TextWithStroke";
 import apiClient from "../../lib/api/axios";
 import { useAuthStore } from "@/lib/zustand/authStore";
 import { IMAGE_URLS } from "@/lib/constants/constants";
@@ -18,7 +17,7 @@ import SoundButton from "@/components/button/SoundButton";
 import backClickSound from "@/assets/sound/back_click.mp3";
 import NameAndPoint from "@/components/user/NameAndPoint";
 
-const IS_TEST_MODE = true;
+const IS_TEST_MODE = false;
 
 // 상수 선언
 const MAX_DEPOSIT_RATE = 0.2; // 20%
@@ -101,7 +100,7 @@ export default function SavingsPage() {
   const today = new Date();
 
   // 보유포인트 상태 추가
-  const { point } = useAuthStore();
+  const { point, setPoint } = useAuthStore();
 
   // ===== 유틸 함수 =====
   const resetSavingsAccount = () => {
@@ -171,11 +170,24 @@ export default function SavingsPage() {
     setIsDepositModalOpen(true);
   };
 
-  // 입금 금액 입력 시 20% 초과 및 목표금액 초과, 보유포인트 초과 체크
+    // 입금 금액 입력 시 20% 초과 및 목표금액 초과, 보유포인트 초과 체크
   const handleDepositInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setDepositInput(value);
     setDepositError("");
+
+    // 음수나 0 체크
+    if (Number(value) <= 0) {
+      setDepositError("0보다 큰 금액을 입력해주세요.");
+      return;
+    }
+
+    // 보유 포인트 체크
+    if (point !== null && Number(value) > point) {
+      setDepositError("보유 포인트가 부족합니다.");
+      return;
+    }
+
     if (goalAmount) {
       const maxDeposit = Math.floor(Number(goalAmount) * MAX_DEPOSIT_RATE);
       const remainToGoal = Number(goalAmount) - Number(currentAmount);
@@ -199,6 +211,13 @@ export default function SavingsPage() {
       setDepositError("오늘은 이미 입금하셨습니다.");
       return;
     }
+
+    // 보유 포인트 체크
+    if (point !== null && Number(depositInput) > point) {
+      setDepositError("보유 포인트가 부족합니다.");
+      return;
+    }
+
     if (goalAmount) {
       const maxDeposit = Math.floor(Number(goalAmount) * MAX_DEPOSIT_RATE);
       const remainToGoal = Number(goalAmount) - Number(currentAmount);
@@ -223,15 +242,25 @@ export default function SavingsPage() {
       const data = response.data;
       // 서버 응답값으로 상태 갱신
       setCurrentAmount(String(data.accountPoint)); // accountPoint가 현재 저축통장 금액
+      // 총 포인트에서 입금액 차감
+      if (point !== null) {
+        setPoint(point - Number(depositInput));
+      }
       setIsDepositModalOpen(false);
       setLastDepositAmount(depositInput);
       setIsDepositResultModalOpen(true);
       const todayKey = `savings_deposit_${new Date().toISOString().slice(0, 10)}`;
       localStorage.setItem(todayKey, "1");
       setHasDepositedToday(true);
-      // 목표 달성 시 보너스 모달
+      // 목표 달성 시 보너스 모달 및 포인트 추가
       if (Number(currentAmount) + Number(depositInput) >= Number(goalAmount)) {
         setIsBonusModalOpen(true);
+        // 저축 금액과 보너스를 총 포인트에 추가
+        if (point !== null) {
+          const totalSavings = Number(goalAmount); // 저축한 총 금액
+          const bonusPoints = Number(bonusAmount); // 보너스 금액
+          setPoint(point + totalSavings + bonusPoints);
+        }
       }
     } catch (error: any) {
       // 서버에서 에러 메시지 반환 시 처리
@@ -647,13 +676,20 @@ export default function SavingsPage() {
             {/* 메인 액션 버튼 (통장 개설 또는 입금하기) */}
             {isCreated ? (
               <button
-                className="bg-[#FDF0B7] text-[#573924] font-bold text-[1.2rem] rounded-4xl py-3 w-45 cursor-pointer disabled:opacity-60"
+                className={`font-bold text-[1.2rem] rounded-4xl py-3 w-45 ${
+                  hasDepositedToday
+                    ? "bg-[#E6E6E6] text-[#999999] cursor-not-allowed"
+                    : "bg-[#FDF0B7] text-[#573924] cursor-pointer hover:bg-[#F8E599]"
+                }`}
                 onClick={() => {
-                  playButtonSound();
-                  handleDepositClick();
+                  if (!hasDepositedToday) {
+                    playButtonSound();
+                    handleDepositClick();
+                  }
                 }}
+                disabled={hasDepositedToday}
               >
-                입금하기
+                {hasDepositedToday ? "오늘은 입금 완료" : "입금하기"}
               </button>
             ) : (
               <button
@@ -843,7 +879,7 @@ export default function SavingsPage() {
               <div className="text-lg text-[#573924] mb-4">
                 목표를 달성해서
                 <br />
-                <span className="font-extrabold text-[#BBA14F]">+{bonusAmount}냥</span>을 받았습니다!
+                <span className="font-extrabold text-[#BBA14F]">+{goalAmount ? Math.floor(Number(goalAmount) * BONUS_RATE) : 0}냥</span>을 받았습니다!
               </div>
 
               {/* 확인 버튼 */}

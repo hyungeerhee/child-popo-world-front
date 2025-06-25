@@ -235,7 +235,7 @@ export default function RaisingPage() {
           </div>
           <div className="flex justify-center gap-4 mt-2">
           <button
-              className="bg-[#EBD057] text-[#834400] font-bold px-6 py-1 rounded-xl text-xl shadow cursor-pointer"
+              className="bg-[#EBD057] text-[#834400] font-bold px-6 py-1 rounded-xl text-xl q cursor-pointer"
               onClick={() => {
                 playButtonSound();
                 onConfirm(selected);
