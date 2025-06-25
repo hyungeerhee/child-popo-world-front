@@ -94,7 +94,6 @@ export default function InvestingPage() {
     queryClient.prefetchQuery({
       queryKey: ['invest-game', chaptersInfo[chapter as keyof typeof chaptersInfo].id],
       queryFn: () => getChapterData(chaptersInfo[chapter as keyof typeof chaptersInfo].id),
-      staleTime: 1000 * 6, // 6초 
     }); 
     
     await animation.start({

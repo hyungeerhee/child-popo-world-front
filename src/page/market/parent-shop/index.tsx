@@ -1,5 +1,5 @@
 import { ParentShopTemplate } from "@/module/market/template/parent-shop";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../../lib/zustand/authStore";
 import { playButtonSound } from "@/lib/utils/sound";
@@ -43,6 +43,7 @@ export default function NpcShop() {
   const { data: storeItems } = useQuery({
     queryKey: ["store-items", "parent"],
     queryFn: () => getStoreItems("parent"),
+    staleTime: 0 // 0초 그냥 부모가 상품올렸을떄 바로 반영해야함
   });
 
   const purchaseMutation = useMutation({

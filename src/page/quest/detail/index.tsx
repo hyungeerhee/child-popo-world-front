@@ -1,14 +1,15 @@
 import { QuestDetailTemplate } from "@/module/quest/template/QuestDetailTemplate";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { Quest } from "@/module/quest/types/quest";
-import apiClient, { ApiError } from "@/lib/api/axios";
+import apiClient from "@/lib/api/axios";
 import { StateChangeModal } from "@/module/quest/components/StateChangeModal";
 import { useAuthStore } from "@/lib/zustand/authStore";
-import { playButtonSound,  } from "@/lib/utils/sound";
+import { playButtonSound, } from "@/lib/utils/sound";
 import backClickSound from "@/assets/sound/back_click.mp3";
 import { getQuest } from "@/lib/api/quest/getQuest";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { postQuestState } from "@/lib/api/quest/postQuestState";
 
 const questStateMap: Record<string, Quest["state"]> = {
   PENDING_ACCEPT: "수락하기",
@@ -58,7 +59,8 @@ export default function QuestDetail() {
   } | null>(null);
 
   const { setPoint } = useAuthStore();
-
+  const queryClient = useQueryClient(); 
+  
   const total = questData.filter(
     (q) =>
       q.state === "기다리는 중" ||
@@ -156,7 +158,8 @@ export default function QuestDetail() {
     console.log("상태 변경 요청 body:", body);
 
     try {
-      await apiClient.post("/api/quest/state", body);
+      await postQuestState(questId, childId, serverState); 
+      queryClient.invalidateQueries({ queryKey: ["quest"], refetchType: "all" });
 
       const nextState = nextStateMap[state];
       if (!nextState) return;
