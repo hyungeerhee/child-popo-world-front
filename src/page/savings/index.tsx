@@ -38,7 +38,9 @@ export default function SavingsPage() {
 
   // 오늘의 저장소 키 가져오기
   const getTodayKey = () => {
-    const today = new Date().toISOString().slice(0, 10);
+    const now = new Date();
+    const korDate = new Date(now.getTime() + (9 * 60 * 60 * 1000));
+    const today = korDate.toISOString().slice(0, 10);
     return getSavingsKey(today);
   };
 
