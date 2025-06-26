@@ -19,6 +19,7 @@ interface AuthState {
   accessToken: string | null;
   isAuthenticated: boolean; // 인증 여부
   name: string | null; // 이름
+  email: string | null;
   point: number | null; // 포인트
 }
 
@@ -33,7 +34,7 @@ interface AuthStore extends AuthState {
   setAccessToken: (accessToken: string | null) => void;
   setUserName: (name: string | null) => void; // 유저 정보 설정
   setPoint: (point: number | null) => void; // 포인트 설정
-  login: (name: string, point: number) => void; // 로그인
+  login: (name: string, point: number, email: string) => void; // 로그인
   logout: () => void; // 로그아웃
 }
 
@@ -45,6 +46,7 @@ const INITIAL_AUTH_STATE: AuthState = {
   accessToken: null,
   isAuthenticated: false,
   name: null,
+  email: null,
   point: null,
 };
 
@@ -68,8 +70,8 @@ export const useAuthStore = create<AuthStore>()(
           point,
         }),
 
-      login: (name: string, point: number) => {
-        set({ isAuthenticated: true, name, point });
+      login: (name: string, point: number, email: string) => {
+        set({ isAuthenticated: true, name, point, email });
       },
 
       // 로그아웃 액션
@@ -87,6 +89,7 @@ export const useAuthStore = create<AuthStore>()(
         accessToken: state.accessToken,
         isAuthenticated: state.isAuthenticated,
         name: state.name,
+        email: state.email,
         point: state.point,
       }),
     }

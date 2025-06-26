@@ -1,18 +1,18 @@
 import { Background } from "../../../components/layout/Background";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import apiClient from "../../../lib/api/axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../../../styles/toast.css";
 import { useAuthStore } from "@/lib/zustand/authStore";
-import Cookies from "js-cookie";
 import { IMAGE_URLS } from "@/lib/constants/constants";
+import { login } from "@/lib/api/auth/login";
+import type { LoginRequest } from "@/lib/api/auth/login";
 
 export default function LoginPage() {
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState<LoginRequest>({ email: "", password: "" });
   const navigate = useNavigate();
-  const { login, setAccessToken } = useAuthStore();
+  const { login: setLoginState, setAccessToken } = useAuthStore();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -26,41 +26,19 @@ export default function LoginPage() {
       return;
     }
 
-    try {
-      const response = await apiClient.post("/auth/login", form);
-      console.log(response.headers);
-      // 액세스 토큰 저장
-      const accessToken = response.headers["authorization"]?.replace("Bearer ", "");
-      console.log(accessToken);
-      if (accessToken) {
-        setAccessToken(accessToken);
-      }
+    const result = await login(form);
 
-      // 리프레시 토큰 저장
-      const refreshToken = response.headers["refresh-token"];
-      if (refreshToken) {
-        Cookies.set("refreshToken", refreshToken, {
-          expires: 14, // 14일 후 만료
-          secure: true,
-          sameSite: "strict", // CSRF 공격 방지
-        });
-      }
+    if (result.success && result.data && result.accessToken) {
+      // 액세스 토큰 저장
+      setAccessToken(result.accessToken);
 
       // 사용자 정보 저장
-      if (response.data) {
-        login(response.data.name, response.data.point);
-      }
+      setLoginState(result.data.name, result.data.point, form.email);
 
       // 메인 페이지로 이동
       navigate("/");
-    } catch (error: any) {
-      console.error("로그인 에러:", error);
-      if (error.response) {
-        console.error("에러 응답:", error.response.data);
-        toast.error(error.response.data.message || "로그인에 실패했습니다.");
-      } else {
-        toast.error("서버 연결에 실패했습니다.");
-      }
+    } else {
+      toast.error(result.error || "로그인에 실패했습니다.");
     }
   };
 

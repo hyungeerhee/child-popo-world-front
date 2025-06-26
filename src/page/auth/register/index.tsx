@@ -1,18 +1,18 @@
 import { Background } from "../../../components/layout/Background";
-
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import apiClient from "../../../lib/api/axios";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../../../styles/toast.css";
 import { toast } from "react-toastify";
 import { BackArrow } from "../../../components/button/BackArrow";
 import { IMAGE_URLS } from "@/lib/constants/constants";
+import { register, validateAge } from "@/lib/api/auth/register";
+import type { RegisterForm } from "@/lib/api/auth/register";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<RegisterForm>({
     email: "",
     password: "",
     passwordCheck: "",
@@ -38,8 +38,9 @@ export default function RegisterPage() {
 
   const handleAgeBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (value !== "" && Number(value) < 5) {
-      toast.error("5세 이상부터 회원가입이 가능합니다.");
+    const validation = validateAge(value);
+    if (!validation.isValid) {
+      toast.error(validation.message);
       setIsValidAge(false);
     } else {
       setIsValidAge(true);
@@ -49,65 +50,13 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // 먼저 모든 필드가 입력되었는지 확인
-    if (
-      !form.email ||
-      !form.password ||
-      !form.passwordCheck ||
-      !form.name ||
-      !form.gender ||
-      !form.age ||
-      !form.parentCode
-    ) {
-      toast.error("모든 항목을 입력해주세요.");
-      return;
-    }
+    const result = await register(form);
 
-    // 나이 유효성 검사
-    if (!isValidAge || Number(form.age) < 5) {
-      toast.error("5세 이상부터 회원가입이 가능합니다.");
-      return;
-    }
-
-    if (form.password !== form.passwordCheck) {
-      toast.error("비밀번호가 일치하지 않습니다.");
-      return;
-    }
-
-    if (form.password.length < 8) {
-      toast.error("비밀번호는 8자리 이상이어야 합니다.");
-      return;
-    }
-
-    const passwordRule = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).+$/;
-    if (!passwordRule.test(form.password)) {
-      toast.error("비밀번호에는 특수문자 1개, 대문자 1개, 숫자 1개 이상이 포함되어야 합니다.");
-      return;
-    }
-
-    try {
-      console.log({
-        email: form.email,
-        password: form.password,
-        name: form.name,
-        sex: form.gender === "male" ? "M" : "F",
-        age: Number(form.age),
-        role: "Child",
-        parentCode: form.parentCode,
-      });
-      await apiClient.post("/auth/signup", {
-        email: form.email,
-        password: form.password,
-        name: form.name,
-        sex: form.gender === "male" ? "M" : "F",
-        age: Number(form.age),
-        role: "Child",
-        parentCode: form.parentCode || "DEFAULT_CODE",
-      });
+    if (result.success) {
       toast.success("회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.");
       navigate("/auth/login");
-    } catch (error: any) {
-      toast.error(error.message || "회원가입 중 오류가 발생했습니다.");
+    } else {
+      toast.error(result.error);
     }
   };
 
