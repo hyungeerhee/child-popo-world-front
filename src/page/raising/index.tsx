@@ -2,44 +2,16 @@ import { Background } from "../../components/layout/Background";
 import { IMAGE_URLS } from "../../lib/constants/constants";
 import { BackArrow } from "../../components/button/BackArrow";
 import { useState, useEffect } from "react";
-import apiClient from "../../lib/api/axios";
-import { ToRasingLandLoading1 } from "@/components/loading/ToRasingLandLoading1";
-import { ToRasingLandLoading2 } from "@/components/loading/ToRasingLandLoading2";
 import { useLocation, useNavigate } from "react-router-dom";
 import { setNewAudio, stopBackgroundMusic, playButtonSound } from "@/lib/utils/sound";
 import { useSoundStore } from "@/lib/zustand/soundStore";
 import RaisingBackgroundMusic from "@/assets/sound/raising.mp3";
 import SoundButton from "@/components/button/SoundButton";
 import backClickSound from "@/assets/sound/back_click.mp3";
-// 먹이 타입 정의
-interface Feed {
-  productId: string;
-  name: string;
-  imageUrl: string;
-  stock: number;
-  type: string;
-  exp: number;
-  price: number;
-}
-
-// 포포 키우기 응답 타입
-interface FeedsResponse {
-  currentLevel: number;
-  currentExperience: number;
-  totalExperience: number;
-  availableFeeds: Feed[];
-}
-
-// 먹이 주기 응답 타입
-interface FeedResponse {
-  newLevel: number;
-  currentExperience: number;
-  totalExperience: number;
-  gainedExperience: number;
-  levelUp: boolean;
-  fedItems: string[];
-  message: string;
-}
+import { getFeeds, feedPopo } from "@/lib/api/raising/raising";
+import type { Feed } from "@/lib/api/raising/raising";
+import { ToRasingLandLoading1 } from "@/components/loading/ToRasingLandLoading1";
+import { ToRasingLandLoading2 } from "@/components/loading/ToRasingLandLoading2";
 
 // 먹이 이미지 매핑
 const feedImageMap: Record<string, keyof typeof IMAGE_URLS.raising> = {
@@ -144,8 +116,7 @@ export default function RaisingPage() {
   // 먹이 목록 조회
   const fetchFeeds = async () => {
     try {
-      const response = await apiClient.get<FeedsResponse>("/api/popo/feeds");
-      const { currentLevel, currentExperience, availableFeeds } = response.data;
+      const { currentLevel, currentExperience, availableFeeds } = await getFeeds();
       
       // API 응답과 기본 먹이 목록을 합침
       const mergedFeeds = ALL_FEEDS.map(defaultFeed => {
@@ -263,20 +234,16 @@ export default function RaisingPage() {
     if (selectedFeeds.length > 0) {
       try {
         // 선택한 먹이 ID 목록을 서버에 전송
-        const response = await apiClient.post<FeedResponse>("/api/popo/feed", {
-          feedItems: selectedFeeds.map(id => ({
-            productId: id,
-            amount: 1
-          }))
-        });
-
         const { 
           newLevel,
           currentExperience: newExp,
           gainedExperience,
           levelUp: didLevelUp,
           message 
-        } = response.data;
+        } = await feedPopo(selectedFeeds.map(id => ({
+          productId: id,
+          amount: 1
+        })));
 
         setAddedExp(gainedExperience);
 

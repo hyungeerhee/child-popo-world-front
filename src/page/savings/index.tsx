@@ -7,7 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { BackArrow } from "../../components/button/BackArrow";
 import { ko, pl } from "date-fns/locale";
 import { addDays, isAfter as _isAfter, isSameDay as _isSameDay } from "date-fns";
-import apiClient from "../../lib/api/axios";
+
 import { useAuthStore } from "@/lib/zustand/authStore";
 import { IMAGE_URLS } from "@/lib/constants/constants";
 import { playButtonSound, setNewAudio, stopBackgroundMusic } from "@/lib/utils/sound";
@@ -23,23 +23,7 @@ const IS_TEST_MODE = false;
 const MAX_DEPOSIT_RATE = 0.2; // 20%
 const BONUS_RATE = 0.1; // 10%
 
-// 저축통장 생성 API 호출 함수
-async function createSavingsAccount(goalAmount: number, createdAt: string, endDate: string, rewardPoint: number) {
-  try {
-    // apiClient로 POST 요청 (토큰/주소 자동)
-    const response = await apiClient.post("/api/saveAccount", {
-      goalAmount, // 목표 금액
-      createdAt, // 시작 날짜 (YYYY-MM-DD)
-      endDate, // 종료 날짜 (YYYY-MM-DD)
-      rewardPoint, // 보너스 금액
-    });
-    // 성공 시 메시지 반환
-    return { success: true, message: response.data };
-  } catch (error: any) {
-    // 에러 메시지 반환
-    return { success: false, message: error.message };
-  }
-}
+import { createSavingsAccount, getSavingsAccount, depositToSavings } from "@/lib/api/savings/savings";
 
 export default function SavingsPage() {
   const navigate = useNavigate();
@@ -232,14 +216,13 @@ export default function SavingsPage() {
       }
     }
 
-    try {
+          try {
       // 서버에 입금 요청
-      const response = await apiClient.put("/api/saveAccount/dailyDeposit", {
+      const data = await depositToSavings({
         depositPoint: Number(depositInput),
         // success는 프론트에서 계산 후 전달(목표 달성 시 true)
         success: Number(currentAmount) + Number(depositInput) >= Number(goalAmount),
       });
-      const data = response.data;
       // 서버 응답값으로 상태 갱신
       setCurrentAmount(String(data.accountPoint)); // accountPoint가 현재 저축통장 금액
       // 총 포인트에서 입금액 차감
@@ -296,7 +279,12 @@ export default function SavingsPage() {
     const start = startDate instanceof Date ? startDate.toISOString().slice(0, 10) : String(startDate);
     const end = endDate instanceof Date ? endDate.toISOString().slice(0, 10) : String(endDate);
 
-    const result = await createSavingsAccount(Number(goalAmount), start, end, Number(bonusAmount));
+    const result = await createSavingsAccount({
+      goalAmount: Number(goalAmount),
+      createdAt: start,
+      endDate: end,
+      rewardPoint: Number(bonusAmount)
+    });
     setIsLoading(false);
     setCreateMessage(result.message);
     if (result.success) {
@@ -307,26 +295,16 @@ export default function SavingsPage() {
 
   // 계좌 정보 불러오는 함수 추가
   async function fetchAccountInfo() {
-    try {
-      const response = await apiClient.get("/api/saveAccount");
-      const data = response.data;
-      // status가 ACTIVE이고, createdDate 등 주요 필드가 null이 아니면 활성화된 계좌로 간주
-      if (data && data.status === "ACTIVE" && data.createdDate && data.endDate) {
-        setIsCreated(true);
-        setGoalAmount(String(data.goalAmount));
-        setCurrentAmount(String(data.accountPoint)); // accountPoint가 현재 저축통장 금액
-        setStartDate(data.createdDate ? new Date(data.createdDate) : null);
-        setEndDate(data.endDate ? new Date(data.endDate) : null);
-        setBonusAmount(""); // 필요시 보너스 금액 세팅
-      } else {
-        setIsCreated(false);
-        setGoalAmount("");
-        setCurrentAmount("");
-        setStartDate(null);
-        setEndDate(null);
-        setBonusAmount("");
-      }
-    } catch (e) {
+    const data = await getSavingsAccount();
+    // status가 ACTIVE이고, createdDate 등 주요 필드가 null이 아니면 활성화된 계좌로 간주
+    if (data && data.status === "ACTIVE" && data.createdDate && data.endDate) {
+      setIsCreated(true);
+      setGoalAmount(String(data.goalAmount));
+      setCurrentAmount(String(data.accountPoint)); // accountPoint가 현재 저축통장 금액
+      setStartDate(data.createdDate ? new Date(data.createdDate) : null);
+      setEndDate(data.endDate ? new Date(data.endDate) : null);
+      setBonusAmount(""); // 필요시 보너스 금액 세팅
+    } else {
       setIsCreated(false);
       setGoalAmount("");
       setCurrentAmount("");
