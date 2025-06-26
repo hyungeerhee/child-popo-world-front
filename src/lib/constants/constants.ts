@@ -266,6 +266,13 @@ const IMAGE_URLS = {
     embarrassed:
       "https://res.cloudinary.com/dgmbxvpv9/image/upload/v1749623606/emotion-embarrassed_npzyuk.webp",
   },
+
+  quiz: {
+    bg: "https://res.cloudinary.com/dgmbxvpv9/image/upload/f_auto,q_auto/v1750380247/quiz-bg_iwbvqj",
+    popo: "https://res.cloudinary.com/dgmbxvpv9/image/upload/f_auto,q_auto/v1750380194/quiz-popo_spfyup",
+    o: "https://res.cloudinary.com/dgmbxvpv9/image/upload/f_auto,q_auto/v1750816235/quiz-o-popo_cyzcv8",
+    x:"https://res.cloudinary.com/dgmbxvpv9/image/upload/f_auto,q_auto/v1750816279/quiz-x-popo_harxd1"
+  }
 };
 
 // import MainBackgroundMusic from "@/assets/sound/main.mp3";

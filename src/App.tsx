@@ -11,6 +11,9 @@ import EmotionDiary from "@/page/emotionDiary";
 import DiaryWrite from "@/page/emotionDiary/write";
 import Attandance from "@/page/attandance";
 import Quiz from "@/page/quiz";
+import QuizLevelSelect from "@/page/quiz/level-select";
+import QuizTopicSelect from "@/page/quiz/topic-select";
+import QuizPlay from "@/page/quiz/quiz-play";
 import NotFound from "@/page/notfound";
 import InvestingGame from "@/page/investing/game";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -25,6 +28,7 @@ import { BrowserRouter } from "react-router-dom";
 // import { useEffect } from "react";
 // import { useAuthStore } from "./lib/zustand/authStore";
 // import Cookies from "js-cookie";
+
 
 // QueryClient 인스턴스 생성
 const queryClient = new QueryClient({
@@ -110,7 +114,12 @@ function App() {
             {/* 출석 */}
             <Route path="/attandance" element={<Attandance />} />
             {/* 퀴즈 */}
-            <Route path="/quiz" element={<Quiz />} />
+            <Route path="/quiz">
+              <Route index element={<Quiz />} />
+              <Route path="level-select" element={<QuizLevelSelect />}></Route>
+              <Route path=":level" element={<QuizTopicSelect />}></Route>
+              <Route path=":level/:topic" element={<QuizPlay />}></Route>
+            </Route>
           </Route>
           {/* 로그인 */}
           <Route path="/auth/login" element={<LoginPage />} />
