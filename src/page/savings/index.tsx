@@ -28,6 +28,19 @@ import { createSavingsAccount, getSavingsAccount, depositToSavings } from "@/lib
 export default function SavingsPage() {
   const navigate = useNavigate();
   const { isMuted, audio } = useSoundStore();
+  const { point, setPoint, email } = useAuthStore();
+
+  // 저장소 키 생성 함수
+  const getSavingsKey = (date: string) => {
+    if (!email) return null;
+    return `savings_deposit_${email}_${date}`;
+  };
+
+  // 오늘의 저장소 키 가져오기
+  const getTodayKey = () => {
+    const today = new Date().toISOString().slice(0, 10);
+    return getSavingsKey(today);
+  };
 
   // 첫페이지 로드시 배경음악 설정
   useEffect(() => {
@@ -83,9 +96,6 @@ export default function SavingsPage() {
   // 오늘 날짜 구하기
   const today = new Date();
 
-  // 보유포인트 상태 추가
-  const { point, setPoint } = useAuthStore();
-
   // ===== 유틸 함수 =====
   const resetSavingsAccount = () => {
     setIsCreated(false);
@@ -99,9 +109,11 @@ export default function SavingsPage() {
     setOpenInput(null);
     setInputValue("");
     // 오늘 날짜의 입금 기록 삭제
-    const todayKey = `savings_deposit_${new Date().toISOString().slice(0, 10)}`;
-    localStorage.removeItem(todayKey);
-    setHasDepositedToday(false);
+    const todayKey = getTodayKey();
+    if (todayKey) {
+      localStorage.removeItem(todayKey);
+      setHasDepositedToday(false);
+    }
   };
 
   // ========== 이벤트 핸들러 함수들 ==========
@@ -138,10 +150,12 @@ export default function SavingsPage() {
   // 컴포넌트 마운트 시 오늘 입금 여부 확인
   useEffect(() => {
     if (isCreated) {
-      const todayKey = `savings_deposit_${new Date().toISOString().slice(0, 10)}`;
-      setHasDepositedToday(!!localStorage.getItem(todayKey));
+      const todayKey = getTodayKey();
+      if (todayKey) {
+        setHasDepositedToday(!!localStorage.getItem(todayKey));
+      }
     }
-  }, [isCreated]);
+  }, [isCreated, email]);
 
   /**
    * 입금하기 버튼 클릭 시 입금 모달을 여는 함수
@@ -149,8 +163,10 @@ export default function SavingsPage() {
   const handleDepositClick = () => {
     setDepositInput("");
     setDepositError("");
-    const todayKey = `savings_deposit_${new Date().toISOString().slice(0, 10)}`;
-    setHasDepositedToday(!!localStorage.getItem(todayKey));
+    const todayKey = getTodayKey();
+    if (todayKey) {
+      setHasDepositedToday(!!localStorage.getItem(todayKey));
+    }
     setIsDepositModalOpen(true);
   };
 
@@ -191,6 +207,11 @@ export default function SavingsPage() {
    * 입금 모달에서 입금을 확정하는 함수
    */
   const handleDepositConfirm = async () => {
+    if (!email) {
+      setDepositError("로그인이 필요합니다.");
+      return;
+    }
+
     if (!IS_TEST_MODE && hasDepositedToday) {
       setDepositError("오늘은 이미 입금하셨습니다.");
       return;
@@ -216,15 +237,14 @@ export default function SavingsPage() {
       }
     }
 
-          try {
+    try {
       // 서버에 입금 요청
       const data = await depositToSavings({
         depositPoint: Number(depositInput),
-        // success는 프론트에서 계산 후 전달(목표 달성 시 true)
         success: Number(currentAmount) + Number(depositInput) >= Number(goalAmount),
       });
       // 서버 응답값으로 상태 갱신
-      setCurrentAmount(String(data.accountPoint)); // accountPoint가 현재 저축통장 금액
+      setCurrentAmount(String(data.accountPoint));
       // 총 포인트에서 입금액 차감
       if (point !== null) {
         setPoint(point - Number(depositInput));
@@ -232,21 +252,25 @@ export default function SavingsPage() {
       setIsDepositModalOpen(false);
       setLastDepositAmount(depositInput);
       setIsDepositResultModalOpen(true);
-      const todayKey = `savings_deposit_${new Date().toISOString().slice(0, 10)}`;
-      localStorage.setItem(todayKey, "1");
-      setHasDepositedToday(true);
+
+      // 오늘 날짜의 입금 기록 저장
+      const todayKey = getTodayKey();
+      if (todayKey) {
+        localStorage.setItem(todayKey, "1");
+        setHasDepositedToday(true);
+      }
+
       // 목표 달성 시 보너스 모달 및 포인트 추가
       if (Number(currentAmount) + Number(depositInput) >= Number(goalAmount)) {
         setIsBonusModalOpen(true);
         // 저축 금액과 보너스를 총 포인트에 추가
         if (point !== null) {
-          const totalSavings = Number(goalAmount); // 저축한 총 금액
-          const bonusPoints = Number(bonusAmount); // 보너스 금액
+          const totalSavings = Number(goalAmount);
+          const bonusPoints = Number(bonusAmount);
           setPoint(point + totalSavings + bonusPoints);
         }
       }
     } catch (error: any) {
-      // 서버에서 에러 메시지 반환 시 처리
       if (error.response && error.response.data && error.response.data.currentPoint) {
         setDepositError(error.response.data.currentPoint);
       } else {
