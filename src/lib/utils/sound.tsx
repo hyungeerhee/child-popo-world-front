@@ -2,6 +2,7 @@ import { useSoundStore } from "../zustand/soundStore";
 import buttonSound from "@/assets/sound/button_click.mp3";
 import  type { NamedHTMLAudioElement } from "../zustand/soundStore";
 
+
 export const playButtonSound = (url: string = buttonSound, volume: number = 1) => {
   const { isMuted } = useSoundStore.getState();
   if (isMuted) return;
@@ -9,6 +10,35 @@ export const playButtonSound = (url: string = buttonSound, volume: number = 1) =
   const audio = new Audio(url);
   audio.volume = volume;
   audio.play();
+};
+
+// 전역 효과음 Audio 객체
+let effectAudio: HTMLAudioElement | null = null;
+
+export const playSound = (url: string, volume: number = 1, onEnded?: () => void) => {
+  const { isMuted } = useSoundStore.getState();
+  if (isMuted) return;
+  
+  // 기존 오디오가 재생 중이면 정지
+  if (effectAudio) {
+    effectAudio.pause();
+    effectAudio.currentTime = 0;
+  }
+  
+  // 새로운 오디오 객체 생성 또는 기존 객체 재사용
+  if (!effectAudio) {
+    effectAudio = new Audio();
+  }
+  
+  effectAudio.src = url;
+  effectAudio.volume = volume;
+  
+  // 음원 재생 완료 시 콜백 실행
+  if (onEnded) {
+    effectAudio.onended = onEnded;
+  }
+  
+  effectAudio.play();
 };
 
 // 배경음악 설정

@@ -5,6 +5,8 @@ import { AttandanceTemplate } from "@/module/attandance/template";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { playButtonSound } from "@/lib/utils/sound";
 import { getToday, getYesterday } from "@/lib/utils/utils";
+import { useTutorialStore } from "@/lib/zustand/tutorialStore";
+import { useNavigate } from "react-router-dom";
 
 export const WEEK = ["월", "화", "수", "목", "금", "토", "일"];
 
@@ -23,8 +25,6 @@ export interface Attendance {
   dayOfWeek: string;
   attended: boolean;
 }
-
-
 
 export default function AttandancePage() {
   const [isPointModalOpen, setIsPointModalOpen] = useState(false);
@@ -86,16 +86,20 @@ export default function AttandancePage() {
     return getConsecutive();
   }, [attendanceData]);
 
-
   const handleAttendance = () => {
     playButtonSound();
     attendanceMutation.mutate(getToday());
   };
 
+  // 튜토리얼 중이고 출석 단계(3단계)라면 포인트 모달 닫힐 때 메인으로 돌아가서 튜토리얼 계속
+  const handlePointModalClose = () => {
+    setIsPointModalOpen(false);
+  };
+
   return <AttandanceTemplate 
     consecutive={consecutive}
     isPointModalOpen={isPointModalOpen}
-    setIsPointModalOpen={setIsPointModalOpen}
+    setIsPointModalOpen={handlePointModalClose}
     rewardPoints={rewardPoints}
     isWeekCompleted={isWeekCompleted}
     isAlreadyAttended={isAlreadyAttended}

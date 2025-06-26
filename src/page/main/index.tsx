@@ -11,6 +11,8 @@ import MainBackgroundMusic from "@/assets/sound/main1.mp3";
 import { getDiary } from "@/lib/api/emotion/getDiary";
 import { useQueryClient } from '@tanstack/react-query';
 import { getQuest } from "@/lib/api/quest/getQuest";
+import Tutorial from "@/module/main/template/Tutorial";
+import { useTutorialStore } from "@/lib/zustand/tutorialStore";
 
 // 섬별 위치 정보
 const ISLAND_POSITIONS = {
@@ -25,12 +27,20 @@ const ISLAND_POSITIONS = {
 export default function Main() {
   const { logout } = useAuthStore();
   const { toggleMute, isMuted, audio } = useSoundStore();
+  const { isCompleted } = useTutorialStore();
+  // 튜토리얼이 완료되지 않았으면 튜토리얼 표시
+  const [isTutorialOpen, setIsTutorialOpen] = useState(!isCompleted);
   const queryClient = useQueryClient();
-
+  
   // 첫페이지 로드시 배경음악 설정
   useEffect(() => {
     setNewAudio(MainBackgroundMusic, 0.4);
   }, []);
+
+  // 튜토리얼 완료 상태 변경 시 튜토리얼 표시 여부 업데이트
+  useEffect(() => {
+    setIsTutorialOpen(!isCompleted);
+  }, [isCompleted]);
 
   // 음소거 상태 변경시 배경음악 정지 또는 재생
   useEffect(() => {
@@ -138,6 +148,14 @@ export default function Main() {
     }
   };
 
+  const handleTutorialComplete = () => {
+    localStorage.setItem("Tutorial", "true");
+    setIsTutorialOpen(false);
+  };
+
+  if(isTutorialOpen) {
+    return <Tutorial  onComplete={handleTutorialComplete} />;
+  }
   return (
     <MainTemplate
       isAnimating={isAnimating}
