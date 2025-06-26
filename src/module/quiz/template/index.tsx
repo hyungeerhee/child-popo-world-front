@@ -1,15 +1,45 @@
-import { TextWithStroke } from "../../../components/text/TextWithStroke";
+import { Background } from "@/components/layout/Background";
+import { IMAGE_URLS } from "@/lib/constants/constants";
+import { BackArrow } from "@/components/button/BackArrow";
 
-export const QuizTemplate = () => {
+interface QuizTemplateProps {
+  onBack: () => void;
+  onClickQuiz: () => void;
+}
+
+export const QuizTemplate = ({ onBack,onClickQuiz }:QuizTemplateProps) => {
   return (
-    <div className="w-screen h-screen bg-black font-TJ overflow-hidden flex justify-center items-center">
-      <div className="relative w-[360px] h-[258px] sm:w-[430px] sm:h-[300px] md:w-[615px] md:h-[430px] xl:w-[1180px] xl:h-[820px]">
-        <TextWithStroke
-          text="퀴즈"
-          textClassName="text-main-yellow-800 text-[3.5rem]"
-          strokeClassName="text-main-brown-800 text-[3.5rem] text-stroke-width-[0.4rem] text-stroke-color-main-brown-800"
-        />
+    <Background backgroundImage={IMAGE_URLS.quiz.bg}>
+      {/* 뒤로가기 */}
+      <BackArrow onClick={onBack} />
+
+      {/* 제목 - 퀴즈 */}
+      <div className=" items-center justify-center mt-[3.7rem] flex flex-col">
+        <span className="text-[3.5rem] font-bold text-[#F98224] ">매일매일 새로워지는</span>
+        <div className="flex justify-center items-center gap-[1rem]">
+          <span className="text-[5rem] font-extrabold text-[#7F8EC2]">경제</span>
+          <span className="text-[5rem] font-extrabold text-[#F77B6E]">퀴즈</span>
+        </div>
+      </div> 
+  
+
+      {/* 포포 이미지 */}
+      <img
+        src={IMAGE_URLS.quiz.popo}
+        alt="퀴즈 포포 이미지"
+        className="absolute h-[12.5rem] right-[0.2rem] bottom-[0.3rem] "
+      />
+      
+      {/* 시작하기 버튼 */}
+      <div className="flex items-center justify-center mt-[2rem]">
+        <button
+          className="bg-[#FD7152] border-[0.25rem] border-[#F65636] text-[#FFF4D2] px-[1.2rem] py-[0.4rem] rounded-3xl text-[2rem] font-bold"
+          onClick={onClickQuiz}
+        >
+        퀴즈 풀기
+        </button>
       </div>
-    </div>
+      </Background>
   );
 };
+             
