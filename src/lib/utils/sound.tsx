@@ -45,6 +45,8 @@ export const playSound = (url: string, volume: number = 1, onEnded?: () => void)
 export const setNewAudio = (url: string, volume: number = 0.8, loop: boolean = true) => {
   const { audio, setAudio } = useSoundStore.getState();
   if (audio) {
+    if( url == audio.name) return 
+
     audio.pause();
     audio.src = ""; // src 제거
     audio.load(); // 메모리에서 해제

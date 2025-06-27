@@ -22,6 +22,7 @@ export default function Tutorial({ onComplete }: TutorialProps) {
   const { currentStep, nextStep, completeTutorial } = useTutorialStore();
   
   const tutorialOrder: Record<string, {text: React.ReactNode, sound: string}> = {
+    // currentStep 1
     intro: {
       text: <div>
       <div>안녕~ 난 포포야!</div>
@@ -29,6 +30,7 @@ export default function Tutorial({ onComplete }: TutorialProps) {
     </div>,
     sound: startTTS
     },
+    // currentStep 2
     sound: {
       text: <div>
       <div className="flex items-center">저기 위에  <img src={IMAGE_URLS.sound.off} alt="music" className="w-[1.2rem] mx-1" />버튼 보여?</div>
@@ -36,6 +38,7 @@ export default function Tutorial({ onComplete }: TutorialProps) {
     </div>,
     sound: soundTTS
     },
+    // currentStep 3
     attendance: {
       text: 
         <div>
@@ -43,18 +46,21 @@ export default function Tutorial({ onComplete }: TutorialProps) {
     </div>,
     sound: startTTS
     },
+    // currentStep 4
     quiz: {
       text: <div>
       퀴즈 버튼이야! 쉬운 것도, 어려운 것도 있어~ 맞히면 냥이 우르르~!
     </div>,
     sound: startTTS
     },
+    // currentStep 5
     diary: {
       text: <div>
       감정일기 버튼이야!
     </div>,
     sound: startTTS
     },
+    // currentStep 6
     investing: {
       text: <div className="">ㅎㅇㅇ</div>,
       sound: startTTS
@@ -131,6 +137,10 @@ export default function Tutorial({ onComplete }: TutorialProps) {
             />
           </div>
         </div>
+        {currentStep === 4 && (
+            <div className="w-[2.3rem] h-[2.3rem] rounded-full bg-white/40 absolute  right-[9.8rem] top-[0.5rem] z-90"></div>
+        )}
+
 
         {/* 출석 */}
         <Link to="/attandance" className="absolute top-[0.6rem]  right-[7.6rem]  flex flex-col items-center justify-center ">
@@ -192,13 +202,13 @@ export default function Tutorial({ onComplete }: TutorialProps) {
           <div
             className={clsx(
               "absolute bottom-[1rem] right-[12.27rem]  px-[0.85rem] text-[0.8rem] pt-[0.08rem]  font-bold text-main-brown-800 bg-main-yellow-700 border md:border-2 border-main-brown-700 rounded-lg",
-              currentStep === 10 && "z-100"
+              currentStep === 4 && "z-100"
             )}
           >
             적금
           </div>
         </div>
-        {currentStep === 10 && (
+        {currentStep === 5 && (
           <div className="w-[9rem] h-[9rem] rounded-full bg-white/40 absolute  right-[9.2rem] bottom-[0.3rem] z-90"></div>
         )}
 
@@ -212,13 +222,13 @@ export default function Tutorial({ onComplete }: TutorialProps) {
           <div
             className={clsx(
               "absolute bottom-[6rem] right-[3.8rem]  px-[0.85rem] text-[0.8rem] pt-[0.08rem]   font-bold text-main-brown-800 bg-main-yellow-700 border md:border-2 border-main-brown-700 rounded-lg",
-              currentStep === 10 && "z-100"
+              currentStep === 3 && "z-100"
             )}
           >
             퀘스트
           </div>
         </div>
-        {currentStep === 10 && (
+        {currentStep === 3 && (
           <div className="w-[9rem] h-[9rem] rounded-full bg-white/40 absolute  right-[1.5rem] bottom-[4.8rem] z-90"></div>
         )}
 
@@ -232,13 +242,13 @@ export default function Tutorial({ onComplete }: TutorialProps) {
           <div
             className={clsx(
               "absolute top-[11.4rem] right-[4rem]  px-[0.85rem] text-[0.8rem] pt-[0.08rem] font-bold text-main-brown-800 bg-main-yellow-700 border md:border-2 border-main-brown-700 rounded-lg",
-              currentStep === 10 && "z-100"
+              currentStep === 6 && "z-100"
             )}
           >
             모의투자
           </div>
         </div>
-        {currentStep === 10 && (
+        {currentStep === 6 && (
           <div className="w-[9rem] h-[9rem] rounded-full bg-white/40 absolute  right-[2rem] top-[5rem] z-90"></div>
         )}
         {/* 포니 */}
