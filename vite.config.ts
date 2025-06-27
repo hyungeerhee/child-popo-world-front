@@ -19,30 +19,6 @@ export default defineConfig(({ mode }) => {
         "@": path.resolve(__dirname, "./src"),
       },
     },
-    server: {
-      proxy: {
-        "/api": {
-          target: env.VITE_API_URL || "http://52.78.53.247:8080",
-          changeOrigin: true,
-          secure: false,
-          ws: true,
-          rewrite: (path) => path.replace(/^\/api/, ""),
-          configure: (proxy, _options) => {
-            proxy.on('error', (err, _req, _res) => {
-              console.log('[Proxy Error]', err);
-            });
-            proxy.on('proxyReq', (proxyReq, req, _res) => {
-              console.log('[Proxy Request]', req.method, req.url);
-              // CORS 헤더 추가
-              proxyReq.setHeader('Origin', 'http://localhost:5173');
-            });
-            proxy.on('proxyRes', (proxyRes, req, _res) => {
-              console.log('[Proxy Response]', proxyRes.statusCode, req.url);
-            });
-          },
-        },
-      },
-    },
     build: {
       outDir: 'dist',
       sourcemap: true,
