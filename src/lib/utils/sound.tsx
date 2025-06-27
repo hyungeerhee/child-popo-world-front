@@ -15,6 +15,8 @@ export const playButtonSound = (url: string = buttonSound, volume: number = 1) =
 export const setNewAudio = (url: string, volume: number = 0.8, loop: boolean = true) => {
   const { audio, setAudio } = useSoundStore.getState();
   if (audio) {
+    if(audio.name === url) return;
+    
     audio.pause();
     audio.src = ""; // src 제거
     audio.load(); // 메모리에서 해제
