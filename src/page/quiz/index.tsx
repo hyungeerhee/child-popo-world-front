@@ -1,19 +1,67 @@
 import { useNavigate } from "react-router-dom";
 import { QuizTemplate } from "../../module/quiz/template";
+import { useSoundStore } from "@/lib/zustand/soundStore";
+import { useEffect, useState } from "react";
+import {
+  playButtonSound,
+  setNewAudio,
+  stopBackgroundMusic,
+} from "@/lib/utils/sound";
+import QuizBackgroundMusic from "@/assets/sound/quiz2.mp3";
+import apiClient from "@/lib/api/axios";
 
 export default function QuizPage() {
-
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { isMuted, audio } = useSoundStore();
+
+  // 첫페이지 로드시 배경음악 설정
+  useEffect(() => {
+    console.log("audio.name", audio?.name);
+    if (audio?.name !== QuizBackgroundMusic) {
+      setNewAudio(QuizBackgroundMusic, 0.6);
+    }
+  }, []);
+
+  // 음소거 상태 변경시 배경음악 정지 또는 재생
+  useEffect(() => {
+    if (isMuted && audio) stopBackgroundMusic();
+    if (isMuted && !audio) return;
+
+    if (audio && !isMuted) {
+      audio.play();
+    }
+  }, [isMuted, audio]);
 
   // 뒤로가기 버튼 클릭 시 홈으로 이동
   const handleBack = () => {
     navigate("/");
   };
 
-  // 퀴즈 클릭 시 퀴즈 상세 페이지로 이동
-  const handleClickQuiz = () => {
-    navigate("/quiz/level-select");
+  // 퀴즈 풀기 클릭 시 API 호출 후 이동 여부 결정
+  const handleClickQuiz = async () => {
+    playButtonSound();
+    try {
+      await apiClient.get("/api/quiz/active");
+      // 성공 -> 아직 퀴즈 안함
+      navigate("/quiz/level-select");
+    } catch (error: any) {
+        setIsModalOpen(true);
+    }
   };
 
-  return <QuizTemplate onBack={handleBack} onClickQuiz={handleClickQuiz}/>;
+  // 모달창 닫기
+  const handleCloseModal = () => {
+    playButtonSound();
+    setIsModalOpen(false);
+  };
+
+  return (
+    <QuizTemplate
+      onBack={handleBack}
+      isModalOpen={isModalOpen}
+      onCloseModal={handleCloseModal}
+      onClickQuiz={handleClickQuiz}
+    />
+  );
 }

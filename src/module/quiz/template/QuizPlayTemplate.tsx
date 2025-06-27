@@ -37,7 +37,6 @@ export const QuizPlayTemplate = ({
 
   return (
     <Background backgroundImage={IMAGE_URLS.quiz.bg}>
-      <BackArrow onClick={onBack} />
 
         {/* 문제 번호 */}
         <div className="text-[#4B3D2A] text-[1.1rem] font-bold mb-[1rem] flex justify-center items-center mt-[1.5rem]">
@@ -45,8 +44,8 @@ export const QuizPlayTemplate = ({
         </div>
 
         {/* 문제 내용 */}
-        <div className="h-[9rem] flex mb-[2rem]   justify-center items-center ">
-        <div className="bg-white/90 w-[35rem] rounded-2xl shadow-md overflow-scroll scrollbar-hidden">
+        <div className="h-[9rem] flex mb-[2rem]  justify-center items-center ">
+        <div className="bg-white/90 w-[35rem] min-h-[8rem] items-center flex justify-center rounded-2xl shadow-md overflow-scroll scrollbar-hidden">
         <div className=" text-[#4B3D2A] text-[1rem] font-bold flex justify-center items-center pt-[1rem] px-[1.3rem] mb-3 ">
             {currentQuiz.question}
           </div>
