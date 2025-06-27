@@ -5,12 +5,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import apiClient from "@/lib/api/axios";
 import { useAuthStore } from "@/lib/zustand/authStore";
+import { playButtonSound } from "@/lib/utils/sound";
 
 interface Quiz {
   question: string;
   choices: string[];
-  answerIndex?: number; // 객관식
-  answerText?: string;  // OX형
+  answerIndex?: number;
+  answerText?: string;
   description: string;
 }
 
@@ -26,13 +27,12 @@ export default function QuizPlayPage() {
   const [reward, setReward] = useState(0);
   const { point, setPoint } = useAuthStore();
   const navigate = useNavigate();
+
   const handleBack = () => navigate("/quiz");
 
-  // ✅ 퀴즈 로딩
   useEffect(() => {
     if (!level || !topic) return;
 
-    console.log(point)
     apiClient
       .get("/api/quiz", {
         params: { difficulty: level, topic },
@@ -47,7 +47,6 @@ export default function QuizPlayPage() {
           answer: string | number,
           description: string
         ): Quiz => {
-          // ✅ OX 퀴즈: 선택지가 없으면 ["O", "X"] 기본 설정
           if (!choices || choices.length === 0) {
             return {
               question,
@@ -56,8 +55,6 @@ export default function QuizPlayPage() {
               description,
             };
           }
-
-          // ✅ 객관식 퀴즈
           return {
             question,
             choices,
@@ -75,8 +72,8 @@ export default function QuizPlayPage() {
       .catch((err) => console.error("퀴즈 생성 api 요청 실패", err));
   }, [level, topic]);
 
-  // ✅ 선택지 선택
   const handleSelectChoice = (choice: string | number) => {
+    playButtonSound();
     const currentQuiz = quizList[currentIndex];
     let isCorrect = false;
 
@@ -92,8 +89,8 @@ export default function QuizPlayPage() {
     setShowAnswerPage(true);
   };
 
-  // ✅ 다음 문제로 이동
   const handleNext = () => {
+    playButtonSound();
     setShowAnswerPage(false);
     if (currentIndex + 1 < quizList.length) {
       setCurrentIndex((prev) => prev + 1);
@@ -105,26 +102,24 @@ export default function QuizPlayPage() {
     }
   };
 
-  // ✅ 완료 후 메인으로 이동
   const handleComplete = () => {
+    playButtonSound();
     navigate("/quiz");
   };
 
-  // 포인트 보상
   const calculateTotalPoint = () => {
-    if (!level) return 0;
+    if (!level) return;
     if (!point) return;
     const pointPerQuestion =
       level === "hard" ? 300 : level === "normal" ? 200 : 100;
-    
-    const reward = correctCount * pointPerQuestion
-    const updatePoint = point + reward
-    console.log(point, reward, updatePoint)
-    setPoint(updatePoint);
-    setReward(reward)
+
+    const reward = correctCount * pointPerQuestion;
+    setPoint(point + reward);
+    setReward(reward);
   };
 
   const currentQuiz = quizList[currentIndex];
+  const isLastQuiz = currentIndex === quizList.length - 1;
 
   return showCompletePage ? (
     <QuizCompleteTemplate
@@ -141,6 +136,7 @@ export default function QuizPlayPage() {
       explanation={currentQuiz.description}
       isCorrect={isCorrect ?? false}
       isNext={handleNext}
+      isLast={isLastQuiz} // 👈 추가
     />
   ) : (
     <QuizPlayTemplate
