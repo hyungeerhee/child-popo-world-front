@@ -8,11 +8,13 @@ import { useAuthStore } from "@/lib/zustand/authStore";
 import { IMAGE_URLS } from "@/lib/constants/constants";
 import { login } from "@/lib/api/auth/login";
 import type { LoginRequest } from "@/lib/api/auth/login";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function LoginPage() {
   const [form, setForm] = useState<LoginRequest>({ email: "", password: "" });
   const navigate = useNavigate();
   const { login: setLoginState, setAccessToken } = useAuthStore();
+  const queryClient = useQueryClient();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -34,7 +36,7 @@ export default function LoginPage() {
 
       // 사용자 정보 저장
       setLoginState(result.data.name, result.data.point, form.email);
-
+      queryClient.clear();
       // 메인 페이지로 이동
       navigate("/");
     } else {
