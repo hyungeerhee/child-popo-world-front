@@ -53,6 +53,7 @@ export default function NpcShop() {
       setIsCompleteOpen(true); 
       
       queryClient.invalidateQueries({ queryKey: ["store-items", "parent"], refetchType:"all"});
+      queryClient.invalidateQueries({ queryKey: ["inventory-items"], refetchType:"all"});
     }, 
     onError: (error) => {
       console.error("Failed to buy product", error); 
@@ -65,7 +66,7 @@ export default function NpcShop() {
     if (storeItems?.length === 0) {
       return TEXT_MESSAGE.not_product;
     }
-    if (productIndex === 0 || productIndex === lastIndex) {
+    if (productIndex === 0 && productIndex === lastIndex) {
       return TEXT_MESSAGE.first_and_last;
     }
     if (productIndex === 0) {
