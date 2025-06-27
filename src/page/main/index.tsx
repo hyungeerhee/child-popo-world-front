@@ -153,8 +153,8 @@ export default function Main() {
     setIsTutorialOpen(false);
   };
 
-  console.log(isTutorialOpen)
   if(isTutorialOpen) {
+    setNewAudio(MainBackgroundMusic, 0.3);
     return <Tutorial  onComplete={handleTutorialComplete} />;
   }
   return (

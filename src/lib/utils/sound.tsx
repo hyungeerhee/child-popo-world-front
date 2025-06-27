@@ -14,12 +14,7 @@ export const playButtonSound = (url: string = buttonSound, volume: number = 1) =
 
 // 전역 효과음 Audio 객체
 let effectAudio: HTMLAudioElement | null = null;
-
 export const playSound = (url: string, volume: number = 1, onEnded?: () => void) => {
-  const { isMuted } = useSoundStore.getState();
-  if (isMuted) return;
-  
-  // 기존 오디오가 재생 중이면 정지
   if (effectAudio) {
     effectAudio.pause();
     effectAudio.currentTime = 0;
@@ -45,6 +40,7 @@ export const playSound = (url: string, volume: number = 1, onEnded?: () => void)
 export const setNewAudio = (url: string, volume: number = 0.8, loop: boolean = true) => {
   const { audio, setAudio } = useSoundStore.getState();
   if (audio) {
+    audio.volume = volume;
     if( url == audio.name) return 
 
     audio.pause();

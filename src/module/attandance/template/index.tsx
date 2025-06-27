@@ -5,6 +5,8 @@ import { playButtonSound } from "@/lib/utils/sound";
 import { Modal } from "@/components/modal/Modal";
 import SoundButton from "@/components/button/SoundButton";
 import { WEEK, cheeringText, rewardText, type Attendance } from "@/page/attandance";
+import { useTutorialStore } from "@/lib/zustand/tutorialStore";
+import clsx from "clsx";
 
 interface AttandanceTemplateProps {
   consecutive: number;
@@ -29,8 +31,14 @@ export function AttandanceTemplate({
   handleAttendance,
   attendance,
 }: AttandanceTemplateProps) {
- 
+  const { isCompleted } = useTutorialStore();
   return (
+    <>
+    {!isCompleted && 
+      <div className="fixed inset-0 z-50 bg-black/25" >
+        
+      </div>
+    }
     <div className="w-screen h-screen bg-black font-TJ overflow-hidden flex justify-center items-center">
       <div
         className={
@@ -79,7 +87,7 @@ export function AttandanceTemplate({
         <img
           src={IMAGE_URLS.attandance.masic_popo}
           alt="마법사 포포"
-          className="absolute top-10 right-24 w-44 h-44 object-contain"
+          className={clsx("absolute top-10 right-24 w-44 h-44 object-contain", !isCompleted && "z-200")}
         />
         {/* 월 화 수 목 금 토 일 */}
         <div className="flex px-8 py-4 gap-x-3 bg-white rounded-2xl">
@@ -103,12 +111,18 @@ export function AttandanceTemplate({
         </div>
         {/* 출석하기 버튼 */}
         <div
-          className="mt-8 mx-auto w-fit py-2 px-10 bg-[#F48A00] text-white text-lg rounded-xl active:scale-95 transition-all duration-100"
+          className={clsx("mt-8 mx-auto w-fit py-2 px-10 bg-[#F48A00] text-white text-lg rounded-xl active:scale-95 transition-all duration-100", !isCompleted && "z-200")}
           onClick={handleAttendance}
         >
           출석하기
         </div>
+        {/* 튜토리얼 버튼 */}
+        {!isCompleted && (
+            <div className="w-[12rem] h-[4rem] rounded-full bg-white/40 absolute  right-[20rem] bottom-[3rem] z-90"></div>
+        )}
       </div>
     </div>
+    </>
+
   );
 }

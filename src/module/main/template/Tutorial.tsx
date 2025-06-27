@@ -8,11 +8,15 @@ import { Indicator } from "../components/Indicator";
 import { useEffect } from "react";
 import clsx from "clsx";
 import SoundButton from "@/components/button/SoundButton";
-import startTTS from "@/assets/sound/tutorial/startTTS.wav"
-import soundTTS from "@/assets/sound/tutorial/soundTTS.wav"
 import { playSound } from "@/lib/utils/sound";
 import { Link } from "react-router-dom";
 import { useTutorialStore } from "@/lib/zustand/tutorialStore";
+
+import tutorial_start from "@/assets/sound/tutorial/tutorial_start_“안녕~ 난 포포야! 포포월드에 온 걸 환영해! 재밌는 섬들이 가득해! 하나씩 같이 둘러보_2025-06-27.wav"
+import tutorial_sound from "@/assets/sound/tutorial/tutorial_sound__여기! 위에 있는 이 버튼을 누르면 신나는 음악이 짜잔~ 포포랑 같이 춤출 준비 됐지___2025-06-27.wav"
+import tutorial_attandance from "@/assets/sound/tutorial/tutorial_attandance_“매일 눌러봐~ 출석하면 포인트가 뿅!”_2025-06-27.wav"
+import tutoral_quiz from "@/assets/sound/tutorial/tutorial_quiz_“이건 퀴즈를 할 수 있는 버튼이야! 문제 맞히면 포인트가 짠!”_2025-06-27.wav"
+import tutorial_last from "@/assets/sound/tutorial/tutorial_last_“우와~ 포포월드 구경 잘했어_ 이제 넌 포포월드 탐험가야! 여러 섬에서 놀고, 포인트도 _2025-06-27 (1).wav"
 
 interface TutorialProps {
   onComplete: () => void;
@@ -25,51 +29,49 @@ export default function Tutorial({ onComplete }: TutorialProps) {
     // currentStep 1
     intro: {
       text: <div>
-      <div>안녕~ 난 포포야!</div>
-      <div>여긴 냥이 모아서 놀 수 있는 포포월드야!</div>
+      <div>안녕~ 난 포포야! 포포월드에 온 걸 환영해!</div>
+      <div>재밌는 섬들이 가득해! 하나씩 같이 둘러보자</div>
     </div>,
-    sound: startTTS
+    sound: tutorial_start
     },
     // currentStep 2
     sound: {
       text: <div>
-      <div className="flex items-center">저기 위에  <img src={IMAGE_URLS.sound.off} alt="music" className="w-[1.2rem] mx-1" />버튼 보여?</div>
-      <div>누르면 음악이 나와~ 포포랑 같이 흔들흔들~</div>
+      <div className="flex items-center">여기! 위에 있는 이<img src={IMAGE_URLS.sound.off} alt="music" className="w-[1.2rem]" />버튼을 누르면</div>
+      <div>신나는 음악이 짜잔~ 포포랑 같이 춤출 준비 됐지?</div>
     </div>,
-    sound: soundTTS
+    sound: tutorial_sound
     },
     // currentStep 3
     attendance: {
-      text: 
-        <div>
-      그 옆엔 출석 버튼! 하루에 한 번, 도장 꾹~ 냥이 보상 뿅!
-    </div>,
-    sound: startTTS
+      text: <div>
+        매일 눌러봐~ 출석하면 포인트가 뿅!
+      </div>,
+    sound: tutorial_attandance
     },
     // currentStep 4
     quiz: {
       text: <div>
       퀴즈 버튼이야! 쉬운 것도, 어려운 것도 있어~ 맞히면 냥이 우르르~!
     </div>,
-    sound: startTTS
+    sound: tutoral_quiz
     },
     // currentStep 5
     diary: {
       text: <div>
-      감정일기 버튼이야!
+      우와~ 포포월드 구경 잘했어_ 이제 넌 포포월드 탐험가야! 여러 섬에서 놀고, 포인트도
     </div>,
-    sound: startTTS
+    sound: tutorial_last
     },
-    // currentStep 6
-    investing: {
-      text: <div className="">ㅎㅇㅇ</div>,
-      sound: startTTS
-    }
   };
 
   const totalSteps = Object.keys(tutorialOrder).length;
 
   const handleNextStep = () => {
+    if(currentStep === 3 || currentStep === 4) {
+      return 
+    }
+
     if (currentStep < totalSteps) {
       nextStep();
     } else {
@@ -84,12 +86,6 @@ export default function Tutorial({ onComplete }: TutorialProps) {
       playSound(
         tutorialOrder[Object.keys(tutorialOrder)[currentStep - 1]].sound,
         1,
-        () => {
-          // 음원 재생 완료 시 다음 단계로 자동 이동
-          setTimeout(() => {
-            handleNextStep();
-          }, 500); // 0.5초 대기 후 다음 단계로
-        }
       );
     } 
   }, [currentStep]);
@@ -197,60 +193,44 @@ export default function Tutorial({ onComplete }: TutorialProps) {
           <img
             src={IMAGE_URLS.main.saving}
             alt="savings"
-            className={clsx("w-[8rem] right-[9.75rem] bottom-[0.9rem] absolute", currentStep === 4 && "z-100")}
+            className="w-[8rem] right-[9.75rem] bottom-[0.9rem] absolute"
           />
           <div
-            className={clsx(
-              "absolute bottom-[1rem] right-[12.27rem]  px-[0.85rem] text-[0.8rem] pt-[0.08rem]  font-bold text-main-brown-800 bg-main-yellow-700 border md:border-2 border-main-brown-700 rounded-lg",
-              currentStep === 4 && "z-100"
-            )}
+            className="absolute bottom-[1rem] right-[12.27rem]  px-[0.85rem] text-[0.8rem] pt-[0.08rem]  font-bold text-main-brown-800 bg-main-yellow-700 border md:border-2 border-main-brown-700 rounded-lg"
           >
             적금
           </div>
         </div>
-        {currentStep === 5 && (
-          <div className="w-[9rem] h-[9rem] rounded-full bg-white/40 absolute  right-[9.2rem] bottom-[0.3rem] z-90"></div>
-        )}
 
         {/* 퀘스트 */}
         <div className="cursor-pointer">
           <img
             src={IMAGE_URLS.main.quest}
             alt="quest"
-            className={clsx("w-[7.2rem] absolute right-[2.4rem] bottom-[6.25rem]", currentStep === 3 && "z-100")}
+            className={clsx("w-[7.2rem] absolute right-[2.4rem] bottom-[6.25rem]", )}
           />
           <div
-            className={clsx(
-              "absolute bottom-[6rem] right-[3.8rem]  px-[0.85rem] text-[0.8rem] pt-[0.08rem]   font-bold text-main-brown-800 bg-main-yellow-700 border md:border-2 border-main-brown-700 rounded-lg",
-              currentStep === 3 && "z-100"
-            )}
+            className= "absolute bottom-[6rem] right-[3.8rem]  px-[0.85rem] text-[0.8rem] pt-[0.08rem] font-bold text-main-brown-800 bg-main-yellow-700 border md:border-2 border-main-brown-700 rounded-lg"
           >
             퀘스트
           </div>
         </div>
-        {currentStep === 3 && (
-          <div className="w-[9rem] h-[9rem] rounded-full bg-white/40 absolute  right-[1.5rem] bottom-[4.8rem] z-90"></div>
-        )}
+
 
         {/* 모의투자 */}
         <div className="cursor-pointer">
           <img
             src={IMAGE_URLS.main.investing}
             alt="quiz"
-            className={clsx("w-[7.5rem] absolute  right-[2.75rem] top-[5.5rem]", currentStep === 10 && "z-100")}
+            className="w-[7.5rem] absolute  right-[2.75rem] top-[5.5rem]"
           />
           <div
-            className={clsx(
-              "absolute top-[11.4rem] right-[4rem]  px-[0.85rem] text-[0.8rem] pt-[0.08rem] font-bold text-main-brown-800 bg-main-yellow-700 border md:border-2 border-main-brown-700 rounded-lg",
-              currentStep === 6 && "z-100"
-            )}
+            className="absolute top-[11.4rem] right-[4rem]  px-[0.85rem] text-[0.8rem] pt-[0.08rem] font-bold text-main-brown-800 bg-main-yellow-700 border md:border-2 border-main-brown-700 rounded-lg"
           >
             모의투자
           </div>
         </div>
-        {currentStep === 6 && (
-          <div className="w-[9rem] h-[9rem] rounded-full bg-white/40 absolute  right-[2rem] top-[5rem] z-90"></div>
-        )}
+
         {/* 포니 */}
         <img src={IMAGE_URLS.main.popo} alt="poni" className="absolute w-40 h-40 top-[8rem] left-[14rem] z-100" />
         {/* 말풍선 */}
