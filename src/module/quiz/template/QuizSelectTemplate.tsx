@@ -1,4 +1,5 @@
 import { BackArrow } from "@/components/button/BackArrow";
+import SoundButton from "@/components/button/SoundButton";
 import { Background } from "@/components/layout/Background";
 import { IMAGE_URLS } from "@/lib/constants/constants";
 
@@ -12,7 +13,8 @@ export const QuizLevelSelectTemplate = ({ onBack, onClickQuiz }: QuizLevelSelect
     <Background backgroundImage={IMAGE_URLS.quiz.bg}>
       {/* 뒤로가기 */}
       <BackArrow onClick={onBack} />
-
+      {/* 사운드 */}
+      <SoundButton />
       {/* 중앙 콘텐츠 */}
       <div className="flex flex-col items-center w-full px-[3rem]">
         {/* 설명 박스 */}

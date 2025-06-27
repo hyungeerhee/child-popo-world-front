@@ -1,18 +1,26 @@
 import { Background } from "@/components/layout/Background";
 import { IMAGE_URLS } from "@/lib/constants/constants";
 import { BackArrow } from "@/components/button/BackArrow";
+import SoundButton from "@/components/button/SoundButton";
+import NameAndPoint from "@/components/user/NameAndPoint";
+import { PlayLimitModal } from "./PlayLimitModal";
 
 interface QuizTemplateProps {
   onBack: () => void;
   onClickQuiz: () => void;
+  isModalOpen: boolean;
+  onCloseModal: () => void;
 }
 
-export const QuizTemplate = ({ onBack,onClickQuiz }:QuizTemplateProps) => {
+export const QuizTemplate = ({ onBack,onClickQuiz,isModalOpen,onCloseModal }:QuizTemplateProps) => {
   return (
     <Background backgroundImage={IMAGE_URLS.quiz.bg}>
       {/* 뒤로가기 */}
       <BackArrow onClick={onBack} />
-
+      {/* 사운드 */}
+      <SoundButton />
+      {/* 이름 포인트 */}
+      <NameAndPoint/>
       {/* 제목 - 퀴즈 */}
       <div className=" items-center justify-center mt-[3.7rem] flex flex-col">
         <span className="text-[3.5rem] font-bold text-[#F98224] ">매일매일 새로워지는</span>
@@ -39,6 +47,10 @@ export const QuizTemplate = ({ onBack,onClickQuiz }:QuizTemplateProps) => {
         퀴즈 풀기
         </button>
       </div>
+
+      {/* 작성제한모달 */}
+      {isModalOpen && (
+        <PlayLimitModal isOpen={isModalOpen} onClose={onCloseModal} />)}
       </Background>
   );
 };
