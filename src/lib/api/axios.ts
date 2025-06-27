@@ -9,20 +9,19 @@ export class ApiError extends Error {
   constructor(public status: number, public message: string, public data?: any) {
     super(message);
     this.name = "ApiError";
- 
   }
 }
 
 /**
  * Axios 인스턴스 생성
  * 기본 설정:
- * - baseURL: 환경 변수에서 API URL을 가져오거나 기본값 사용
+ * - baseURL: API 서버 URL
  * - timeout: 5초
  * - withCredentials: true (CORS 요청에서 쿠키 전송 허용)
  * - 기본 헤더: Content-Type: application/json
  */
 
-const API_URL = "/api";
+const API_URL = "https://www.toslte.store";
 
 const apiClient = axios.create({
   baseURL: API_URL,
@@ -30,7 +29,7 @@ const apiClient = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  withCredentials: true, // CORS 요청에서 쿠키 전송을 허용
+  withCredentials: true,
 });
 
 // 재시도 횟수를 추적하는 Map
@@ -44,6 +43,7 @@ const MAX_RETRY_COUNT = 3;
  * 1. 인증 토큰 처리
  * 2. Content-Type 헤더 동적 설정
  */
+
 apiClient.interceptors.request.use(
   (config) => {
     const token = useAuthStore.getState().accessToken;

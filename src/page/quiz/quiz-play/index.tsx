@@ -34,7 +34,7 @@ export default function QuizPlayPage() {
 
     console.log(point)
     apiClient
-      .get("http://52.78.53.247:8080/api/quiz", {
+      .get("/api/quiz", {
         params: { difficulty: level, topic },
       })
       .then((res) => {
