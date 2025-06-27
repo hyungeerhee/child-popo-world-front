@@ -3,7 +3,7 @@ import { IMAGE_URLS } from "@/lib/constants/constants";
 import { TextWithStroke } from "../../../components/text/TextWithStroke";
 import { Background } from "../../../components/layout/Background";
 import NameAndPoint from "@/components/user/NameAndPoint";
-import { SpeechBubble } from "../components/SpeechBubble";
+import { SpeechBubble, SpeechBubble2 } from "../components/SpeechBubble";
 import { Indicator } from "../components/Indicator";
 import { useEffect } from "react";
 import clsx from "clsx";
@@ -28,25 +28,36 @@ export default function Tutorial({ onComplete }: TutorialProps) {
   const tutorialOrder: Record<string, {text: React.ReactNode, sound: string}> = {
     // currentStep 1
     intro: {
-      text: <div>
-      <div>안녕~ 난 포포야! 포포월드에 온 걸 환영해!</div>
-      <div>재밌는 섬들이 가득해! 하나씩 같이 둘러보자</div>
+      text: <div className="absolute top-6 left-10 ">
+      <div className="absolute top-2 left-5 whitespace-nowrap">안녕~ 난 포포야! </div>
+      <div className="absolute top-6.5 -left-1 whitespace-nowrap">포포월드에 온 걸 환영해!</div>
+      <div className="absolute top-11 left-1 whitespace-nowrap">재밌는 섬들이 가득해! </div>
+      <div className="absolute top-15.5 left-1 whitespace-nowrap">하나씩 같이 둘러보자!</div>
     </div>,
     sound: tutorial_start
     },
     // currentStep 2
     sound: {
-      text: <div>
-      <div className="flex items-center">여기! 위에 있는 이<img src={IMAGE_URLS.sound.off} alt="music" className="w-[1.2rem]" />버튼을 누르면</div>
-      <div>신나는 음악이 짜잔~ 포포랑 같이 춤출 준비 됐지?</div>
+      text: <div className="absolute top-6 left-10">
+      <div className="absolute top-2.5 left-5 whitespace-nowrap flex items-center">
+        여기! 위에 있는 
+
+      </div>
+      <div className="absolute top-7 -left-2 whitespace-nowrap flex items-center">
+        이<img src={IMAGE_URLS.sound.off} alt="music" className="w-[1.2rem]" />
+        버튼을 누르면 신나는
+        </div>
+      <div className="absolute top-11.5 left-2.5 whitespace-nowrap">음악이 짜잔~ 포포랑 </div>
+      <div className="absolute top-16 left-2.5 whitespace-nowrap">같이 춤출 준비 됐지?</div>
     </div>,
     sound: tutorial_sound
     },
     // currentStep 3
     attendance: {
-      text: <div>
-        매일 눌러봐~ 출석하면 포인트가 뿅!
-      </div>,
+      text:<div className="absolute top-6 left-10 ">
+      <div className="absolute top-6 left-8 whitespace-nowrap">매일 눌러봐~  </div>
+      <div className="absolute top-11 left-1 whitespace-nowrap">출석하면 포인트가 뿅!</div>
+    </div>,
     sound: tutorial_attandance
     },
     // currentStep 4
@@ -68,7 +79,7 @@ export default function Tutorial({ onComplete }: TutorialProps) {
   const totalSteps = Object.keys(tutorialOrder).length;
 
   const handleNextStep = () => {
-    if(currentStep === 3 || currentStep === 4) {
+    if( currentStep === 3 || currentStep === 4) {
       return 
     }
 
@@ -234,9 +245,9 @@ export default function Tutorial({ onComplete }: TutorialProps) {
         {/* 포니 */}
         <img src={IMAGE_URLS.main.popo} alt="poni" className="absolute w-40 h-40 top-[8rem] left-[14rem] z-100" />
         {/* 말풍선 */}
-        <SpeechBubble
+        <SpeechBubble2
           children={tutorialOrder[Object.keys(tutorialOrder)[currentStep - 1]].text}
-          className="absolute bottom-[19.2rem] left-[11.8rem] z-100"
+          className="absolute bottom-[16.8rem] left-[14rem] z-100"
         />
         {/* 인디케이터 */}
         <Indicator

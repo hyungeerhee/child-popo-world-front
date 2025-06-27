@@ -1,3 +1,5 @@
+import { IMAGE_URLS } from "@/lib/constants/constants";
+
 interface SpeechBubbleProps {
   children: React.ReactNode;
   className?: string;
@@ -13,8 +15,24 @@ export const SpeechBubble = ({ className = "", children }: SpeechBubbleProps) =>
         </div>
         {/* 화살표 */}
         <div
-          className={`absolute -bottom-1 left-1/2 -translate-x-1/2 border-t-white border-t-8 border-x-transparent border-x-8 border-b-0`}
+          className={`absolute -bottom-2 left-1/2 -translate-x-1/2 border-t-white border-t-30 border-x-transparent border-x-30 border-b-0`}
         />
+      </div>
+    </div>
+  );
+};
+
+export const SpeechBubble2 = ({ className = "", children }: SpeechBubbleProps) => {
+  return (
+    <div className={` ${className}`}>
+      <div className="relative">
+        {/* 말풍선 본체 */}
+        <div className="flex text-sm rounded-xl px-4 py-2 w-[13.5rem] relative">
+          <img src={IMAGE_URLS.common.speech_bubble_2} alt="speech_bubble" className="w-full rotate-3" />
+          <div className="absolute top-0 left-0 w-full h-full text-sm">
+            {children}
+          </div>
+        </div>
       </div>
     </div>
   );

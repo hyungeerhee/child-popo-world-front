@@ -38,6 +38,8 @@ const IMAGE_URLS = {
     back_arrow_gray:"https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1750335615/back_arrow_gray_pm2mvr",
     point_popo:"https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1750725203/point_popo_g0js7h",
     cry_popo:"https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1750748431/cry_popo_dlbbio",
+    speech_bubble:"https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1751024818/speech_bubble1_uhbc7z",
+    speech_bubble_2:"https://res.cloudinary.com/djmcg7zgu/image/upload/f_auto,q_auto/v1751026361/speech_bubble3_1_2_goevx4",
   },
   main: {
     bg: "https://res.cloudinary.com/dgmbxvpv9/image/upload/f_auto,q_auto/v1749831440/main-background_lviawu",
