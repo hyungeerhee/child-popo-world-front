@@ -119,9 +119,6 @@ export default function Main() {
       questPageImages.forEach((image) => {
         preload(image, { as: "image" });
       });
-
-      queryClient.prefetchQuery({ queryKey: ["quest", "daily"], queryFn: () => getQuest("daily") });
-      queryClient.prefetchQuery({ queryKey: ["quest", "parent"], queryFn: () => getQuest("parent") });
     }
   };
 
