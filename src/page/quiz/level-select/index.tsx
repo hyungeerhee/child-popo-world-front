@@ -1,3 +1,4 @@
+import { playButtonSound } from "@/lib/utils/sound";
 import { QuizLevelSelectTemplate } from "@/module/quiz/template/QuizSelectTemplate";
 import { useNavigate } from "react-router-dom";
 import { useTutorialStore } from "@/lib/zustand/tutorialStore";
@@ -12,11 +13,13 @@ export default function QuizLevelSelectPage() {
       navigate("/");
       return;
     }
+    playButtonSound();
     navigate("/quiz");
   }
 
   // 난이도 클릭 시 난이도 선택 페이지로 이동
-  const handleClickQuiz = (level : string) => {
+  const handleClickQuiz = (level: string) => {
+    playButtonSound();
     navigate(`/quiz/${level}`);
   } 
     return (

@@ -75,6 +75,7 @@ export default function QuestDetail() {
   const {data: responseQuestData, isLoading, error} = useQuery({
     queryKey: ["quest", questType],
     queryFn: () => getQuest(questType),
+    staleTime: 0,
   });
 
   useEffect(() => {

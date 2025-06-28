@@ -46,7 +46,7 @@ export const chaptersInfo = {
 export default function InvestingPage() {
   const navigate = useNavigate();
   const animation = useAnimation();
-  const { point } = useAuthStore();
+  const { point,setPoint } = useAuthStore();
   const [isGameStartModalOpen, setIsGameStartModalOpen] = useState(false);
   const [isNoPointModalOpen, setIsNoPointModalOpen] = useState(false);
   const [chapter, setChapter] = useState<string>("");
@@ -91,6 +91,13 @@ export default function InvestingPage() {
     setIsGameStartModalOpen(false);
     const { x, y } = chapterPositions[chapter];
     
+    // 포인트 차감
+    if(point !== null) setPoint(point - chaptersInfo[chapter as keyof typeof chaptersInfo].price);
+
+    await queryClient.invalidateQueries({ 
+      queryKey: ['invest-game', chaptersInfo[chapter as keyof typeof chaptersInfo].id] 
+    });
+
     queryClient.prefetchQuery({
       queryKey: ['invest-game', chaptersInfo[chapter as keyof typeof chaptersInfo].id],
       queryFn: () => getChapterData(chaptersInfo[chapter as keyof typeof chaptersInfo].id),

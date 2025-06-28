@@ -1,10 +1,16 @@
 import { Background } from "@/components/layout/Background";
 import { IMAGE_URLS } from "@/lib/constants/constants";
 import { BackArrow } from "@/components/button/BackArrow";
+
 import clsx from "clsx";
 import { SpeechBubble2 } from "@/components/text/SpeechBubble";
 import { BottomArrow } from "@/components/icon/BottomArrow";
 import { tutorialQuiz } from "@/lib/constants/tutorial";
+
+import SoundButton from "@/components/button/SoundButton";
+import NameAndPoint from "@/components/user/NameAndPoint";
+import { PlayLimitModal } from "./PlayLimitModal";
+
 
 interface QuizTemplateProps {
   onBack: () => void;
@@ -13,6 +19,11 @@ interface QuizTemplateProps {
 }
 
 export const QuizTemplate = ({ onBack,onClickQuiz, isTutorialCompleted }:QuizTemplateProps) => {
+  isModalOpen: boolean;
+  onCloseModal: () => void;
+}
+
+export const QuizTemplate = ({ onBack,onClickQuiz,isModalOpen,onCloseModal }:QuizTemplateProps) => {
   return (
     <>
     {/* 튜토리얼 중 퀴즈 클릭 시 배경 어둡게 */}
@@ -24,7 +35,10 @@ export const QuizTemplate = ({ onBack,onClickQuiz, isTutorialCompleted }:QuizTem
     <Background backgroundImage={IMAGE_URLS.quiz.bg}>
       {/* 뒤로가기 */}
       <BackArrow onClick={onBack} />
-
+      {/* 사운드 */}
+      <SoundButton />
+      {/* 이름 포인트 */}
+      <NameAndPoint/>
       {/* 제목 - 퀴즈 */}
       <div className=" items-center justify-center mt-[3.7rem] flex flex-col">
         <span className="text-[3.5rem] font-bold text-[#F98224] ">매일매일 새로워지는</span>
@@ -59,10 +73,16 @@ export const QuizTemplate = ({ onBack,onClickQuiz, isTutorialCompleted }:QuizTem
         퀴즈 풀기
         </button>
       </div>
+      
       {/* 튜토리얼 버튼 */}
       {(!isTutorialCompleted) && (
         <BottomArrow size={80} color="#F65636" className="absolute right-1/2 translate-x-1/2 bottom-[8.2rem] z-190 animate-bounce " />
       )}
+
+      {/* 작성제한모달 */}
+      {isModalOpen && (
+        <PlayLimitModal isOpen={isModalOpen} onClose={onCloseModal} />)}
+
       </Background>
     </>
   );

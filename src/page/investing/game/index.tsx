@@ -10,7 +10,6 @@ import { postSendTurnData } from "@/lib/api/invest-game/postSendTurnData";
 import { getChapterData } from "@/lib/api/invest-game/getChapterData";
 import { setNewAudio, stopBackgroundMusic } from "@/lib/utils/sound";
 import { useSoundStore } from "@/lib/zustand/soundStore";
-import { useAuthStore } from "@/lib/zustand/authStore";
 import LittlePigSound from "@/assets/sound/chapter1.mp3";
 import TruckSound from "@/assets/sound/chapter2.mp3";
 import MasicSound from "@/assets/sound/chapter3.mp3";
@@ -156,19 +155,27 @@ export default function InvestingGame() {
   // 소리 
   const { isMuted, audio } = useSoundStore();
   // 포인트
-  const { point, setPoint } = useAuthStore();
   const queryClient = useQueryClient();
+  // 게임 데이터를 저장할 state
+  const [gameData, setGameData] = useState<any>(null);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  
   const { data, isSuccess } = useQuery({
     queryKey: ['invest-game', INITIAL_CHAPTER_DATA[gametype].id],
     queryFn: () => getChapterData(INITIAL_CHAPTER_DATA[gametype].id),
-    enabled: gameStage === "game-start",
+    enabled: gameStage === "game-start" && !isDataLoaded, // 데이터가 로드되지 않았을 때만 실행
   });
+
+  // 데이터를 한 번만 저장
+  useEffect(() => {
+    if (isSuccess && data && !isDataLoaded) {
+      setGameData(data);
+      setIsDataLoaded(true);
+    }
+  }, [isSuccess, data, isDataLoaded]);
 
   const useEndGameMutation = useMutation({
     mutationFn: ({ sessionId, chapterId, isSuccess, profitValue }: { sessionId: string, chapterId: string, isSuccess: boolean, profitValue: number }) => postEndGame(sessionId, chapterId, isSuccess, profitValue),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["invest-game"], refetchType: "all" });
-    },
   });
 
   // 첫페이지 로드시 배경음악 설정
@@ -188,13 +195,10 @@ export default function InvestingGame() {
 
   // 시나리오 데이터 로드
   useEffect(() => {
-    if (!isSuccess || gameStage !== "game-start") return;
-    
-    const chapterData = data; 
-    if(!chapterData) return;
+    if (!isSuccess || gameStage !== "game-start" || !isDataLoaded) return;
 
-    // 포인트 차감
-    if(point !== null) setPoint(point - INITIAL_CHAPTER_DATA[gametype].price);
+    const chapterData = gameData; 
+    if(!chapterData) return;
 
     // 게임 세션 id 저장
     const sessionId = chapterData.sessionId;
@@ -218,7 +222,7 @@ export default function InvestingGame() {
       news_tag: story[0].news_tag, // 뉴스 태그
     }))
 
-  }, [gameStage]);
+  }, [gameStage, isDataLoaded]);
 
   // 거래 타입 결정 헬퍼 함수
   const determineTransactionType = (beforeCount: number, currentCount: number): string => {

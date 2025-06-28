@@ -40,6 +40,7 @@ export const playSound = (url: string, volume: number = 1, onEnded?: () => void)
 export const setNewAudio = (url: string, volume: number = 0.8, loop: boolean = true) => {
   const { audio, setAudio } = useSoundStore.getState();
   if (audio) {
+
     audio.volume = volume;
     if( url == audio.name) return 
 

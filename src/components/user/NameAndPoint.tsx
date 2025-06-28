@@ -19,7 +19,7 @@ const limitNameLength = (name: string) => {
   for (let i = 0; i < name.length; i++) {
     const char = name[i];
     if (/[가-힣]/.test(char)) {
-      length += 2.1;
+      length += 2;
     } else if (/[a-z]/.test(char)) {
       length += 1.1;
     } else {

@@ -7,13 +7,15 @@ interface QuizAnswerTemplateProps {
   explanation: string;
   isCorrect: boolean;
   isNext: () => void;
+  isLast: boolean;
 }
 
 export const QuizAnswerTemplate = ({
   answer,
-  explanation,
+  explanation, 
   isCorrect,
   isNext,
+  isLast
 }: QuizAnswerTemplateProps) => {
     const resultColor = isCorrect ? "text-[#7F8EC2]" : "text-[#F77B6E]";
     const imagePopo = isCorrect ? IMAGE_URLS.quiz.o : IMAGE_URLS.quiz.x;
@@ -41,7 +43,8 @@ export const QuizAnswerTemplate = ({
           onClick={isNext}
           className="border-[0.25rem] border-[#A69C5D] w-[8.5rem] h-[3rem] bg-[#E0FFC1] rounded-2xl flex font-semibold justify-center items-center text-[1.2rem] text-[#4B3D2A]"
         >
-          다음 문제
+        {isLast ? "결과 보기" : "다음 문제"}
+
         </button>
           </div>
           

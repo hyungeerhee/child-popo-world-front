@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { QuizTopicSelectTemplate } from "@/module/quiz/template/QuizTopicSelectTemplate";
 import { useTutorialStore } from "@/lib/zustand/tutorialStore";
+import { playButtonSound } from "@/lib/utils/sound";
 
 export default function TopicSelectPage() {
     const navigate = useNavigate();
@@ -12,13 +13,14 @@ export default function TopicSelectPage() {
       navigate("/");
       return;
     }
+    playButtonSound();
     navigate("/quiz/level-select");
   };
     
-    // 주제 클릭시 퀴즈 풀기 페이지로 이동
-    const handleClickTopic = (topic: string) => {
-      if (!level) return;
-      navigate(`/quiz/${level}/${topic}`);
+  const handleClickTopic = (topic: string) => {
+    playButtonSound();
+        if (!level) return;
+        navigate(`/quiz/${level}/${topic}`);
     }
 
 
