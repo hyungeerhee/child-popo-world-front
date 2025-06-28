@@ -82,7 +82,7 @@ export const QuizPlayTemplate = ({
               );
             })}
           </div>
-
+        </div>
       </div>
     </Background>
   );

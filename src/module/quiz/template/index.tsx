@@ -16,14 +16,12 @@ interface QuizTemplateProps {
   onBack: () => void;
   onClickQuiz: () => void;
   isTutorialCompleted: boolean;
-}
-
-export const QuizTemplate = ({ onBack,onClickQuiz, isTutorialCompleted }:QuizTemplateProps) => {
   isModalOpen: boolean;
-  onCloseModal: () => void;
+  onCloseModal: () => void; 
 }
 
-export const QuizTemplate = ({ onBack,onClickQuiz,isModalOpen,onCloseModal }:QuizTemplateProps) => {
+
+export const QuizTemplate = ({ onBack,onClickQuiz,isModalOpen,onCloseModal,isTutorialCompleted }:QuizTemplateProps) => {
   return (
     <>
     {/* 튜토리얼 중 퀴즈 클릭 시 배경 어둡게 */}

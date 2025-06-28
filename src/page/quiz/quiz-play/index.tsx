@@ -46,6 +46,7 @@ export default function QuizPlayPage() {
         params: { difficulty: level, topic },
       })
       .then((res) => {
+        console.log(res)
         const raw = JSON.parse(res.data.questionJson);
         const parsedQuiz: Quiz[] = [];
 
