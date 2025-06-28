@@ -3,9 +3,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { MarketTemplate } from "../../module/market/template";
 import { preload } from "react-dom";
 import { IMAGE_URLS } from "@/lib/constants/constants";
-import { setNewAudio, stopBackgroundMusic } from "@/lib/utils/sound";
+import { playSound, setNewAudio, stopBackgroundMusic } from "@/lib/utils/sound";
 import { useSoundStore } from "@/lib/zustand/soundStore";
 import MarketBackgroundMusic from "@/assets/sound/market.mp3";
+import MarketTTS from "@/assets/sound/tutorial/market_tts_“시장 섬에 온 걸 환영해! 뭘 사러 온 거야~_”_2025-06-27.wav"
 
 const marketPageImages = [
   IMAGE_URLS.market.bg,
@@ -21,9 +22,11 @@ export default function MarketPage() {
     useEffect(() => {
       console.log("audio.name", audio?.name);
       if(audio?.name !== MarketBackgroundMusic) {
-        setNewAudio(MarketBackgroundMusic, 0.6);
+        setNewAudio(MarketBackgroundMusic, 0.5);
       }
-    }, []);
+
+      playSound(MarketTTS, 1);
+    }, []);1
   
     // 음소거 상태 변경시 배경음악 정지 또는 재생
     useEffect(() => {

@@ -29,11 +29,11 @@ export const QuizAnswerTemplate = ({
           <p className="text-[1rem] mb-[1rem] w-full ">
             <span className="font-semibold">정답: </span>{answer}
           </p>
-                  <div className="overflow-scroll scrollbar-hidden bg-white/60 rounded-xl h-[7rem] shadow-md flex justify-center items-center px-[0.5rem] py-[3.5rem] text-center ">
-                  <p className="text-[0.9rem] mt-[1rem] mb-[0.6rem] mx-[1rem] text-[#5f4b2a] whitespace-pre-wrap  flex items-center justify-center w-full h-full ">
-            {explanation}
-          </p>
-</div>
+          <div className="overflow-scroll scrollbar-hidden bg-white/60 rounded-xl h-[7rem] shadow-md flex justify-center items-center px-[0.5rem] py-[3.5rem] text-center ">
+            <p className="text-[0.9rem] mt-[1rem] mb-[0.6rem] mx-[1rem] text-[#5f4b2a] whitespace-pre-wrap  flex items-center justify-center w-full h-full ">
+              {explanation}
+            </p>
+          </div>
         </div>
 
         {/* 다음 문제 버튼 */}

@@ -21,7 +21,7 @@ export const Modal = ({ isOpen, onClose, children }: ModalProps) => {
     <ModalPortal>
       {/* 모달 오버레이: 배경을 어둡게 하고 모달을 중앙에 배치 */}
       <div
-        className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 font-TJ"
+        className="fixed inset-0 bg-black/50 flex justify-center items-center z-1000 font-TJ"
         onClick={() => {
           onClose?.();
         }}
@@ -57,8 +57,13 @@ const ModalPortal = ({ children }: ModalPortalProps) => {
   if (!mounted) return null;
 
   // modal-root 엘리먼트를 찾아서 portal 생성
-  const modalRoot = document.getElementById("modal-root");
-  if (!modalRoot) return null;
+  let modalRoot = document.getElementById("modal-root");
+  if (!modalRoot) {
+    // modal-root가 없으면 생성
+    modalRoot = document.createElement("div");
+    modalRoot.id = "modal-root";
+    document.body.appendChild(modalRoot);
+  }
 
   // createPortal을 사용하여 children을 modal-root에 렌더링
   return createPortal(children, modalRoot);

@@ -3,101 +3,34 @@ import { IMAGE_URLS } from "@/lib/constants/constants";
 import { TextWithStroke } from "../../../components/text/TextWithStroke";
 import { Background } from "../../../components/layout/Background";
 import NameAndPoint from "@/components/user/NameAndPoint";
-import { SpeechBubble, SpeechBubble2 } from "../components/SpeechBubble";
+import { SpeechBubble2 } from "../../../components/text/SpeechBubble";
 import { Indicator } from "../components/Indicator";
 import { useEffect } from "react";
 import clsx from "clsx";
 import SoundButton from "@/components/button/SoundButton";
-import { playSound } from "@/lib/utils/sound";
+import { playButtonSound, playSound } from "@/lib/utils/sound";
 import { Link } from "react-router-dom";
 import { useTutorialStore } from "@/lib/zustand/tutorialStore";
+import { TopArrow } from "@/components/icon/TopArrow";
+import { tutorialOrder } from "@/lib/constants/tutorial";
 
-import tutorial_start from "@/assets/sound/tutorial/tutorial_start_“안녕~ 난 포포야! 포포월드에 온 걸 환영해! 재밌는 섬들이 가득해! 하나씩 같이 둘러보_2025-06-27.wav"
-import tutorial_sound from "@/assets/sound/tutorial/tutorial_sound__여기! 위에 있는 이 버튼을 누르면 신나는 음악이 짜잔~ 포포랑 같이 춤출 준비 됐지___2025-06-27.wav"
-import tutorial_attandance from "@/assets/sound/tutorial/tutorial_attandance_“매일 눌러봐~ 출석하면 포인트가 뿅!”_2025-06-27.wav"
-import tutoral_quiz from "@/assets/sound/tutorial/tutorial_quiz_“이건 퀴즈를 할 수 있는 버튼이야! 문제 맞히면 포인트가 짠!”_2025-06-27.wav"
-import tutorial_last from "@/assets/sound/tutorial/tutorial_last_“우와~ 포포월드 구경 잘했어_ 이제 넌 포포월드 탐험가야! 여러 섬에서 놀고, 포인트도 _2025-06-27 (1).wav"
 
-interface TutorialProps {
-  onComplete: () => void;
-}
-
-export default function Tutorial({ onComplete }: TutorialProps) {
-  const { currentStep, nextStep, completeTutorial } = useTutorialStore();
+export default function Tutorial() {
+  const { currentStep, nextStep, setTutorialCompleted } = useTutorialStore();
   
-  const tutorialOrder: Record<string, {text: React.ReactNode, sound: string}> = {
-    // currentStep 1
-    intro: {
-      text: <div className="absolute top-6 left-10 ">
-      <div className="absolute top-2 left-5 whitespace-nowrap">안녕~ 난 포포야! </div>
-      <div className="absolute top-6.5 -left-1 whitespace-nowrap">포포월드에 온 걸 환영해!</div>
-      <div className="absolute top-11 left-1 whitespace-nowrap">재밌는 섬들이 가득해! </div>
-      <div className="absolute top-15.5 left-1 whitespace-nowrap">하나씩 같이 둘러보자!</div>
-    </div>,
-    sound: tutorial_start
-    },
-    // currentStep 2
-    sound: {
-      text: <div className="absolute top-6 left-10">
-      <div className="absolute top-2.5 left-5 whitespace-nowrap flex items-center">
-        여기! 위에 있는 
-
-      </div>
-      <div className="absolute top-7 -left-2 whitespace-nowrap flex items-center">
-        이<img src={IMAGE_URLS.sound.off} alt="music" className="w-[1.2rem]" />
-        버튼을 누르면 신나는
-        </div>
-      <div className="absolute top-11.5 left-2.5 whitespace-nowrap">음악이 짜잔~ 포포랑 </div>
-      <div className="absolute top-16 left-2.5 whitespace-nowrap">같이 춤출 준비 됐지?</div>
-    </div>,
-    sound: tutorial_sound
-    },
-    // currentStep 3
-    attendance: {
-      text:<div className="absolute top-6 left-10 ">
-      <div className="absolute top-6 left-8 whitespace-nowrap">매일 눌러봐~  </div>
-      <div className="absolute top-11 left-1 whitespace-nowrap">출석하면 포인트가 뿅!</div>
-    </div>,
-    sound: tutorial_attandance
-    },
-    // currentStep 4
-    quiz: {
-      text: <div>
-      퀴즈 버튼이야! 쉬운 것도, 어려운 것도 있어~ 맞히면 냥이 우르르~!
-    </div>,
-    sound: tutoral_quiz
-    },
-    // currentStep 5
-    diary: {
-      text: <div>
-      우와~ 포포월드 구경 잘했어_ 이제 넌 포포월드 탐험가야! 여러 섬에서 놀고, 포인트도
-    </div>,
-    sound: tutorial_last
-    },
-  };
-
   const totalSteps = Object.keys(tutorialOrder).length;
 
   const handleNextStep = () => {
-    if( currentStep === 3 || currentStep === 4) {
-      return 
-    }
-
     if (currentStep < totalSteps) {
       nextStep();
     } else {
-      completeTutorial();
-      onComplete();
+      setTutorialCompleted(true);
     }
   };
 
   useEffect(() => {
-    console.log(tutorialOrder[Object.keys(tutorialOrder)[currentStep - 1]].sound, currentStep);
     if (tutorialOrder[Object.keys(tutorialOrder)[currentStep - 1]].sound) {
-      playSound(
-        tutorialOrder[Object.keys(tutorialOrder)[currentStep - 1]].sound,
-        1,
-      );
+      playSound(tutorialOrder[Object.keys(tutorialOrder)[currentStep - 1]].sound);
     } 
   }, [currentStep]);
 
@@ -131,26 +64,33 @@ export default function Tutorial({ onComplete }: TutorialProps) {
         currentStep === 2 && "z-100"
         )} />
         {currentStep === 2 && (
-          <div className="w-[2.2rem] h-[2.2rem] rounded-full bg-white/40 absolute  left-[6.25rem] top-[0.4rem] z-90"></div>
+          <>
+            <div className="w-[2.2rem] h-[2.2rem] rounded-full bg-white/50 absolute  left-[6.25rem] top-[0.4rem] z-90 shadow-[0_0_20px_rgba(255,255,255,0.5)]"></div>
+            <TopArrow
+              className="absolute left-[6.45rem] top-[2.9rem] z-90 animate-bounce"
+              color="#F7F7F7"
+              size={52}
+            />
+          </>
         )}
         {/* 퀴즈 */}
-        <div>
-          <div className="absolute top-[0.5rem] right-[9.8rem]  flex flex-col justify-center items-center ">
-            <img src={IMAGE_URLS.main.quiz} alt="quiz" className="w-[1.8rem]" />
+        <Link to="/quiz" onClick={() => {playButtonSound(); handleNextStep()}}>
+        <div className="absolute top-[0.5rem] right-[9.8rem]  flex flex-col justify-center items-center ">
+            <img src={IMAGE_URLS.main.quiz} alt="quiz" className={clsx("w-[1.8rem]", currentStep === 4 && "z-100")} />
             <TextWithStroke
               text="퀴즈"
               textClassName="text-main-yellow-800 text-[0.9rem]"
               strokeClassName="text-main-brown-800 text-[0.9rem] text-stroke-width-[0.15rem] text-stroke-color-main-brown-800"
             />
           </div>
-        </div>
+        </Link>
         {currentStep === 4 && (
-            <div className="w-[2.3rem] h-[2.3rem] rounded-full bg-white/40 absolute  right-[9.8rem] top-[0.5rem] z-90"></div>
+            <div className="w-[2.3rem] h-[2.3rem] rounded-full bg-white/50 absolute  right-[9.55rem] top-[0.29rem] z-90 shadow-[0_0_20px_rgba(255,255,255,0.5)]"></div>
         )}
 
 
         {/* 출석 */}
-        <Link to="/attandance" className="absolute top-[0.6rem]  right-[7.6rem]  flex flex-col items-center justify-center ">
+        <Link to="/attandance" onClick={() => {playButtonSound(); handleNextStep()}} className="absolute top-[0.6rem]  right-[7.6rem]  flex flex-col items-center justify-center ">
           <img src={IMAGE_URLS.main.attendance} alt="attandance" className={clsx("w-[1.8rem]", currentStep === 3 && "z-100")} />
           <TextWithStroke
             text="출석"
@@ -159,7 +99,14 @@ export default function Tutorial({ onComplete }: TutorialProps) {
           />
         </Link>
         {currentStep === 3 && (
-            <div className="w-[2.3rem] h-[2.3rem] rounded-full bg-white/40 absolute  right-[7.3rem] top-[0.35rem] z-90"></div>
+          <>
+            <div className="w-[2.3rem] h-[2.3rem] rounded-full bg-white/50 absolute  right-[7.3rem] top-[0.35rem] z-90 shadow-[0_0_20px_rgba(255,255,255,0.5)]"></div>
+            <TopArrow
+              className="absolute right-[7.65rem] top-[2.9rem] z-90 animate-bounce"
+              color="#F7F7F7"
+              size={52}
+            />
+          </>
         )}
 
         {/* 이름과 포인트 */}

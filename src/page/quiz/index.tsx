@@ -1,9 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import { QuizTemplate } from "../../module/quiz/template";
+import { useTutorialStore } from "@/lib/zustand/tutorialStore";
+import { useEffect } from "react";
+import { playSound } from "@/lib/utils/sound";
+import { tutorialQuiz } from "@/lib/constants/tutorial";
 
 export default function QuizPage() {
-
+  const { isTutorialCompleted} = useTutorialStore();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if(!isTutorialCompleted) {
+      playSound(tutorialQuiz["quiz2"].sound);
+    }
+  }, [isTutorialCompleted]);
 
   // 뒤로가기 버튼 클릭 시 홈으로 이동
   const handleBack = () => {
@@ -15,5 +25,5 @@ export default function QuizPage() {
     navigate("/quiz/level-select");
   };
 
-  return <QuizTemplate onBack={handleBack} onClickQuiz={handleClickQuiz}/>;
+  return <QuizTemplate onBack={handleBack} onClickQuiz={handleClickQuiz} isTutorialCompleted={isTutorialCompleted}/>;
 }
