@@ -1,5 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { QuizTemplate } from "../../module/quiz/template";
+import { useTutorialStore } from "@/lib/zustand/tutorialStore";
+import { playSound } from "@/lib/utils/sound";
+import { tutorialQuiz } from "@/lib/constants/tutorial";
 import { useSoundStore } from "@/lib/zustand/soundStore";
 import { useEffect, useState } from "react";
 import {
@@ -11,6 +14,7 @@ import QuizBackgroundMusic from "@/assets/sound/quiz2.mp3";
 import apiClient from "@/lib/api/axios";
 
 export default function QuizPage() {
+    const { isTutorialCompleted} = useTutorialStore();
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { isMuted, audio } = useSoundStore();
@@ -32,6 +36,12 @@ export default function QuizPage() {
       audio.play();
     }
   }, [isMuted, audio]);
+
+  useEffect(() => {
+    if(!isTutorialCompleted) {
+      playSound(tutorialQuiz["quiz2"].sound);
+    }
+  }, [isTutorialCompleted]);
 
   // 뒤로가기 버튼 클릭 시 홈으로 이동
   const handleBack = () => {
@@ -56,12 +66,14 @@ export default function QuizPage() {
     setIsModalOpen(false);
   };
 
+
   return (
     <QuizTemplate
       onBack={handleBack}
       isModalOpen={isModalOpen}
       onCloseModal={handleCloseModal}
       onClickQuiz={handleClickQuiz}
+      isTutorialCompleted={isTutorialCompleted}
     />
   );
 }

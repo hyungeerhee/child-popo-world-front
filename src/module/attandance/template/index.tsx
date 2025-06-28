@@ -1,36 +1,47 @@
 import { BackArrow } from "@/components/button/BackArrow";
 import { IMAGE_URLS } from "@/lib/constants/constants";
 import { PointModal } from "@/components/modal/PointModal";
-import { playButtonSound } from "@/lib/utils/sound";
+import { playButtonSound, setNewAudio } from "@/lib/utils/sound";
 import { Modal } from "@/components/modal/Modal";
 import SoundButton from "@/components/button/SoundButton";
 import { WEEK, cheeringText, rewardText, type Attendance } from "@/page/attandance";
+import { useTutorialStore } from "@/lib/zustand/tutorialStore";
+import clsx from "clsx";
+import { SpeechBubble2 } from "@/components/text/SpeechBubble";
+import { tutorialAttandance } from "@/lib/constants/tutorial";
+import { BottomArrow } from "@/components/icon/BottomArrow";
 
 interface AttandanceTemplateProps {
   consecutive: number;
   isPointModalOpen: boolean;
-  setIsPointModalOpen: (isOpen: boolean) => void;
+  handlePointModalClose: () => void;
   rewardPoints: number;
   isWeekCompleted: boolean;
   isAlreadyAttended: boolean;
   setIsAlreadyAttended: (isAttended: boolean) => void;
   handleAttendance: () => void;
   attendance: Attendance[];
+  isTutorialCompleted: boolean;
 }
 
 export function AttandanceTemplate({
   consecutive,
   isPointModalOpen,
-  setIsPointModalOpen,
+  handlePointModalClose,
   rewardPoints,
   isWeekCompleted,
   isAlreadyAttended,
   setIsAlreadyAttended,
   handleAttendance,
   attendance,
+  isTutorialCompleted,
 }: AttandanceTemplateProps) {
- 
+
+
   return (
+    <>
+    {/* 튜토리얼중, 포인트모달이 열리지 않았다면 배경 어둡게 */}
+    {(!isTutorialCompleted && !isPointModalOpen) && <div className="fixed inset-0 z-50 bg-black/25" />}
     <div className="w-screen h-screen bg-black font-TJ overflow-hidden flex justify-center items-center">
       <div
         className={
@@ -40,11 +51,11 @@ export function AttandanceTemplate({
         {/* 포인트 모달 */}
         <PointModal
           isOpen={isPointModalOpen}
-          onClose={() => setIsPointModalOpen(false)}
+          onClose={handlePointModalClose}
           title={"축하해요!"}
           text={rewardText[isWeekCompleted ? "week" : "day"]}
           price={rewardPoints}
-          onConfirm={() => setIsPointModalOpen(false)}
+          onConfirm={handlePointModalClose}
         />
 
         {isAlreadyAttended && (
@@ -79,8 +90,16 @@ export function AttandanceTemplate({
         <img
           src={IMAGE_URLS.attandance.masic_popo}
           alt="마법사 포포"
-          className="absolute top-10 right-24 w-44 h-44 object-contain"
+          className={clsx("absolute top-10 right-24 w-44 h-44 object-contain", (!isTutorialCompleted && !isPointModalOpen) && "z-200")}
         />
+        {/* 튜토리얼 메시지 */}
+        {!isTutorialCompleted && !isPointModalOpen && ( 
+        <SpeechBubble2
+          children={tutorialAttandance["attendance2"].text}
+          className="absolute bottom-[16.8rem] right-[13.5rem] z-100"
+          flip={true}
+        />        
+        )}
         {/* 월 화 수 목 금 토 일 */}
         <div className="flex px-8 py-4 gap-x-3 bg-white rounded-2xl">
           {WEEK.map((day) => {
@@ -103,12 +122,19 @@ export function AttandanceTemplate({
         </div>
         {/* 출석하기 버튼 */}
         <div
-          className="mt-8 mx-auto w-fit py-2 px-10 bg-[#F48A00] text-white text-lg rounded-xl active:scale-95 transition-all duration-100"
+          className={clsx("mt-8 mx-auto w-fit py-2 px-10 bg-[#F48A00] text-white text-lg rounded-xl active:scale-95 transition-all duration-100 relative",
+             (!isTutorialCompleted && !isPointModalOpen) && "z-[200] shadow-[0_0_20px_rgba(255,255,255,0.5)]")}
           onClick={handleAttendance}
         >
           출석하기
         </div>
+        {/* 튜토리얼 버튼 */}
+        {(!isTutorialCompleted && !isPointModalOpen) && (
+            <BottomArrow size={80} color="#F48A00" className="absolute right-1/2 translate-x-1/2 bottom-[5.5rem] z-190 animate-bounce " />
+        )}
       </div>
     </div>
+    </>
+
   );
 }

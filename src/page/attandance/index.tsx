@@ -3,8 +3,11 @@ import { getAttendance, postAttendance } from "@/lib/api/attandance/attendance";
 import { useAuthStore } from "@/lib/zustand/authStore";
 import { AttandanceTemplate } from "@/module/attandance/template";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { playButtonSound } from "@/lib/utils/sound";
+import { playButtonSound, playSound, setNewAudio } from "@/lib/utils/sound";
 import { getToday, getYesterday } from "@/lib/utils/utils";
+import { useTutorialStore } from "@/lib/zustand/tutorialStore";
+import { useNavigate } from "react-router-dom";
+import { tutorialAttandance } from "@/lib/constants/tutorial";
 
 export const WEEK = ["월", "화", "수", "목", "금", "토", "일"];
 
@@ -24,8 +27,6 @@ export interface Attendance {
   attended: boolean;
 }
 
-
-
 export default function AttandancePage() {
   const [isPointModalOpen, setIsPointModalOpen] = useState(false);
   const [rewardPoints, setRewardPoints] = useState(0); 
@@ -33,12 +34,21 @@ export default function AttandancePage() {
   const [isAlreadyAttended, setIsAlreadyAttended] = useState(false);
   const {setPoint, point} = useAuthStore();
   const queryClient = useQueryClient();
+  const { isTutorialCompleted  } = useTutorialStore();
+  const navigate = useNavigate();
 
   const { data: attendanceData } = useQuery<Attendance[]>({
     queryKey: ["attendance"],
     queryFn: getAttendance,
     staleTime: 60 * 1000 * 60 , // 1시간 마다 캐시 무효화
   });
+
+  useEffect(() => {
+    if (!isTutorialCompleted) {
+      playSound(tutorialAttandance["attendance2"].sound);
+    }
+  }, [isTutorialCompleted]);
+
 
   const attendanceMutation = useMutation({
     mutationFn: (dayOfWeek: string) => postAttendance(dayOfWeek),
@@ -86,21 +96,32 @@ export default function AttandancePage() {
     return getConsecutive();
   }, [attendanceData]);
 
-
   const handleAttendance = () => {
     playButtonSound();
+    console.log("isPointModalOpen", isPointModalOpen);
+    setIsPointModalOpen(true);
     attendanceMutation.mutate(getToday());
+  };
+
+  // 튜토리얼 중 포인트 모달 닫힐 때 메인으로 돌아가서 튜토리얼 계속
+  const handlePointModalClose = () => {
+    setIsPointModalOpen(false);
+
+    if (!isTutorialCompleted) {
+      navigate("/");
+    }
   };
 
   return <AttandanceTemplate 
     consecutive={consecutive}
     isPointModalOpen={isPointModalOpen}
-    setIsPointModalOpen={setIsPointModalOpen}
+    handlePointModalClose={handlePointModalClose}
     rewardPoints={rewardPoints}
     isWeekCompleted={isWeekCompleted}
     isAlreadyAttended={isAlreadyAttended}
     setIsAlreadyAttended={setIsAlreadyAttended}
     handleAttendance={handleAttendance}
     attendance={attendanceData || []}
+    isTutorialCompleted={isTutorialCompleted}
   />;
 }

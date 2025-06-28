@@ -2,10 +2,11 @@ import { NpcShopTemplate } from "@/module/market/template/npc-shop";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../../lib/zustand/authStore";
-import { playButtonSound } from "@/lib/utils/sound";
+import { playButtonSound, playSound } from "@/lib/utils/sound";
 import { getStoreItems, type StoreItem } from "@/lib/api/market/getStore";
 import { buyProduct } from "@/lib/api/market/buyProduct";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import NpcShopTTS from "@/assets/sound/tutorial/npc_stop_tts_“오~ 왔구나! 포포 먹이 사러 왔니_”_2025-06-27.wav"
 
 
 export const TEXT_MESSAGE = {
@@ -40,6 +41,10 @@ export default function NpcShop() {
   const [selectedProduct, setSelectedProduct] = useState<StoreItem | null>(null);
   const { setPoint, point } = useAuthStore();
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    playSound(NpcShopTTS, 1);
+  }, []);
 
   // 상점 아이템 조회
   const { data: storeItems } = useQuery({

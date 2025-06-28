@@ -11,6 +11,8 @@ import MainBackgroundMusic from "@/assets/sound/main1.mp3";
 import { getDiary } from "@/lib/api/emotion/getDiary";
 import { useQueryClient } from '@tanstack/react-query';
 import { getQuest } from "@/lib/api/quest/getQuest";
+import Tutorial from "@/module/main/template/Tutorial";
+import { useTutorialStore } from "@/lib/zustand/tutorialStore";
 
 // 섬별 위치 정보
 const ISLAND_POSITIONS = {
@@ -25,8 +27,9 @@ const ISLAND_POSITIONS = {
 export default function Main() {
   const { logout } = useAuthStore();
   const { toggleMute, isMuted, audio } = useSoundStore();
+  const { isTutorialCompleted } = useTutorialStore();
   const queryClient = useQueryClient();
-
+  
   // 첫페이지 로드시 배경음악 설정
   useEffect(() => {
     setNewAudio(MainBackgroundMusic, 0.4);
@@ -134,6 +137,11 @@ export default function Main() {
       return navigate(targetPath);
     }
   };
+
+  if(!isTutorialCompleted) {
+    setNewAudio(MainBackgroundMusic, 0.3);
+    return <Tutorial/>;
+  }
 
   return (
     <MainTemplate

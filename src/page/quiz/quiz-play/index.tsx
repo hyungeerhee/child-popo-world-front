@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import apiClient from "@/lib/api/axios";
 import { useAuthStore } from "@/lib/zustand/authStore";
+import { useTutorialStore } from "@/lib/zustand/tutorialStore";
 import { playButtonSound } from "@/lib/utils/sound";
 
 interface Quiz {
@@ -17,6 +18,7 @@ interface Quiz {
 
 export default function QuizPlayPage() {
   const { level, topic } = useParams<{ level: string; topic: string }>();
+  const { isTutorialCompleted } = useTutorialStore();
   const [quizList, setQuizList] = useState<Quiz[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedChoice, setSelectedChoice] = useState<string | number | null>(null);
@@ -27,8 +29,14 @@ export default function QuizPlayPage() {
   const [reward, setReward] = useState(0);
   const { point, setPoint } = useAuthStore();
   const navigate = useNavigate();
-
-  const handleBack = () => navigate("/quiz");
+  
+  const handleBack = () => {
+    if(!isTutorialCompleted) {
+      navigate("/");
+      return;
+    }
+    navigate("/quiz");
+  }
 
   useEffect(() => {
     if (!level || !topic) return;
@@ -38,6 +46,7 @@ export default function QuizPlayPage() {
         params: { difficulty: level, topic },
       })
       .then((res) => {
+        console.log(res)
         const raw = JSON.parse(res.data.questionJson);
         const parsedQuiz: Quiz[] = [];
 
